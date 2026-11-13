@@ -1,0 +1,23 @@
+[
+  {
+    "date": "2026-11-11",
+    "title": "Why Child Psychology Fascinates Me",
+    "excerpt": "The moment I realized children aren't just 'small adults' — their minds work in completely different ways. This changed everything about how I approach mentorship.",
+    "label": "cognitive",
+    "author": "Me"
+  },
+  {
+    "date": "2024-11-15",
+    "title": "First Week at the YMCA",
+    "excerpt": "The energy in the room was infectious. Some reflections on what I learned from the kids in my very first week.",
+    "label": "memory",
+    "author": "Me"
+  },
+  {
+    "date": "2024-11-10",
+    "title": "On Research Methods",
+    "excerpt": "Data doesn't speak for itself — it speaks through the questions we ask. A note on why I love qualitative work.",
+    "label": "introspection",
+    "author": "Me"
+  }
+]

@@ -1,0 +1,107 @@
+{
+  "profile": {
+    "name": "IAN",
+    "pronouns": "XY",
+    "greeting": "Hello there!",
+    "title": "Psychology Graduate & Educator",
+    "tagline": "",
+    "bio": "I am a University of Manitoba graduate with a passion for human behavior, child development, and research. With hands-on experience mentoring children through the YMCA-YWCA of Winnipeg, I bring a supportive, analytical, and empathetic approach to everything I do.",
+    "location": "Winnipeg, MB",
+    "email": "127.0.0.1.energetic663@passinbox.com",
+    "linkedin": "",
+    "actions": [
+      {
+        "label": "Explore My Profile",
+        "href": "profile.html",
+        "style": "primary"
+      },
+      {
+        "label": "Leave Feedback",
+        "href": "survey.html",
+        "style": "secondary"
+      }
+    ]
+  },
+  "education": [
+    {
+      "institution": "University of Manitoba",
+      "degree": "Bachelor of Science, Psychology",
+      "years": "2020-2026",
+      "sortYear": 2026,
+      "location": "Winnipeg, MB",
+      "description": "Edit this entry in the admin panel (Education tab, coming in session 3).",
+      "highlights": [
+        "Research Methods",
+        "Abnormal Psychology",
+        "Child & Adolescent Psychology",
+        "Brain and Behavior",
+        "Gender Studies",
+        "Sports Psychology"
+      ]
+    }
+  ],
+  "posts": [
+    {
+      "date": "2026-11-11",
+      "title": "Why Child Psychology Fascinates Me",
+      "excerpt": "The moment I realized children aren't just 'small adults' — their minds work in completely different ways. This changed everything about how I approach mentorship.",
+      "label": "cognitive",
+      "author": "Me"
+    },
+    {
+      "date": "2024-11-15",
+      "title": "First Week at the YMCA",
+      "excerpt": "The energy in the room was infectious. Some reflections on what I learned from the kids in my very first week.",
+      "label": "memory",
+      "author": "Me"
+    },
+    {
+      "date": "2024-11-10",
+      "title": "On Research Methods",
+      "excerpt": "Data doesn't speak for itself — it speaks through the questions we ask. A note on why I love qualitative work.",
+      "label": "introspection",
+      "author": "Me"
+    },
+    {
+      "date": "2026-11-13",
+      "title": "sample post",
+      "excerpt": "asdf",
+      "label": "birthday",
+      "author": "Me"
+    }
+  ],
+  "photos": [
+    {
+      "date": "2026-11-13",
+      "memo": "mom and moo",
+      "image": "photos/polaroid/cool.jpg",
+      "labels": [
+        "memory"
+      ]
+    },
+    {
+      "date": "2026-11-13",
+      "memo": "ivy",
+      "image": "photos/polaroid/field.jpg",
+      "labels": [
+        "memory"
+      ]
+    },
+    {
+      "date": "2026-11-13",
+      "memo": "fam",
+      "image": "photos/polaroid/car.jpg",
+      "labels": [
+        "memory"
+      ]
+    },
+    {
+      "date": "2026-11-13",
+      "memo": "asd",
+      "image": "photos/polaroid/2026-11-13-photo-td0b.jpg",
+      "labels": [
+        "event"
+      ]
+    }
+  ]
+}
