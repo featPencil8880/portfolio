@@ -175,6 +175,7 @@
                 <button class="admin-tab" data-tab="profile" role="tab" type="button">Profile</button>
                 <button class="admin-tab" data-tab="education" role="tab" type="button">Education</button>
                 <button class="admin-tab" data-tab="experience" role="tab" type="button">Experience</button>
+                <button class="admin-tab" data-tab="skills" role="tab" type="button">Skills</button>
             </div>
 
             <div class="admin-tab-panel is-active" id="adminPanelPosts">
@@ -443,6 +444,26 @@
                 </form>
 
                 <div class="admin-list" id="adminExperienceList"></div>
+            </div>
+
+            <div class="admin-tab-panel" id="adminPanelSkills">
+                <form id="skillsForm" class="admin-form">
+                    <h3>Edit Skills &amp; Hobbies</h3>
+                    <div class="admin-field">
+                        <label for="skillsList">Skills (one per line)</label>
+                        <textarea id="skillsList" rows="10" maxlength="2000" placeholder="e.g.&#10;Qualitative research&#10;Survey design&#10;Data coding&#10;SPSS&#10;Active listening"></textarea>
+                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
+                            Each line becomes a chip. Blank lines are ignored. Sorted alphabetically on the page.
+                        </small>
+                    </div>
+                    <div class="admin-field">
+                        <label for="hobbiesList">Hobbies (one per line)</label>
+                        <textarea id="hobbiesList" rows="8" maxlength="1500" placeholder="e.g.&#10;Reading&#10;Photography&#10;Hiking"></textarea>
+                    </div>
+                    <div class="admin-form-actions">
+                        <button type="submit" class="admin-primary">Save Skills &amp; Hobbies</button>
+                    </div>
+                </form>
             </div>
 
             <p class="admin-hint">

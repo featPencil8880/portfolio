@@ -6,6 +6,7 @@
     "title": "Psychology Graduate & Educator",
     "tagline": "",
     "bio": "I am a University of Manitoba graduate with a passion for human behavior, child development, and research. With hands-on experience mentoring children through the YMCA-YWCA of Winnipeg, I bring a supportive, analytical, and empathetic approach to everything I do.",
+    "about": "",
     "location": "Winnipeg, MB",
     "email": "127.0.0.1.energetic663@passinbox.com",
     "linkedin": "",
@@ -39,6 +40,41 @@
         "Sports Psychology"
       ]
     }
+  ],
+  "experience": [
+    {
+      "position": "Youth Mentor / Educator",
+      "organization": "YMCA-YWCA of Winnipeg",
+      "years": "20XX–20XX",
+      "sortYear": 2023,
+      "location": "Winnipeg, MB",
+      "description": "Worked with children in elementary schools to support their academic, social, and emotional development. Designed and led activities that fostered curiosity, cooperation, and confidence.",
+      "highlights": [
+        "Child development",
+        "Mentorship & tutoring",
+        "Behavioral support",
+        "Curriculum design",
+        "Group facilitation"
+      ],
+      "documents": []
+    }
+  ],
+  "skills": [
+    "Qualitative research",
+    "Survey design",
+    "Data coding",
+    "SPSS",
+    "Active listening",
+    "Behavioral observation",
+    "Mentorship",
+    "Group facilitation"
+  ],
+  "hobbies": [
+    "Reading",
+    "Writing",
+    "Photography",
+    "Hiking",
+    "Cooking"
   ],
   "posts": [
     {

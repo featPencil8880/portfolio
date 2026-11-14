@@ -1,4 +1,68 @@
 // portfolio.js
+
+/* =========================================================
+   WIDGET INJECTION — subpages get the widget via JS
+   (Home already has it inline, so this is a no-op there)
+   ========================================================= */
+const WIDGET_HTML = `
+<div class="widget-panel">
+    <div class="widget-header">
+        <button class="widget-btn" id="diceBtn" title="Surprise me with a random post" type="button">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7.5 18c-.83 0-1.5-.67-1.5-1.5S6.67 15 7.5 15s1.5.67 1.5 1.5S8.33 18 7.5 18zm0-9C6.67 9 6 8.33 6 7.5S6.67 6 7.5 6 9 6.67 9 7.5 8.33 9 7.5 9zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm0-9c-.83 0-1.5-.67-1.5-1.5S15.67 6 16.5 6s1.5.67 1.5 1.5S17.33 9 16.5 9z"/></svg>
+        </button>
+        <button class="widget-btn" id="photosBtn" title="View photo gallery" type="button">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12,17.27L18.18,21l-1.64-7.03L22,9.24l-7.19-0.61L12,2L9.19,8.63L2,9.24l5.46,4.73L5.82,21L12,17.27z"/></svg>
+        </button>
+        <button class="widget-btn" id="thoughtBtn" title="Manage Posts" type="button">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.59,21.41Q10,20.83 10,20h4q0,0.82-0.59,1.41T12,22t-1.41-0.59ZM8,19V17h8v2H8Zm0.25-3q-1.72-1.03-2.74-2.75Q4.5,11.52 4.5,9.5q0-3.13 2.19-5.31T12,2t5.31,2.19T19.5,9.5q0,2.02-1.01,3.75T15.75,16H8.25Zm0.6-2h6.3q1.13-0.8 1.74-1.98T17.5,9.5q0-2.3-1.6-3.9T12,4T8.1,5.6T6.5,9.5q0,1.35 0.61,2.52T8.85,14ZM12,14Z"/></svg>
+        </button>
+        <button class="widget-btn widget-btn-small" id="clockToggleBtn" title="Toggle Clock Type" type="button">
+            <svg id="digitalIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.63,13.9h0.6V10.1H6.8L5.68,10.9L6,11.38l0.63-0.45V13.9Zm1.43,0.03h2.5V13.35H8.9V13.3l0.97-1q0.3-0.3 0.45-0.6t0.15-0.6q0-0.5-0.34-0.8T9.28,10Q8.83,10 8.5,10.23q-0.32,0.22-0.45,0.63L8.58,11.1q0.1-0.25 0.27-0.38Q9.03,10.6 9.28,10.6q0.28,0 0.44,0.14q0.16,0.14 0.16,0.39q0,0.3-0.42,0.77l-1.4,1.45v0.57Zm3.85-0.15q0.13-0.13 0.13-0.32T11.9,13.13T11.58,13t-0.33,0.13t-0.13,0.32t0.13,0.32t0.33,0.13t0.32-0.13Zm0-2.02q0.13-0.13 0.13-0.33q0-0.2-0.13-0.32t-0.32-0.13T11.25,11.1t-0.13,0.32q0,0.2 0.13,0.33t0.33,0.13t0.32-0.13ZM13.88,14q0.58,0 0.93-0.33t0.35-0.82q0-0.35-0.17-0.59T14.5,11.9V11.88q0.25-0.13 0.39-0.34t0.14-0.49q0-0.42-0.35-0.74T13.83,10q-0.43,0-0.74,0.21q-0.31,0.21-0.46,0.59l0.55,0.22q0.1-0.22 0.26-0.34t0.39-0.11q0.28,0 0.42,0.14t0.15,0.34q0,0.25-0.19,0.41q-0.19,0.16-0.46,0.16h-0.3V12.2h0.32q0.35,0 0.54,0.14q0.19,0.14 0.19,0.41q0,0.27-0.2,0.46T13.8,13.4q-0.28,0-0.44-0.15T13.1,12.77L12.53,13q0.15,0.47 0.5,0.74T13.88,14ZM17,14q0.55,0 0.94-0.38t0.39-0.93q0-0.5-0.32-0.86q-0.32-0.36-0.82-0.36q-0.05,0-0.4,0.1l-0.03-0.03l0.88-1.2L17.13,10l-0.97,1.4q-0.3,0.43-0.4,0.7t-0.1,0.53q0,0.57 0.39,0.97T17,14Zm-0.54-0.79Q16.25,13 16.25,12.7t0.21-0.51t0.51-0.21t0.51,0.21T17.7,12.7t-0.21,0.51q-0.21,0.21-0.51,0.21t-0.51-0.21ZM12,22q-2.07,0-3.9-0.79q-1.82-0.79-3.17-2.14Q3.58,17.73 2.79,15.9T2,12Q2,9.92 2.79,8.1Q3.58,6.27 4.93,4.93Q6.28,3.57 8.1,2.79Q9.93,2 12,2t3.9,0.79t3.17,2.14q1.35,1.35 2.14,3.17Q22,9.92 22,12t-0.79,3.9t-2.14,3.17q-1.35,1.35-3.17,2.14T12,22Zm0-10Zm0,8q3.33,0 5.66-2.34T20,12q0-3.33-2.34-5.66T12,4Q8.68,4 6.34,6.34T4,12t2.34,5.66T12,20Z"/></svg>
+            <svg id="analogIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display: none;"><path d="M14.55,16.55L11,13V8h2v4.17l2.95,2.95l-1.4,1.43ZM11,6V4h2V6H11Zm7,7V11h2v2H18Zm-7,7V18h2v2H11ZM4,13V11H6v2H4Zm8,9q-2.07,0-3.9-0.79q-1.82-0.79-3.17-2.14Q3.58,17.73 2.79,15.9T2,12Q2,9.92 2.79,8.1Q3.58,6.27 4.93,4.93Q6.28,3.57 8.1,2.79Q9.93,2 12,2t3.9,0.79t3.17,2.14q1.35,1.35 2.14,3.17Q22,9.92 22,12t-0.79,3.9t-2.14,3.17q-1.35,1.35-3.17,2.14T12,22Zm0-2q3.35,0 5.68-2.32T20,12T17.68,6.32T12,4T6.33,6.32T4,12t2.33,5.68T12,20Zm0-8Z"/></svg>
+        </button>
+        <button class="widget-btn" id="settingsBtn" title="Settings" type="button">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.25,22l-0.4-3.2q-0.32-0.13-0.61-0.3T7.68,18.13L4.7,19.38L1.95,14.63l2.58-1.95Q4.5,12.5 4.5,12.34q0-0.16 0-0.34t0-0.34t0.03-0.34L1.95,9.38L4.7,4.63L7.68,5.88Q7.95,5.68 8.25,5.5t0.6-0.3L9.25,2h5.5l0.4,3.2q0.33,0.13 0.61,0.3t0.56,0.38L19.3,4.63l2.75,4.75l-2.57,1.95q0.02,0.18 0.02,0.34t0,0.34t0,0.34t-0.05,0.34l2.57,1.95l-2.75,4.75l-2.95-1.25q-0.27,0.2-0.57,0.38t-0.6,0.3L14.75,22H9.25ZM11,20h1.98l0.35-2.65q0.78-0.2 1.44-0.59t1.21-0.94l2.47,1.03l0.98-1.7l-2.15-1.63q0.13-0.35 0.17-0.74T17.5,12t-0.05-0.79q-0.05-0.39-0.17-0.74l2.15-1.63l-0.98-1.7L15.98,8.2q-0.55-0.57-1.21-0.96T13.33,6.65L13,4H11.03L10.68,6.65Q9.9,6.85 9.24,7.24T8.03,8.17L5.55,7.15L4.58,8.85l2.15,1.6Q6.6,10.83 6.55,11.2T6.5,12q0,0.4 0.05,0.77t0.17,0.75L4.58,15.15l0.98,1.7L8.03,15.8q0.55,0.58 1.21,0.96t1.44,0.59L11,20Zm1.05-4.5q1.45,0 2.47-1.03T15.55,12T14.53,9.52T12.05,8.5q-1.47,0-2.49,1.02T8.55,12t1.01,2.47t2.49,1.03ZM12,12Z"/></svg>
+        </button>
+    </div>
+    <div class="widget-body">
+        <div class="widget-clock-container">
+            <div id="digitalClock" class="clock-digital">00:00:00</div>
+            <div id="analogClock" class="clock-analog" style="display: none;">
+                <div class="clock-center"></div>
+                <div class="hand hour-hand" id="hourHand"></div>
+                <div class="hand min-hand" id="minHand"></div>
+                <div class="hand sec-hand" id="secHand"></div>
+            </div>
+        </div>
+        <div class="widget-calendar">
+            <div class="calendar-header">
+                <div class="calendar-nav">
+                    <button class="calendar-btn" id="prevYear" title="Previous Year" type="button">&laquo;</button>
+                    <button class="calendar-btn" id="prevMonth" title="Previous Month" type="button">&lsaquo;</button>
+                </div>
+                <span id="calendarMonthYear" class="calendar-title">Loading...</span>
+                <div class="calendar-nav">
+                    <button class="calendar-btn" id="nextMonth" title="Next Month" type="button">&rsaquo;</button>
+                    <button class="calendar-btn" id="nextYear" title="Next Year" type="button">&raquo;</button>
+                </div>
+            </div>
+            <div class="calendar-grid" id="calendarGrid"></div>
+            <div class="calendar-worded-date" id="wordedDate"></div>
+            <button class="calendar-today-btn" id="calendarTodayBtn" type="button" style="display: none;">Back to Today</button>
+        </div>
+    </div>
+</div>
+`;
+
+(function injectWidgetIfMissing() {
+    if (document.querySelector('.widget-panel')) return;
+    const content = document.querySelector('.content');
+    if (!content) return;
+    const template = document.createElement('template');
+    template.innerHTML = WIDGET_HTML.trim();
+    content.appendChild(template.content.firstChild);
+})();
+
 /* =========================================================
    SETTINGS & AUDIO ENGINE
    ========================================================= */
@@ -306,6 +370,23 @@ const contentData = {
             ],
             documents:    []
         }
+    ],
+    skills: [
+        "Qualitative research",
+        "Survey design",
+        "Data coding",
+        "SPSS",
+        "Active listening",
+        "Behavioral observation",
+        "Mentorship",
+        "Group facilitation"
+    ],
+    hobbies: [
+        "Reading",
+        "Writing",
+        "Photography",
+        "Hiking",
+        "Cooking"
     ],
     posts: [
         {
@@ -656,9 +737,14 @@ function renderCalendar(date) {
         }
 
         cell.addEventListener('click', () => {
-            currentDateFilter = new Date(year, month, day);
-            renderCalendar(currentViewDate);
-            renderPosts();
+            if (document.getElementById('postList')) {
+                currentDateFilter = new Date(year, month, day);
+                renderCalendar(currentViewDate);
+                renderPosts();
+            } else {
+                const key = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                window.location.href = `index.html?date=${key}`;
+            }
         });
 
         grid.appendChild(cell);
@@ -720,6 +806,10 @@ if (document.getElementById('experienceTimeline')) {
 
 if (document.getElementById('profileName')) {
     renderProfilePage();
+}
+
+if (document.getElementById('skillsCard')) {
+    renderSkillsPage();
 }
 
 if (document.getElementById('postList')) {
@@ -868,6 +958,14 @@ function applyContent(parsed) {
         contentData.photos.length = 0;
         contentData.photos.push(...parsed.photos);
     }
+    if (Array.isArray(parsed.skills)) {
+        contentData.skills.length = 0;
+        contentData.skills.push(...parsed.skills);
+    }
+    if (Array.isArray(parsed.hobbies)) {
+        contentData.hobbies.length = 0;
+        contentData.hobbies.push(...parsed.hobbies);
+    }
 
     if (document.getElementById('heroText')) renderHero();
     updateHeaderName();
@@ -877,9 +975,11 @@ function applyContent(parsed) {
     }
     if (typeof currentViewDate !== 'undefined') renderCalendar(currentViewDate);
     if (typeof populateProfileForm === 'function') populateProfileForm();
+    if (typeof populateSkillsForm === 'function') populateSkillsForm();
     if (document.getElementById('educationTimeline')) renderEducationPage();
     if (document.getElementById('experienceTimeline')) renderExperiencePage();
     if (document.getElementById('profileName')) renderProfilePage();
+    if (document.getElementById('skillsCard')) renderSkillsPage();
 }
 
 function saveContent() {
@@ -930,6 +1030,7 @@ function openAdmin() {
     resetPhotoForm();
     resetEducationForm();
     resetExperienceForm();
+    populateSkillsForm();
     renderAdminList();
     renderAdminPhotoList();
     renderAdminEducationList();
@@ -1488,7 +1589,13 @@ function rollDice() {
     }, 1100);
 }
 
-document.getElementById('diceBtn')?.addEventListener('click', rollDice);
+document.getElementById('diceBtn')?.addEventListener('click', () => {
+    if (document.getElementById('postList')) {
+        rollDice();
+    } else {
+        window.location.href = 'index.html?roll=1';
+    }
+});
 
 /* =========================================================
    23. CALENDAR "BACK TO TODAY" BUTTON
@@ -2404,3 +2511,97 @@ function renderProfilePage() {
         }
     }
 }
+
+/* =========================================================
+   31. SKILLS & HOBBIES
+   ========================================================= */
+function populateSkillsForm() {
+    const s = document.getElementById('skillsList');
+    const h = document.getElementById('hobbiesList');
+    if (s) s.value = (contentData.skills || []).join('\n');
+    if (h) h.value = (contentData.hobbies || []).join('\n');
+}
+
+document.getElementById('skillsForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const skillsRaw  = (document.getElementById('skillsList')?.value || '').trim();
+    const hobbiesRaw = (document.getElementById('hobbiesList')?.value || '').trim();
+
+    contentData.skills  = skillsRaw  ? skillsRaw.split('\n').map(s => s.trim()).filter(Boolean) : [];
+    contentData.hobbies = hobbiesRaw ? hobbiesRaw.split('\n').map(s => s.trim()).filter(Boolean) : [];
+
+    saveContent();
+    if (document.getElementById('skillsCard')) renderSkillsPage();
+    playSound('success');
+});
+
+function renderSkillsPage() {
+    const skillsCard  = document.getElementById('skillsCard');
+    const hobbiesCard = document.getElementById('hobbiesCard');
+    if (!skillsCard && !hobbiesCard) return;
+
+    if (skillsCard) {
+        const skills = (contentData.skills || []).slice().sort((a, b) => a.localeCompare(b));
+        if (skills.length) {
+            skillsCard.innerHTML = `
+                <h2 class="skills-card-title">Skills</h2>
+                <div class="skills-chips">
+                    ${skills.map(s => `<span class="skills-chip">${s}</span>`).join('')}
+                </div>
+            `;
+            skillsCard.style.display = '';
+        } else {
+            skillsCard.innerHTML = '';
+            skillsCard.style.display = 'none';
+        }
+    }
+
+    if (hobbiesCard) {
+        const hobbies = (contentData.hobbies || []).slice().sort((a, b) => a.localeCompare(b));
+        if (hobbies.length) {
+            hobbiesCard.innerHTML = `
+                <h2 class="skills-card-title">Hobbies</h2>
+                <div class="skills-chips">
+                    ${hobbies.map(h => `<span class="skills-chip">${h}</span>`).join('')}
+                </div>
+            `;
+            hobbiesCard.style.display = '';
+        } else {
+            hobbiesCard.innerHTML = '';
+            hobbiesCard.style.display = 'none';
+        }
+    }
+}
+
+/* =========================================================
+32. CROSS-PAGE NAVIGATION PARAMS
+(?roll=1 or ?date=YYYY-MM-DD arriving from a subpage)
+========================================================= */
+(function handleCrossPageParams() {
+if (!document.getElementById('postList')) return;
+const params = new URLSearchParams(location.search);
+const rollParam = params.get('roll');
+const dateParam = params.get('date');
+
+if (rollParam === '1') {
+    setTimeout(() => { if (typeof rollDice === 'function') rollDice(); }, 300);
+}
+
+if (dateParam) {
+    const parts = dateParam.split('-');
+    if (parts.length === 3) {
+        const y = parseInt(parts[0], 10);
+        const m = parseInt(parts[1], 10);
+        const d = parseInt(parts[2], 10);
+        if (!isNaN(y) && !isNaN(m) && !isNaN(d)) {
+            currentDateFilter = new Date(y, m - 1, d);
+            renderCalendar(currentViewDate);
+            renderPosts();
+        }
+    }
+}
+
+if (rollParam || dateParam) {
+    history.replaceState({}, '', location.pathname);
+}
+})();
