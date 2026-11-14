@@ -270,6 +270,21 @@
             <div class="admin-tab-panel" id="adminPanelProfile">
                 <form id="profileForm" class="admin-form">
                     <div class="admin-field">
+                        <label for="siteProjectName">Site name (header brand)</label>
+                        <input type="text" id="siteProjectName" maxlength="40" placeholder="PORTFOLIO">
+                    </div>
+                    <div class="admin-field">
+                        <label for="siteTheme">Site theme</label>
+                        <select id="siteTheme">
+                            <option value="retro">Retro (default)</option>
+                            <option value="neobrutalism">Neobrutalism</option>
+                        </select>
+                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
+                            Only visible to you until you export and publish.
+                        </small>
+                    </div>
+                    <hr class="settings-divider">
+                    <div class="admin-field">
                         <label for="profileName">Name</label>
                         <input type="text" id="profileName" maxlength="60" placeholder="e.g. Maya">
                     </div>

@@ -441,6 +441,10 @@ const contentData = {
         "opinion & advice": { color: "#D4A8FF" },
         introspection:      { color: "#A8C9E8" }
     },
+    site: {
+        projectName: "PORTFOLIO",
+        theme:       "retro"
+    },
     survey: {
         introTitle:     "Share your thoughts",
         introText:      "Thanks for taking a look. I'd love to hear what you think — what stood out, what could be better, or just a hello.",
@@ -996,12 +1000,17 @@ function applyContent(parsed) {
         Object.keys(contentData.labels).forEach(k => delete contentData.labels[k]);
         Object.assign(contentData.labels, parsed.labels);
     }
+    if (parsed.site && typeof parsed.site === 'object') {
+        if (!contentData.site) contentData.site = { projectName: 'PORTFOLIO', theme: 'retro' };
+        Object.assign(contentData.site, parsed.site);
+    }
     if (parsed.survey && typeof parsed.survey === 'object') {
         Object.assign(contentData.survey, parsed.survey);
     }
 
     if (document.getElementById('heroText')) renderHero();
     updateHeaderName();
+    renderTheme();
     if (document.getElementById('postList')) {
         renderLabelChips();
         renderPosts();
@@ -1026,11 +1035,23 @@ function saveContent() {
 
 function updateHeaderName() {
     const nameEl = document.querySelector('.name');
-    if (nameEl) nameEl.textContent = contentData.profile.name;
+    if (nameEl) {
+        nameEl.textContent = (contentData.site && contentData.site.projectName) || 'PORTFOLIO';
+    }
+    const nameLink = document.querySelector('.name-container');
+    if (nameLink) nameLink.setAttribute('href', 'index.html');
+}
+
+function renderTheme() {
+    const theme = (contentData.site && contentData.site.theme) || 'retro';
+    ['retro', 'neobrutalism'].forEach(t => {
+        document.body.classList.toggle('site-theme-' + t, t === theme);
+    });
 }
 
 /* Run immediately so every page has the current name even before loader finishes */
 updateHeaderName();
+renderTheme();
 
 /* =========================================================
    18. ADMIN POST EDITOR
@@ -1211,6 +1232,9 @@ function populateProfileForm() {
         const el = document.getElementById(id);
         if (el) el.value = val || '';
     };
+    setVal('siteProjectName', (contentData.site && contentData.site.projectName) || '');
+    const themeSelect = document.getElementById('siteTheme');
+    if (themeSelect) themeSelect.value = (contentData.site && contentData.site.theme) || 'retro';
     setVal('profileName',     p.name);
     setVal('profilePronouns', p.pronouns);
     setVal('profileGreeting', p.greeting);
@@ -1238,6 +1262,11 @@ function populateProfileForm() {
 /* --- Profile form: save --- */
 function saveProfileForm() {
     const g = (id) => (document.getElementById(id)?.value || '').trim();
+
+    if (!contentData.site) contentData.site = { projectName: 'PORTFOLIO', theme: 'retro' };
+    contentData.site.projectName = g('siteProjectName') || 'PORTFOLIO';
+    const themeSelect = document.getElementById('siteTheme');
+    contentData.site.theme = themeSelect ? themeSelect.value : 'retro';
 
     contentData.profile.name     = g('profileName');
     contentData.profile.pronouns = g('profilePronouns');
@@ -1271,6 +1300,7 @@ function saveProfileForm() {
 
     saveContent();
     updateHeaderName();
+    renderTheme();
     if (document.getElementById('heroText')) renderHero();
     playSound('success');
 }

@@ -3562,3 +3562,66 @@ body.post-focused .post-filter-chips {
     letter-spacing: 0.5px;
     color: #000;
 }
+
+/* =========================================================
+   THEME: NEOBRUTALISM
+   Thicker borders, bigger shadows, sharp corners.
+   Toggle via admin → Profile → Site theme.
+   ========================================================= */
+body.site-theme-neobrutalism .retro-box,
+body.site-theme-neobrutalism .education-card,
+body.site-theme-neobrutalism .experience-card,
+body.site-theme-neobrutalism .skills-card,
+body.site-theme-neobrutalism .game-card,
+body.site-theme-neobrutalism .survey-card,
+body.site-theme-neobrutalism .survey-thanks-card,
+body.site-theme-neobrutalism .profile-about-card,
+body.site-theme-neobrutalism .photos-modal-panel,
+body.site-theme-neobrutalism .admin-panel,
+body.site-theme-neobrutalism .admin-form,
+body.site-theme-neobrutalism .settings-panel,
+body.site-theme-neobrutalism .widget-panel {
+    border-width: 4px;
+    box-shadow: 8px 8px 0 #000;
+    border-radius: 0;
+}
+
+body.site-theme-neobrutalism .post-card {
+    border-width: 4px;
+    border-left-width: 10px;
+    box-shadow: 8px 8px 0 #000;
+    border-radius: 0;
+}
+
+body.site-theme-neobrutalism .photos-stack-card {
+    border-width: 4px;
+    box-shadow: 8px 8px 0 #000;
+    border-radius: 0;
+}
+
+body.site-theme-neobrutalism .menu-button,
+body.site-theme-neobrutalism .name-container,
+body.site-theme-neobrutalism .canvas-button,
+body.site-theme-neobrutalism .widget-btn,
+body.site-theme-neobrutalism .calendar-btn,
+body.site-theme-neobrutalism .calendar-day.header,
+body.site-theme-neobrutalism .post-filter-clear,
+body.site-theme-neobrutalism .admin-actions button,
+body.site-theme-neobrutalism .admin-form-actions button,
+body.site-theme-neobrutalism .admin-close,
+body.site-theme-neobrutalism .admin-today-btn,
+body.site-theme-neobrutalism .settings-close,
+body.site-theme-neobrutalism .settings-select,
+body.site-theme-neobrutalism .settings-danger-btn,
+body.site-theme-neobrutalism .settings-btn-group,
+body.site-theme-neobrutalism .photos-nav-btn,
+body.site-theme-neobrutalism .photos-counter,
+body.site-theme-neobrutalism .photos-modal-close,
+body.site-theme-neobrutalism .calendar-today-btn,
+body.site-theme-neobrutalism .photos-sidebar-item,
+body.site-theme-neobrutalism .hero-box .btn,
+body.site-theme-neobrutalism .hero-box .hero-header {
+    border-width: 3px;
+    border-radius: 0;
+    box-shadow: 4px 4px 0 #000;
+}
