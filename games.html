@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Games | My Portfolio</title>
+    <script src="portfolio.js" defer></script>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="page-sub theme-games">
+    <header class="header">
+        <div class="menu-container">
+            <button class="menu-button" id="navBtn" type="button"></button>
+        </div>
+        <a href="profile.html" class="name-container">
+            <h1 class="name">MY NAME</h1>
+        </a>
+        <button class="canvas-button" id="canvasBtn" type="button" aria-pressed="false" title="Toggle Canvas Mode">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+        </button>
+    </header>
+
+    <div class="layout-container">
+        <div class="left-panel" id="leftPanel">
+            <nav class="menu-list-container" id="menuList" aria-label="Contents">
+                <ul class="list">
+                    <li><a class="left-panel-btn" id="homeBtn" href="index.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17,9h2V7H17V9Zm0,4h2V11H17v2Zm0,4h2V15H17v2Zm0,4V19h4V5H12V6.4L10,4.95V3H23V21H17ZM1,21V11L8,6l7,5V21H9V16H7v5H1Zm2-2H5V14h6v5h2V12L8,8.45L3,12v7Zm14-9Zm-6,9V14H5v5V14H8h3v5Z"/></svg>
+                        <span class="nav-text">HOME</span></a></li>
+                    <li><a class="left-panel-btn" id="profileBtn" href="profile.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.18,10.83Q8,9.65 8,8T9.18,5.18T12,4t2.83,1.18T16,8t-1.17,2.82T12,12T9.18,10.83ZM4,20V17.2q0-0.85 0.44-1.56q0.44-0.71 1.16-1.09q1.55-0.78 3.15-1.16T12,13t3.25,0.39t3.15,1.16q0.72,0.38 1.16,1.09T20,17.2V20H4Zm2-2H18V17.2q0-0.27-0.14-0.5q-0.14-0.22-0.36-0.35q-1.35-0.68-2.72-1.01T12,15T9.23,15.34T6.5,16.35Q6.28,16.48 6.14,16.7Q6,16.93 6,17.2V18Zm7.41-8.59Q14,8.82 14,8T13.41,6.59T12,6T10.59,6.59Q10,7.18 10,8t0.59,1.41T12,10t1.41-0.59ZM12,8Zm0,10Z"/></svg>
+                        <span class="nav-text">PROFILE</span></a></li>
+                    <li><a class="left-panel-btn" id="educationBtn" href="education.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.5,13.68V10H15L14,9H12.5V5q0-0.43 0.29-0.71T13.5,4h2.43q0.27,0 0.51,0.14T16.8,4.52L18.75,8H17.3l-1-2H14V7h1.7l1,2h2.6l1.48,2.57q-0.65-0.28-1.35-0.43T18,11q-1.68,0-3.11,0.72T12.5,13.68ZM10.5,20H8.08Q7.8,20 7.56,19.86Q7.33,19.73 7.2,19.48L5.25,16H6.7l1,2H10V17H8.3l-1-2H4.7L3.28,12.5q-0.05-0.13-0.09-0.25T3.15,12q0-0.1 0.13-0.5L4.7,9H7.3l1-2H10V6H7.7l-1,2H5.25L7.2,4.52Q7.33,4.27 7.56,4.14T8.08,4H10.5q0.43,0 0.71,0.29T11.5,5V9H10L9,10h2.5v3H9.3l-1-2H6L5,12H7.7l1,2h2.8v1.4q-0.25,0.6-0.38,1.25T11,18q0,0.43 0.04,0.85q0.04,0.42 0.16,0.85q-0.13,0.13-0.31,0.21T10.5,20ZM18,21l3-3l-0.7-0.7l-1.8,1.8V15h-1v4.1l-1.8-1.8L15,18l3,3Zm-3.54,0.54Q13,20.08 13,18t1.46-3.54T18,13t3.54,1.46T23,18t-1.46,3.54T18,23q-2.07,0-3.54-1.46Z"/></svg>
+                        <span class="nav-text">EDUCATION</span></a></li>
+                    <li><a class="left-panel-btn" id="experienceBtn" href="experience.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4,19V8V19q0-0.5 0-0.38T4,19Zm0,2q-0.82,0-1.41-0.59T2,19V8Q2,7.18 2.59,6.59T4,6H8V4Q8,3.17 8.59,2.59T10,2h4q0.83,0 1.41,0.59T16,4V6h4q0.83,0 1.41,0.59Q22,7.18 22,8v4.27q-0.45-0.32-0.95-0.56Q20.55,11.48 20,11.3V8H4V19h7.08q0.07,0.52 0.22,1.02T11.68,21H4ZM10,6h4V4H10V6Zm4.46,15.54Q13,20.08 13,18t1.46-3.54T18,13t3.54,1.46T23,18t-1.46,3.54T18,23q-2.07,0-3.54-1.46ZM18.5,17.8V15h-1v3.2l2.15,2.15l0.7-0.7L18.5,17.8Z"/></svg>
+                        <span class="nav-text">EXPERIENCE</span></a></li>
+                    <li><a class="left-panel-btn" id="skillsBtn" href="skills.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.48,21.91q-0.18-0.06-0.32-0.21l-5.1-5.1q-0.15-0.15-0.21-0.33T12.78,15.9t0.06-0.38t0.21-0.33l2.13-2.13q0.15-0.15 0.32-0.21t0.38-0.06t0.38,0.06t0.32,0.21l5.1,5.1q0.15,0.15 0.21,0.32t0.06,0.38t-0.06,0.38t-0.21,0.32L19.55,21.7q-0.15,0.15-0.32,0.21t-0.38,0.06t-0.38-0.06Zm0.38-2.31l0.73-0.73L15.9,15.2l-0.72,0.72l3.68,3.68ZM4.74,21.93Q4.55,21.85 4.4,21.7L2.3,19.6q-0.15-0.15-0.23-0.34T2,18.88T2.08,18.5T2.3,18.18l5.3-5.3H9.73l0.85-0.85L6.45,7.9H5.03L2,4.88L4.83,2.05L7.85,5.07V6.5l4.13,4.13l2.9-2.9L13.8,6.65l1.4-1.4H12.38l-0.7-0.7L15.23,1l0.7,0.7V4.52l1.4-1.4l3.55,3.55Q21.3,7.1 21.53,7.64q0.22,0.54 0.22,1.14q0,0.6-0.22,1.15q-0.23,0.55-0.65,0.97L18.75,8.77l-1.4,1.4L16.3,9.13L11.13,14.3v2.1l-5.3,5.3Q5.68,21.85 5.5,21.93Q5.33,22 5.13,22T4.74,21.93ZM5.13,19.6l4.25-4.25V14.63H8.65L4.4,18.88L5.13,19.6Zm0,0L4.4,18.88l0.38,0.35L5.13,19.6Zm13.73,0l0.73-0.73L18.85,19.6Z"/></svg>
+                        <span class="nav-text">SKILLS</span></a></li>
+                    <li><a class="left-panel-btn" id="surveyBtn" href="survey.html">
+                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12,12Zm0,10q-2.07,0-3.9-0.79q-1.82-0.79-3.17-2.14Q3.58,17.73 2.79,15.9T2,12Q2,9.92 2.79,8.1Q3.58,6.27 4.93,4.93Q6.28,3.57 8.1,2.79Q9.93,2 12,2q1.08,0 2.08,0.21T16,2.82V5.07q-0.88-0.5-1.89-0.79T12,4Q8.68,4 6.34,6.34T4,12t2.34,5.66T12,20t5.66-2.34T20,12q0-0.8-0.16-1.55T19.4,9h2.15q0.23,0.72 0.34,1.46T22,12q0,2.07-0.79,3.9t-2.14,3.17q-1.35,1.35-3.17,2.14T12,22ZM20,7V5H18V3h2V1h2V3h2V5H22V7H20Zm-4.5,4q0.63,0 1.06-0.44T17,9.5T16.56,8.44T15.5,8T14.44,8.44T14,9.5t0.44,1.06T15.5,11Zm-7,0q0.63,0 1.06-0.44T10,9.5T9.56,8.44T8.5,8T7.44,8.44T7,9.5t0.44,1.06T8.5,11Zm6.59,5.54Q16.48,15.58 17.1,14H6.9q0.63,1.57 2.01,2.54T12,17.5t3.09-0.96Z"/></svg>
+                        <span class="nav-text">SURVEY</span></a></li>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="content">
+            <div class="content-container games-container">
+                <div class="retro-box games-hero">
+                    <h1 class="games-hero-title">Games</h1>
+                    <p class="games-hero-subtitle">Three small experiments, disguised as games — drawn from the psychology lab.</p>
+                </div>
+                <div class="games-grid">
+                    <a href="games/reaction.html" class="game-card">
+                        <div class="game-card-icon">⚡</div>
+                        <h3 class="game-card-title">Reaction Time</h3>
+                        <p class="game-card-desc">How fast are your reflexes? A simple test drawn from cognitive psychology labs.</p>
+                        <span class="game-card-cta">Play →</span>
+                    </a>
+                    <a href="games/stroop.html" class="game-card">
+                        <div class="game-card-icon">🎨</div>
+                        <h3 class="game-card-title">Stroop Test</h3>
+                        <p class="game-card-desc">The classic interference task. Say the ink color, not the word.</p>
+                        <span class="game-card-cta">Play →</span>
+                    </a>
+                    <a href="games/memory.html" class="game-card">
+                        <div class="game-card-icon">🧩</div>
+                        <h3 class="game-card-title">Memory Match</h3>
+                        <p class="game-card-desc">A working-memory test dressed up as a card game.</p>
+                        <span class="game-card-cta">Play →</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

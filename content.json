@@ -100,44 +100,55 @@
     },
     {
       "date": "2026-11-13",
-      "title": "sample post",
-      "excerpt": "asdf",
+      "title": "Sample Birthday Post",
+      "excerpt": "Happy birthday ! :)",
       "label": "birthday",
       "author": "Me"
     }
   ],
-  "photos": [
-    {
-      "date": "2026-11-13",
-      "memo": "mom and moo",
-      "image": "photos/polaroid/cool.jpg",
-      "labels": [
-        "memory"
-      ]
+  "photos": [],
+  "labels": {
+    "birthday": {
+      "color": "#FFB3C6"
     },
-    {
-      "date": "2026-11-13",
-      "memo": "ivy",
-      "image": "photos/polaroid/field.jpg",
-      "labels": [
-        "memory"
-      ]
+    "task": {
+      "color": "#FFCE80"
     },
-    {
-      "date": "2026-11-13",
-      "memo": "fam",
-      "image": "photos/polaroid/car.jpg",
-      "labels": [
-        "memory"
-      ]
+    "event": {
+      "color": "#FFE566"
     },
-    {
-      "date": "2026-11-13",
-      "memo": "asd",
-      "image": "photos/polaroid/2026-11-13-photo-td0b.jpg",
-      "labels": [
-        "event"
-      ]
+    "memory": {
+      "color": "#B5E8A0"
+    },
+    "cognitive": {
+      "color": "#80D9DE"
+    },
+    "belief": {
+      "color": "#9CC0FF"
+    },
+    "curiosity": {
+      "color": "#C7A8FF"
+    },
+    "hope": {
+      "color": "#FFA8E6"
+    },
+    "ambition": {
+      "color": "#FFA8A8"
+    },
+    "inspiration": {
+      "color": "#FFC080"
+    },
+    "opinion & advice": {
+      "color": "#D4A8FF"
+    },
+    "introspection": {
+      "color": "#A8C9E8"
     }
-  ]
+  },
+  "survey": {
+    "introTitle": "Share your thoughts",
+    "introText": "Thanks for taking a look. I'd love to hear what you think — what stood out, what could be better, or just a hello.",
+    "thankYouTitle": "Thank you!",
+    "thankYouMessage": "Your message means a lot. I read every submission and try to reply within a few days."
+  }
 }

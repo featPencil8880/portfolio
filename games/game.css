@@ -1,0 +1,394 @@
+/* =========================================================
+   GAME PAGES — shared dark "psych lab" base
+   ========================================================= */
+:root {
+    --bg: #0f1216;
+    --bg-2: #161a20;
+    --text: #d4d8dd;
+    --text-dim: #8b94a0;
+    --accent: #6ee7a8;
+    --accent-hover: #8ff0bb;
+    --accent-dim: #3d8c5f;
+    --warn: #fbbf24;
+    --err: #ef4444;
+    --border: #2a2f38;
+}
+
+* { box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body.game-body {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Courier New", monospace;
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 20px 40px;
+    position: relative;
+}
+
+/* Subtle scanlines for CRT feel */
+body.game-body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+        0deg,
+        transparent 0,
+        transparent 2px,
+        rgba(255, 255, 255, 0.02) 2px,
+        rgba(255, 255, 255, 0.02) 3px
+    );
+    pointer-events: none;
+    z-index: 100;
+}
+
+.game-back {
+    position: absolute;
+    top: 24px;
+    left: 24px;
+    color: var(--text-dim);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 1px;
+    padding: 8px 14px;
+    border: 2px solid var(--border);
+    border-radius: 6px;
+    transition: color 0.2s, border-color 0.2s;
+    background: var(--bg-2);
+    z-index: 10;
+}
+.game-back:hover {
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.game-main {
+    width: 100%;
+    max-width: 640px;
+    margin-top: 60px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.game-panel {
+    width: 100%;
+    background: var(--bg-2);
+    border: 2px solid var(--border);
+    border-radius: 10px;
+    padding: 32px;
+    text-align: center;
+    box-shadow: 0 0 40px rgba(110, 231, 168, 0.05);
+}
+
+.game-title {
+    margin: 0 0 16px;
+    font-size: 1.8rem;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+}
+
+.game-intro {
+    margin: 0 0 28px;
+    line-height: 1.7;
+    font-weight: 400;
+    font-size: 0.95rem;
+    color: var(--text-dim);
+}
+
+.game-btn-primary {
+    background: var(--accent);
+    color: var(--bg);
+    border: 2px solid var(--accent);
+    border-radius: 6px;
+    padding: 14px 32px;
+    font: inherit;
+    font-size: 1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s, background 0.2s;
+}
+.game-btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(110, 231, 168, 0.3);
+}
+
+.game-stage {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.game-box {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    max-height: 400px;
+    background: var(--bg-2);
+    border: 3px solid var(--border);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    user-select: none;
+}
+
+.game-box.state-waiting {
+    background: var(--bg-2);
+    border-color: var(--warn);
+}
+
+.game-box.state-ready {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--bg);
+}
+
+.game-box.state-too-soon {
+    background: var(--err);
+    border-color: var(--err);
+    color: #fff;
+}
+
+.game-box.state-result {
+    background: var(--bg-2);
+    border-color: var(--accent-dim);
+}
+
+.game-box-label {
+    font-size: 2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.game-trials {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+}
+
+.game-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin: 24px 0;
+}
+.game-stats > div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 16px;
+    background: var(--bg);
+    border: 2px solid var(--border);
+    border-radius: 6px;
+}
+.game-stat-label {
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+.game-stat-value {
+    font-size: 1.5rem;
+    color: var(--accent);
+}
+
+.game-results-note {
+    color: var(--text-dim);
+    font-weight: 400;
+    line-height: 1.7;
+    font-size: 0.9rem;
+    margin: 0 0 24px;
+}
+
+@media (max-width: 600px) {
+    .game-title { font-size: 1.4rem; }
+    .game-panel { padding: 22px; }
+    .game-stats { grid-template-columns: 1fr; }
+    .game-box-label { font-size: 1.4rem; }
+    .game-back { position: static; margin-bottom: 20px; align-self: flex-start; }
+    .game-main { margin-top: 0; }
+}
+
+/* =========================================================
+   STROOP TEST — specific styles
+   ========================================================= */
+.stroop-word {
+    font-size: 4rem;
+    font-weight: 900;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    margin: 20px 0 32px;
+    min-height: 5rem;
+    line-height: 1.1;
+    transition: color 0.15s;
+    word-break: break-word;
+}
+
+.stroop-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    width: 100%;
+    max-width: 420px;
+    margin: 0 auto;
+}
+
+.stroop-btn {
+    padding: 22px 16px;
+    background: transparent;
+    border: 3px solid;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 1.05rem;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s, transform 0.1s;
+}
+
+.stroop-btn:hover {
+    background: currentColor;
+    color: var(--bg) !important;
+    transform: translateY(-2px);
+}
+
+.stroop-btn.is-correct {
+    background: var(--accent);
+    border-color: var(--accent) !important;
+    color: var(--bg) !important;
+}
+
+.stroop-btn.is-wrong {
+    background: var(--err);
+    border-color: var(--err) !important;
+    color: #fff !important;
+}
+
+/* =========================================================
+   MEMORY MATCH — specific styles
+   ========================================================= */
+.memory-meta {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 480px;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+}
+
+.memory-meta span span {
+    color: var(--accent);
+    font-size: 1.1rem;
+}
+
+.memory-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+    width: 100%;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.memory-card {
+    aspect-ratio: 1 / 1;
+    background: var(--bg-2);
+    border: 3px solid var(--border);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 2.4rem;
+    line-height: 1;
+    user-select: none;
+    position: relative;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+}
+
+.memory-card:hover:not(.is-flipped):not(.is-matched) {
+    border-color: var(--accent-dim);
+}
+
+.memory-card-back,
+.memory-card-front {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.memory-card-back {
+    color: var(--text-dim);
+    font-size: 1.6rem;
+    font-weight: 900;
+    opacity: 1;
+    transition: opacity 0.2s;
+}
+
+.memory-card-front {
+    color: var(--text);
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.memory-card.is-flipped,
+.memory-card.is-matched {
+    background: var(--bg);
+    border-color: var(--accent);
+}
+
+.memory-card.is-flipped .memory-card-back,
+.memory-card.is-matched .memory-card-back {
+    opacity: 0;
+}
+
+.memory-card.is-flipped .memory-card-front,
+.memory-card.is-matched .memory-card-front {
+    opacity: 1;
+}
+
+.memory-card.is-matched {
+    background: rgba(110, 231, 168, 0.15);
+    cursor: default;
+}
+
+@media (max-width: 600px) {
+    .stroop-word {
+        font-size: 2.5rem;
+        letter-spacing: 2px;
+    }
+    .stroop-btn {
+        padding: 18px 10px;
+        font-size: 0.9rem;
+    }
+    .memory-card {
+        font-size: 1.8rem;
+    }
+    .memory-meta {
+        font-size: 0.75rem;
+    }
+}

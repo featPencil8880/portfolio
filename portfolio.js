@@ -63,6 +63,18 @@ const WIDGET_HTML = `
     content.appendChild(template.content.firstChild);
 })();
 
+(function injectNavGamesItem() {
+    const menuList = document.querySelector('#menuList .list');
+    if (!menuList) return;
+    if (menuList.querySelector('#gamesBtn')) return;
+    const li = document.createElement('li');
+    li.innerHTML = `<a class="left-panel-btn" id="gamesBtn" href="games.html">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.73,20q-1.5,0-2.56-1.07t-1.11-2.6q0-0.22 0.02-0.45t0.08-0.45l2.1-8.4Q3.6,5.68 4.68,4.84T7.13,4h9.75q1.38,0 2.45,0.84q1.07,0.84 1.42,2.19l2.1,8.4q0.05,0.23 0.09,0.46t0.04,0.46q0,1.52-1.09,2.59T19.28,20q-1.05,0-1.95-0.55q-0.9-0.55-1.35-1.5l-0.7-1.45q-0.13-0.25-0.38-0.38T14.38,16H9.63Q9.35,16 9.1,16.13T8.73,16.5l-0.7,1.45q-0.45,0.95-1.35,1.5T4.73,20ZM4.8,18q0.47,0 0.86-0.25t0.59-0.68l0.7-1.42q0.38-0.78 1.1-1.21T9.63,14h4.75q0.85,0 1.58,0.45t1.12,1.2l0.7,1.42q0.2,0.43 0.59,0.68T19.23,18q0.7,0 1.2-0.46t0.53-1.16q0,0.02-0.05-0.47L18.8,7.52q-0.18-0.68-0.7-1.1T16.88,6H7.13Q6.43,6 5.89,6.43T5.2,7.52L3.1,15.9q-0.05,0.15-0.05,0.45q0,0.7 0.51,1.17Q4.08,18 4.8,18Zm9.41-7.29Q14.5,10.43 14.5,10q0-0.43-0.29-0.71T13.5,9T12.79,9.29T12.5,10t0.29,0.71T13.5,11t0.71-0.29Zm2-2Q16.5,8.42 16.5,8q0-0.43-0.29-0.71T15.5,7T14.79,7.29T14.5,8q0,0.42 0.29,0.71T15.5,9t0.71-0.29Zm0,4Q16.5,12.43 16.5,12t-0.29-0.71T15.5,11t-0.71,0.29T14.5,12t0.29,0.71T15.5,13t0.71-0.29Zm2-2Q18.5,10.43 18.5,10q0-0.43-0.29-0.71T17.5,9T16.79,9.29T16.5,10t0.29,0.71T17.5,11t0.71-0.29ZM9.04,12.29q0.21-0.21 0.21-0.54v-1h1q0.33,0 0.54-0.21T11,10q0-0.33-0.21-0.54T10.25,9.25h-1v-1q0-0.32-0.21-0.54Q8.83,7.5 8.5,7.5q-0.32,0-0.54,0.21Q7.75,7.93 7.75,8.25v1h-1q-0.32,0-0.54,0.21T6,10t0.21,0.54t0.54,0.21h1v1q0,0.32 0.21,0.54T8.5,12.5q0.33,0 0.54-0.21ZM12,12Z"/></svg>
+        <span class="nav-text">GAMES</span>
+    </a>`;
+    menuList.appendChild(li);
+})();
+
 /* =========================================================
    SETTINGS & AUDIO ENGINE
    ========================================================= */
@@ -414,7 +426,27 @@ const contentData = {
             image: ""
         }
     ],
-    photos: []
+    photos: [],
+    labels: {
+        birthday:           { color: "#FFB3C6" },
+        task:               { color: "#FFCE80" },
+        event:              { color: "#FFE566" },
+        memory:             { color: "#B5E8A0" },
+        cognitive:          { color: "#80D9DE" },
+        belief:             { color: "#9CC0FF" },
+        curiosity:          { color: "#C7A8FF" },
+        hope:               { color: "#FFA8E6" },
+        ambition:           { color: "#FFA8A8" },
+        inspiration:        { color: "#FFC080" },
+        "opinion & advice": { color: "#D4A8FF" },
+        introspection:      { color: "#A8C9E8" }
+    },
+    survey: {
+        introTitle:     "Share your thoughts",
+        introText:      "Thanks for taking a look. I'd love to hear what you think — what stood out, what could be better, or just a hello.",
+        thankYouTitle:  "Thank you!",
+        thankYouMessage: "Your message means a lot. I read every submission and try to reply within a few days."
+    }
 };
 
 /* Aliases — existing code reads these, no changes needed below */
@@ -430,20 +462,9 @@ const DEFAULT_CONTENT = JSON.parse(JSON.stringify(contentData));
    /* Edit this list as family members join */
 const AUTHORS = ["Me"];
 
-const postLabels = {
-    birthday:           { color: "#FFB3C6" },
-    task:               { color: "#FFCE80" },
-    event:              { color: "#FFE566" },
-    memory:             { color: "#B5E8A0" },
-    cognitive:          { color: "#80D9DE" },
-    belief:             { color: "#9CC0FF" },
-    curiosity:          { color: "#C7A8FF" },
-    hope:               { color: "#FFA8E6" },
-    ambition:           { color: "#FFA8A8" },
-    inspiration:        { color: "#FFC080" },
-    "opinion & advice": { color: "#D4A8FF" },
-    introspection:      { color: "#A8C9E8" }
-};
+/* Alias to contentData.labels — always the same object reference.
+   Mutations to contentData.labels stay visible here. */
+const postLabels = contentData.labels;
 const defaultLabel = { color: "#E0E0E0" };
 function getLabel(key) { return postLabels[key] || defaultLabel; }
 function formatLabelName(key) {
@@ -812,6 +833,10 @@ if (document.getElementById('skillsCard')) {
     renderSkillsPage();
 }
 
+if (document.getElementById('surveyFormCard')) {
+    renderSurveyPage();
+}
+
 if (document.getElementById('postList')) {
     renderLabelChips();
     renderPosts();
@@ -966,6 +991,14 @@ function applyContent(parsed) {
         contentData.hobbies.length = 0;
         contentData.hobbies.push(...parsed.hobbies);
     }
+    if (parsed.labels && typeof parsed.labels === 'object' && !Array.isArray(parsed.labels)) {
+        // Mutate in place to preserve postLabels alias
+        Object.keys(contentData.labels).forEach(k => delete contentData.labels[k]);
+        Object.assign(contentData.labels, parsed.labels);
+    }
+    if (parsed.survey && typeof parsed.survey === 'object') {
+        Object.assign(contentData.survey, parsed.survey);
+    }
 
     if (document.getElementById('heroText')) renderHero();
     updateHeaderName();
@@ -980,6 +1013,7 @@ function applyContent(parsed) {
     if (document.getElementById('experienceTimeline')) renderExperiencePage();
     if (document.getElementById('profileName')) renderProfilePage();
     if (document.getElementById('skillsCard')) renderSkillsPage();
+    if (document.getElementById('surveyFormCard')) renderSurveyPage();
 }
 
 function saveContent() {
@@ -1031,6 +1065,9 @@ function openAdmin() {
     resetEducationForm();
     resetExperienceForm();
     populateSkillsForm();
+    populateSurveyForm();
+    resetLabelsForm();
+    renderAdminLabelsList();
     renderAdminList();
     renderAdminPhotoList();
     renderAdminEducationList();
@@ -2605,3 +2642,280 @@ if (rollParam || dateParam) {
     history.replaceState({}, '', location.pathname);
 }
 })();
+
+/* =========================================================
+   33. SURVEY — ADMIN FORM
+   ========================================================= */
+function populateSurveyForm() {
+    const s = contentData.survey || {};
+    const setVal = (id, val) => {
+        const el = document.getElementById(id);
+        if (el) el.value = val || '';
+    };
+    setVal('surveyIntroTitle',       s.introTitle);
+    setVal('surveyIntroText',        s.introText);
+    setVal('surveyThankYouTitle',    s.thankYouTitle);
+    setVal('surveyThankYouMessage',  s.thankYouMessage);
+}
+
+document.getElementById('surveyForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const g = (id) => (document.getElementById(id)?.value || '').trim();
+    contentData.survey = {
+        introTitle:       g('surveyIntroTitle'),
+        introText:        g('surveyIntroText'),
+        thankYouTitle:    g('surveyThankYouTitle'),
+        thankYouMessage:  g('surveyThankYouMessage')
+    };
+    saveContent();
+    if (document.getElementById('surveyFormCard')) renderSurveyPage();
+    playSound('success');
+});
+
+/* =========================================================
+   34. SURVEY — PAGE RENDERER + VISITOR FORM
+   ========================================================= */
+function renderSurveyPage() {
+    const s = contentData.survey || {};
+
+    const introTitleEl = document.getElementById('surveyIntroTitle');
+    const introTextEl  = document.getElementById('surveyIntroText');
+    const thanksTitleEl = document.getElementById('surveyThanksTitle');
+    const thanksMsgEl   = document.getElementById('surveyThanksMessage');
+    const fallbackEl    = document.getElementById('surveyFallback');
+
+    if (introTitleEl) introTitleEl.textContent = s.introTitle || '';
+    if (introTextEl)  introTextEl.textContent  = s.introText  || '';
+
+    if (thanksTitleEl) thanksTitleEl.textContent = s.thankYouTitle || 'Thank you';
+
+    if (thanksMsgEl) {
+        const msg = s.thankYouMessage || '';
+        const paragraphs = msg.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+        thanksMsgEl.innerHTML = paragraphs.length
+            ? paragraphs.map(p => `<p>${p}</p>`).join('')
+            : '';
+    }
+
+    if (fallbackEl) {
+        const email = contentData.profile && contentData.profile.email;
+        if (email) {
+            fallbackEl.innerHTML = `Prefer email? Reach me directly at <a href="mailto:${email}">${email}</a>.`;
+        } else {
+            fallbackEl.innerHTML = '';
+        }
+    }
+}
+
+document.getElementById('visitorSurveyForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+
+    const toEmail = (contentData.profile && contentData.profile.email || '').trim();
+    if (!toEmail) {
+        alert('The survey is not yet configured — please set your email in the Profile tab of the admin panel (add ?admin=1 to the URL), then try again.');
+        return;
+    }
+
+    const name     = (document.getElementById('vName')?.value     || '').trim();
+    const email    = (document.getElementById('vEmail')?.value    || '').trim();
+    const relation = (document.getElementById('vRelation')?.value || '').trim();
+    const feedback = (document.getElementById('vFeedback')?.value || '').trim();
+    const word     = (document.getElementById('vWord')?.value     || '').trim();
+
+    if (!name)     { alert('Please enter your name.'); document.getElementById('vName')?.focus(); return; }
+    if (!feedback) { alert('Please share some feedback.'); document.getElementById('vFeedback')?.focus(); return; }
+
+    const subject = `Portfolio feedback from ${name}`;
+    const bodyLines = [
+        `Name: ${name}`,
+        email    ? `Email: ${email}` : '',
+        relation ? `How they know you: ${relation}` : '',
+        '',
+        'Feedback:',
+        feedback,
+        word ? `\nOne word to describe the site: ${word}` : ''
+    ].filter(Boolean);
+    const body = bodyLines.join('\n');
+
+    const mailto = `mailto:${toEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    console.log('Survey mailto:', mailto);
+
+    window.location.href = mailto;
+
+    // Show thank-you card
+    const formCard   = document.getElementById('surveyFormCard');
+    const thanksCard = document.getElementById('surveyThanksCard');
+    if (formCard)   formCard.style.display   = 'none';
+    if (thanksCard) thanksCard.style.display = '';
+    playSound('success');
+});
+
+document.getElementById('surveyResetBtn')?.addEventListener('click', () => {
+    const form = document.getElementById('visitorSurveyForm');
+    if (form) form.reset();
+    const formCard   = document.getElementById('surveyFormCard');
+    const thanksCard = document.getElementById('surveyThanksCard');
+    if (formCard)   formCard.style.display   = '';
+    if (thanksCard) thanksCard.style.display = 'none';
+});
+
+/* =========================================================
+   35. LABELS ADMIN
+   ========================================================= */
+function countLabelUsage(key) {
+    let posts = 0, photos = 0;
+    (contentData.posts || []).forEach(p => { if (p.label === key) posts++; });
+    (contentData.photos || []).forEach(p => {
+        if (Array.isArray(p.labels) && p.labels.includes(key)) photos++;
+    });
+    return { posts, photos, total: posts + photos };
+}
+
+function resetLabelsForm() {
+    const form = document.getElementById('labelsForm');
+    if (!form) return;
+    form.reset();
+    const editKey = document.getElementById('labelEditKey');
+    if (editKey) editKey.value = '';
+    const titleEl = document.getElementById('labelsFormTitle');
+    if (titleEl) titleEl.textContent = 'Add New Label';
+    const colorEl = document.getElementById('labelColor');
+    if (colorEl) colorEl.value = '#B5E8A0';
+    updateLabelPreview();
+}
+
+function updateLabelPreview() {
+    const preview = document.getElementById('labelPreview');
+    const colorEl = document.getElementById('labelColor');
+    const keyEl = document.getElementById('labelKeyInput');
+    if (!preview || !colorEl) return;
+    const color = colorEl.value;
+    const name = (keyEl?.value || 'Preview').trim() || 'Preview';
+    preview.textContent = formatLabelName(name);
+    preview.style.background = color;
+}
+
+function renderAdminLabelsList() {
+    const listEl = document.getElementById('adminLabelsList');
+    if (!listEl) return;
+    const keys = Object.keys(contentData.labels || {});
+    if (!keys.length) {
+        listEl.innerHTML = '<p class="admin-empty">No labels yet. Add one above.</p>';
+        return;
+    }
+
+    listEl.innerHTML = keys.sort().map(key => {
+        const color = (contentData.labels[key] || {}).color || '#E0E0E0';
+        const usage = countLabelUsage(key);
+        const usageText = usage.total > 0
+            ? `${usage.posts} post${usage.posts !== 1 ? 's' : ''}, ${usage.photos} photo${usage.photos !== 1 ? 's' : ''}`
+            : 'Unused';
+        return `
+            <div class="admin-item">
+                <div class="admin-item-info">
+                    <strong>
+                        <span class="admin-label-chip" style="background:${color};">${formatLabelName(key)}</span>
+                    </strong>
+                    <span>${color.toUpperCase()} · ${usageText}</span>
+                </div>
+                <div class="admin-item-actions">
+                    <button data-action="edit" data-label-key="${key}" type="button">Edit</button>
+                    <button data-action="delete" data-label-key="${key}" type="button">Delete</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+document.getElementById('labelsForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const keyInput = document.getElementById('labelKeyInput');
+    const colorInput = document.getElementById('labelColor');
+    const editKey = document.getElementById('labelEditKey').value;
+    if (!keyInput || !colorInput) return;
+
+    const rawKey = keyInput.value.trim().toLowerCase();
+    if (!rawKey) { alert('Label name is required.'); return; }
+
+    // Rename check: block if key changed while in use
+    if (editKey && editKey !== rawKey) {
+        const usage = countLabelUsage(editKey);
+        if (usage.total > 0) {
+            alert(`"${editKey}" is used in ${usage.total} item${usage.total !== 1 ? 's' : ''}. Remove those references before renaming.`);
+            return;
+        }
+        delete contentData.labels[editKey];
+    }
+
+    // Duplicate check
+    if (!editKey || editKey !== rawKey) {
+        if (contentData.labels[rawKey]) {
+            alert(`Label "${rawKey}" already exists.`);
+            return;
+        }
+    }
+
+    contentData.labels[rawKey] = { color: colorInput.value.toLowerCase() };
+
+    saveContent();
+    resetLabelsForm();
+    refreshAfterLabelsChange();
+    playSound('success');
+});
+
+document.getElementById('labelsCancelBtn')?.addEventListener('click', resetLabelsForm);
+
+document.getElementById('adminLabelsList')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const key = btn.dataset.labelKey;
+    if (!key || !contentData.labels[key]) return;
+
+    if (btn.dataset.action === 'edit') {
+        document.getElementById('labelEditKey').value = key;
+        document.getElementById('labelKeyInput').value = key;
+        document.getElementById('labelColor').value = contentData.labels[key].color || '#B5E8A0';
+        document.getElementById('labelsFormTitle').textContent = 'Edit Label';
+        updateLabelPreview();
+        document.getElementById('labelsForm').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (btn.dataset.action === 'delete') {
+        const usage = countLabelUsage(key);
+        if (usage.total > 0) {
+            alert(`Cannot delete "${key}" — it's used in ${usage.total} item${usage.total !== 1 ? 's' : ''}. Remove those references first.`);
+            return;
+        }
+        if (!confirm(`Delete label "${key}"?`)) return;
+        delete contentData.labels[key];
+        saveContent();
+        refreshAfterLabelsChange();
+        resetLabelsForm();
+    }
+});
+
+// Quick-pick swatches
+document.querySelectorAll('.label-swatch').forEach(swatch => {
+    swatch.addEventListener('click', () => {
+        const colorEl = document.getElementById('labelColor');
+        if (colorEl) {
+            colorEl.value = swatch.dataset.color;
+            updateLabelPreview();
+        }
+    });
+});
+
+// Live preview on color/key change
+document.getElementById('labelColor')?.addEventListener('input', updateLabelPreview);
+document.getElementById('labelKeyInput')?.addEventListener('input', updateLabelPreview);
+
+function refreshAfterLabelsChange() {
+    populateLabelSelect();
+    populatePhotoLabelPicker();
+    renderAdminLabelsList();
+    if (document.getElementById('postList')) {
+        renderLabelChips();
+        renderPosts();
+    }
+    if (typeof currentViewDate !== 'undefined') renderCalendar(currentViewDate);
+    const photosModal = document.getElementById('photosModal');
+    if (photosModal && !photosModal.hidden) renderPhotosModal();
+}

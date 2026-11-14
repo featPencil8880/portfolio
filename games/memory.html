@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Memory Match | Games</title>
+    <link rel="stylesheet" href="game.css"/>
+</head>
+<body class="game-body">
+    <a href="../games.html" class="game-back">← Back to Games</a>
+
+    <main class="game-main">
+        <div class="game-panel" id="introPanel">
+            <h1 class="game-title">Memory Match</h1>
+            <p class="game-intro">
+                A working-memory test dressed up as a card game.<br>
+                Flip two cards. If they match, they stay.<br>
+                Eight pairs. Fewest moves wins.
+            </p>
+            <button class="game-btn-primary" id="startBtn" type="button">Start Game</button>
+        </div>
+
+        <div class="game-stage" id="stagePanel" style="display: none;">
+            <div class="memory-meta">
+                <span>Moves: <span id="moveCount">0</span></span>
+                <span>Time: <span id="timerDisplay">0:00</span></span>
+                <span>Pairs: <span id="pairCount">0</span>/8</span>
+            </div>
+            <div class="memory-grid" id="memoryGrid"></div>
+        </div>
+
+        <div class="game-panel" id="resultsPanel" style="display: none;">
+            <h2 class="game-title">You Win!</h2>
+            <div class="game-stats">
+                <div>
+                    <span class="game-stat-label">Moves</span>
+                    <span class="game-stat-value" id="statMoves">—</span>
+                </div>
+                <div>
+                    <span class="game-stat-label">Time</span>
+                    <span class="game-stat-value" id="statTime">—</span>
+                </div>
+                <div>
+                    <span class="game-stat-label">Rank</span>
+                    <span class="game-stat-value" id="statRank">—</span>
+                </div>
+            </div>
+            <p class="game-results-note" id="resultsNote"></p>
+            <button class="game-btn-primary" id="againBtn" type="button">Play Again</button>
+        </div>
+    </main>
+
+    <script src="memory.js" defer></script>
+</body>
+</html>
