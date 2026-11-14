@@ -1,6 +1,6 @@
-# Interactive Portfolio
+# Portfolio
 
-A personal portfolio and interactive resume built with vanilla HTML, CSS, and JavaScript. Features a journal system with calendar filtering, a photo gallery, resume pages, and small psychology-inspired games.
+A personal portfolio built with vanilla HTML, CSS, and JavaScript. Features a journal system with calendar filtering, a photo gallery, resume pages, and small psychology-inspired games.
 
 ## Table of Contents
 
