@@ -1043,8 +1043,10 @@ function updateHeaderName() {
 }
 
 function renderTheme() {
-    const theme = (contentData.site && contentData.site.theme) || 'retro';
-    ['retro', 'neobrutalism'].forEach(t => {
+    const raw = (contentData.site && contentData.site.theme) || 'retro';
+    // Backward compat: older content.json may have 'neobrutalism'
+    const theme = raw === 'neobrutalism' ? 'retro-bold' : raw;
+    ['retro', 'retro-bold'].forEach(t => {
         document.body.classList.toggle('site-theme-' + t, t === theme);
     });
 }
