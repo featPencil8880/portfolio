@@ -54,42 +54,7 @@
                 </div>
 
                 <div class="survey-card" id="surveyFormCard">
-                    <h2 class="survey-card-title" id="surveyIntroTitle"></h2>
-                    <p class="survey-intro" id="surveyIntroText"></p>
-                    <form id="visitorSurveyForm" class="survey-form" novalidate>
-                        <div class="survey-field">
-                            <label for="vName">Your name <span class="survey-req">*</span></label>
-                            <input type="text" id="vName" required maxlength="80" placeholder="Who's this?">
-                        </div>
-                        <div class="survey-field">
-                            <label for="vEmail">Your email <span class="survey-opt">(optional)</span></label>
-                            <input type="email" id="vEmail" maxlength="120" placeholder="So I can reply">
-                        </div>
-                        <div class="survey-field">
-                            <label for="vRelation">How do you know me?</label>
-                            <select id="vRelation">
-                                <option value="">Prefer not to say</option>
-                                <option value="Recruiter">Recruiter</option>
-                                <option value="Friend">Friend</option>
-                                <option value="Family">Family</option>
-                                <option value="Colleague">Colleague</option>
-                                <option value="Visitor">Just visiting</option>
-                                <option value="Other">Other</option>
-                            </select>
-                        </div>
-                        <div class="survey-field">
-                            <label for="vFeedback">Your feedback <span class="survey-req">*</span></label>
-                            <textarea id="vFeedback" required rows="6" maxlength="1500" placeholder="What stood out? What could be better? A thoughtful note, a suggestion, or just a hello."></textarea>
-                        </div>
-                        <div class="survey-field">
-                            <label for="vWord">One word to describe this site <span class="survey-opt">(optional)</span></label>
-                            <input type="text" id="vWord" maxlength="30" placeholder="e.g. Thoughtful, Warm, Unusual">
-                        </div>
-                        <div class="survey-actions">
-                            <button type="submit" class="survey-submit">Send Message</button>
-                        </div>
-                        <p class="survey-fallback" id="surveyFallback"></p>
-                    </form>
+                    <div id="surveyDynamicContent"></div>
                 </div>
 
                 <div class="survey-thanks-card" id="surveyThanksCard" style="display: none;">
@@ -97,6 +62,13 @@
                     <h2 class="survey-thanks-title" id="surveyThanksTitle"></h2>
                     <div class="survey-thanks-message" id="surveyThanksMessage"></div>
                     <button type="button" id="surveyResetBtn" class="survey-submit">Send Another</button>
+                </div>
+
+                <div class="post-section">
+                    <div class="post-section-header">
+                        <h3>Survey Posts</h3>
+                    </div>
+                    <div class="post-list" id="postList"></div>
                 </div>
             </div>
         </div>

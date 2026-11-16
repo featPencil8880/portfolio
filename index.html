@@ -21,9 +21,9 @@
         <div class="menu-container">
             <button class="menu-button" id="navBtn" type="button" aria-expanded="false"></button>
         </div>
-        <a href="profile.html" class="name-container">
+        <div class="name-container">
             <h1 class="name">MY NAME</h1>
-        </a>
+        </div>
         <button class="canvas-button" id="canvasBtn" type="button" aria-pressed="false" title="Toggle Canvas Mode">
             <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
         </button>
@@ -58,26 +58,17 @@
         <div class="content">
             <div class="content-container hero-container">
                 <div class="retro-box hero-box">
-                    <button class="hero-header" id="bookToggle" title="Toggle Reading View">
+                    <button class="hero-header" id="bookToggle" data-tab="home" type="button" title="Expand">
                         <svg class="book-icon book-icon-closed" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                             <path d="M6,22q-1.25,0-2.13-0.88T3,19V5Q3,3.75 3.88,2.88T6,2H17V18H6q-0.42,0-0.71,0.29T5,19t0.29,0.71T6,20H19V4h2V22H6Zm3-6h6V4H9V16ZM7,16V4H6Q5.58,4 5.29,4.29T5,5V16.18q0.25-0.07 0.49-0.13T6,16H7ZM5,4V16.18V4Z"/>
                         </svg>
                         <svg class="book-icon book-icon-opened" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                             <path d="M6.75,22q-1.13,0-1.94-0.76T4,19.35V5.4Q4,4.45 4.59,3.7T6.13,2.75L16,0.8v16L6.53,18.7Q6.3,18.75 6.15,18.94T6,19.35q0,0.27 0.23,0.46T6.75,20H18V4h2V22H6.75ZM9,16.18l5-0.98V3.25L9,4.22V16.18Zm-2,0.4V4.63L6.63,4.7Q6.35,4.75 6.18,4.94T6,5.4V16.83q0.13-0.05 0.26-0.09t0.26-0.06L7,16.58ZM6,4.77V16.83V4.77Z"/>
                         </svg>
-                        <span class="book-label">About Me</span>
                     </button>
-
-                    <button class="hero-upload-btn" id="heroUploadBtn" type="button" title="Upload photo" aria-label="Upload photo">+</button>
-                    <input type="file" id="heroPhotoInput" accept="image/*" hidden>
 
                     <div class="hero-content-row">
                         <div class="hero-text" id="heroText"></div>
-
-                        <div class="polaroid">
-                            <img id="polaroidImg" src="photos/profile.jpg" alt="Portrait">
-                            <span class="polaroid-caption">Hello there !</span>
-                        </div>
                     </div>
                 </div>
 
@@ -195,14 +186,6 @@
                         </small>
                     </div>
                     <div class="admin-field">
-                        <label for="adminTitleInput">Title</label>
-                        <input type="text" id="adminTitleInput" required maxlength="100" placeholder="A short headline…">
-                    </div>
-                    <div class="admin-field">
-                        <label for="adminExcerpt">Excerpt</label>
-                        <textarea id="adminExcerpt" required rows="4" maxlength="500" placeholder="A few sentences…"></textarea>
-                    </div>
-                    <div class="admin-field">
                         <label for="adminLabel">Label</label>
                         <select id="adminLabel"></select>
                     </div>
@@ -211,10 +194,27 @@
                         <select id="adminAuthor"></select>
                     </div>
                     <div class="admin-field">
-                        <label for="adminImage">Image path (optional)</label>
-                        <input type="text" id="adminImage" placeholder="photos/posts/2024-11-20-title.jpg">
+                        <label for="adminReplyTo">Reply to (optional)</label>
+                        <select id="adminReplyTo">
+                            <option value="">— Not a reply —</option>
+                        </select>
                         <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            Drop image into <code>photos/posts/</code>, then paste its path here.
+                            Link this post as a continuation of another.
+                        </small>
+                    </div>
+                    <div class="admin-field">
+                        <label for="adminReplyComment">Reply comment</label>
+                        <input type="text" id="adminReplyComment" maxlength="60" placeholder="continued">
+                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
+                            Shows in the continuation banner. Blank defaults to "continued".
+                        </small>
+                    </div>
+                    <div class="admin-field">
+                        <label>Content fields</label>
+                        <div class="fields-editor" id="fieldsEditor"></div>
+                        <button type="button" class="add-block-btn" id="addFieldBtn" style="margin-top:8px;">+ Add Field</button>
+                        <small style="color:#666;font-size:0.7rem;font-weight:normal;margin-top:6px;">
+                            Each field is one page in the reader. Add title / subtitle / paragraph blocks inside.
                         </small>
                     </div>
                     <div class="admin-form-actions">
@@ -268,231 +268,51 @@
             </div><!-- /#adminPanelPhotos -->
 
             <div class="admin-tab-panel" id="adminPanelProfile">
-                <form id="profileForm" class="admin-form">
-                    <div class="admin-field">
-                        <label for="siteProjectName">Site name (header brand)</label>
-                        <input type="text" id="siteProjectName" maxlength="40" placeholder="PORTFOLIO">
-                    </div>
-                    <div class="admin-field">
-                        <label for="siteTheme">Site theme</label>
-                        <select id="siteTheme">
-                            <option value="retro">Retro (default)</option>
-                            <option value="retro-bold">Retro Bold</option>
-                        </select>
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            Only visible to you until you export and publish.
-                        </small>
-                    </div>
-                    <hr class="settings-divider">
-                    <div class="admin-field">
-                        <label for="profileName">Name</label>
-                        <input type="text" id="profileName" maxlength="60" placeholder="e.g. Maya">
-                    </div>
-                    <div class="admin-field">
-                        <label for="profilePronouns">Pronouns (optional)</label>
-                        <input type="text" id="profilePronouns" maxlength="30" placeholder="e.g. she/her">
-                    </div>
-                    <div class="admin-field">
-                        <label for="profileGreeting">Greeting</label>
-                        <input type="text" id="profileGreeting" maxlength="40" placeholder="e.g. Hello, I'm">
-                    </div>
-                    <div class="admin-field">
-                        <label for="profileTitle">Title</label>
-                        <input type="text" id="profileTitle" maxlength="80" placeholder="e.g. Psychology Graduate & Educator">
-                    </div>
-                    <div class="admin-field">
-                        <label for="profileTagline">Tagline (optional)</label>
-                        <input type="text" id="profileTagline" maxlength="120" placeholder="A short italic line">
-                    </div>
-                    <div class="admin-field">
-                        <label for="profileBio">Bio</label>
-                        <textarea id="profileBio" rows="5" maxlength="800" placeholder="A few sentences about you…"></textarea>
-                    </div>
-                    <div class="admin-field">
-                        <label for="profileAbout">About — extended (optional)</label>
-                        <textarea id="profileAbout" rows="6" maxlength="2000" placeholder="A longer 'about me' shown only on the Profile page. Multiple paragraphs welcome."></textarea>
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            Shown only on the Profile page, not on Home. Leave blank to skip.
-                        </small>
-                    </div>
-                    <div class="admin-field">
-                        <label for="profileLocation">Location (optional)</label>
-                        <input type="text" id="profileLocation" maxlength="60" placeholder="e.g. Winnipeg, MB">
-                    </div>
-                    <div class="admin-field">
-                        <label for="profileEmail">Email (optional)</label>
-                        <input type="email" id="profileEmail" maxlength="80" placeholder="you@example.com">
-                    </div>
-                    <div class="admin-field">
-                        <label for="profileLinkedin">LinkedIn URL (optional)</label>
-                        <input type="text" id="profileLinkedin" maxlength="150" placeholder="linkedin.com/in/yourname">
-                    </div>
-
-                    <hr class="settings-divider">
-
-                    <h4 style="margin:0 0 8px;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;">Hero Button 1</h4>
-                    <div class="admin-field">
-                        <label for="profileAction1Label">Label</label>
-                        <input type="text" id="profileAction1Label" maxlength="40" placeholder="e.g. Explore My Profile">
-                    </div>
-                    <div class="admin-field">
-                        <label for="profileAction1Href">Link</label>
-                        <input type="text" id="profileAction1Href" maxlength="150" placeholder="e.g. profile.html">
-                    </div>
-                    <div class="admin-field">
-                        <label for="profileAction1Style">Style</label>
-                        <select id="profileAction1Style">
-                            <option value="primary">Primary</option>
-                            <option value="secondary">Secondary</option>
-                        </select>
-                    </div>
-
-                    <h4 style="margin:16px 0 8px;font-size:0.85rem;text-transform:uppercase;letter-spacing:1px;">Hero Button 2</h4>
-                    <div class="admin-field">
-                        <label for="profileAction2Label">Label</label>
-                        <input type="text" id="profileAction2Label" maxlength="40" placeholder="e.g. Leave Feedback">
-                    </div>
-                    <div class="admin-field">
-                        <label for="profileAction2Href">Link</label>
-                        <input type="text" id="profileAction2Href" maxlength="150" placeholder="e.g. survey.html">
-                    </div>
-                    <div class="admin-field">
-                        <label for="profileAction2Style">Style</label>
-                        <select id="profileAction2Style">
-                            <option value="primary">Primary</option>
-                            <option value="secondary">Secondary</option>
-                        </select>
-                    </div>
-
-                    <div class="admin-form-actions">
-                        <button type="submit" class="admin-primary">Save Profile</button>
-                    </div>
-                </form>
+                <div class="posts-slot" data-tab="profile"></div>
             </div>
 
             <div class="admin-tab-panel" id="adminPanelEducation">
-                <form id="educationForm" class="admin-form">
-                    <h3 id="educationFormTitle">Add New Education Entry</h3>
-                    <input type="hidden" id="educationEditIndex" value="">
-                    <div class="admin-field">
-                        <label for="eduInstitution">Institution</label>
-                        <input type="text" id="eduInstitution" required maxlength="120" placeholder="e.g. University of Manitoba">
-                    </div>
-                    <div class="admin-field">
-                        <label for="eduDegree">Degree</label>
-                        <input type="text" id="eduDegree" required maxlength="140" placeholder="e.g. Bachelor of Arts, Psychology">
-                    </div>
-                    <div class="admin-field">
-                        <label for="eduYears">Years</label>
-                        <input type="text" id="eduYears" required maxlength="40" placeholder="e.g. 2019–2023 or 2020–present">
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            Used to sort entries (most recent first).
-                        </small>
-                    </div>
-                    <div class="admin-field">
-                        <label for="eduLocation">Location (optional)</label>
-                        <input type="text" id="eduLocation" maxlength="100" placeholder="e.g. Winnipeg, MB">
-                    </div>
-                    <div class="admin-field">
-                        <label for="eduDescription">Description (optional)</label>
-                        <textarea id="eduDescription" rows="4" maxlength="600" placeholder="A few sentences about this chapter…"></textarea>
-                    </div>
-                    <div class="admin-field">
-                        <label for="eduHighlights">Highlights (optional)</label>
-                        <textarea id="eduHighlights" rows="5" maxlength="500" placeholder="One per line, e.g.&#10;Research Methods&#10;Abnormal Psychology&#10;Brain and Behavior"></textarea>
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            One highlight per line. Rendered as chips.
-                        </small>
-                    </div>
-                    <div class="admin-form-actions">
-                        <button type="submit" class="admin-primary">Save Entry</button>
-                        <button type="button" id="educationCancelBtn">Cancel Edit</button>
-                    </div>
-                </form>
-
-                <div class="admin-list" id="adminEducationList"></div>
+                <div class="posts-slot" data-tab="education"></div>
             </div>
 
             <div class="admin-tab-panel" id="adminPanelExperience">
-                <form id="experienceForm" class="admin-form">
-                    <h3 id="experienceFormTitle">Add New Experience Entry</h3>
-                    <input type="hidden" id="experienceEditIndex" value="">
-                    <div class="admin-field">
-                        <label for="expPosition">Position</label>
-                        <input type="text" id="expPosition" required maxlength="120" placeholder="e.g. Youth Mentor">
-                    </div>
-                    <div class="admin-field">
-                        <label for="expOrganization">Organization</label>
-                        <input type="text" id="expOrganization" required maxlength="120" placeholder="e.g. YMCA-YWCA of Winnipeg">
-                    </div>
-                    <div class="admin-field">
-                        <label for="expYears">Years</label>
-                        <input type="text" id="expYears" required maxlength="40" placeholder="e.g. 2022–2023 or 2023–present">
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            Used to sort entries (most recent first).
-                        </small>
-                    </div>
-                    <div class="admin-field">
-                        <label for="expLocation">Location (optional)</label>
-                        <input type="text" id="expLocation" maxlength="100" placeholder="e.g. Winnipeg, MB">
-                    </div>
-                    <div class="admin-field">
-                        <label for="expDescription">Description (optional)</label>
-                        <textarea id="expDescription" rows="4" maxlength="700" placeholder="What did you do, learn, and contribute?"></textarea>
-                    </div>
-                    <div class="admin-field">
-                        <label for="expHighlights">Highlights (optional)</label>
-                        <textarea id="expHighlights" rows="5" maxlength="500" placeholder="One per line, e.g.&#10;Child development&#10;Mentorship & tutoring&#10;Behavioral support"></textarea>
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            One highlight per line. Rendered as chips.
-                        </small>
-                    </div>
-                    <div class="admin-field">
-                        <label for="expDocuments">Attached Documents (optional)</label>
-                        <textarea id="expDocuments" rows="4" maxlength="600" placeholder="Title | path (one per line), e.g.&#10;Reference Letter | docs/experience/ymca-reference.pdf&#10;Performance Review | docs/experience/ymca-review.pdf"></textarea>
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            Format: <code>Title | path</code>, one per line. Files render as clickable pills on the Experience page. Drop the actual files into <code>docs/experience/</code> in your project folder.
-                        </small>
-                    </div>
-                    <div class="admin-form-actions">
-                        <button type="submit" class="admin-primary">Save Entry</button>
-                        <button type="button" id="experienceCancelBtn">Cancel Edit</button>
-                    </div>
-                </form>
-
-                <div class="admin-list" id="adminExperienceList"></div>
+                <div class="posts-slot" data-tab="experience"></div>
             </div>
 
             <div class="admin-tab-panel" id="adminPanelSkills">
-                <form id="skillsForm" class="admin-form">
-                    <h3>Edit Skills &amp; Hobbies</h3>
-                    <div class="admin-field">
-                        <label for="skillsList">Skills (one per line)</label>
-                        <textarea id="skillsList" rows="10" maxlength="2000" placeholder="e.g.&#10;Qualitative research&#10;Survey design&#10;Data coding&#10;SPSS&#10;Active listening"></textarea>
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            Each line becomes a chip. Blank lines are ignored. Sorted alphabetically on the page.
-                        </small>
-                    </div>
-                    <div class="admin-field">
-                        <label for="hobbiesList">Hobbies (one per line)</label>
-                        <textarea id="hobbiesList" rows="8" maxlength="1500" placeholder="e.g.&#10;Reading&#10;Photography&#10;Hiking"></textarea>
-                    </div>
-                    <div class="admin-form-actions">
-                        <button type="submit" class="admin-primary">Save Skills &amp; Hobbies</button>
-                    </div>
-                </form>
+                <div class="posts-slot" data-tab="skills"></div>
             </div>
 
             <div class="admin-tab-panel" id="adminPanelSurvey">
+                <div class="admin-field" style="margin-bottom: 20px;">
+                    <label for="surveyContactEmail">Contact email (all surveys)</label>
+                    <input type="email" id="surveyContactEmail" maxlength="80" placeholder="you@example.com">
+                    <small style="color:#666;font-size:0.7rem;font-weight:normal;">
+                        Submissions go here via mailto.
+                    </small>
+                </div>
+
                 <form id="surveyForm" class="admin-form">
-                    <h3>Edit Survey Page</h3>
+                    <h3 id="surveyFormTitle">Add New Survey</h3>
+                    <input type="hidden" id="surveyEditId" value="">
+                    <div class="admin-field">
+                        <label for="surveyTitle">Survey Title</label>
+                        <input type="text" id="surveyTitle" maxlength="120" required placeholder="e.g. Portfolio Feedback">
+                    </div>
+                    <div class="admin-field">
+                        <label class="block-required-toggle" style="text-transform: none; font-size: 0.85rem;">
+                            <input type="checkbox" id="surveyActive">
+                            <span style="font-weight: 700;">Active — shown publicly (only one at a time)</span>
+                        </label>
+                    </div>
+                    <hr class="settings-divider">
                     <div class="admin-field">
                         <label for="surveyIntroTitle">Intro Heading</label>
                         <input type="text" id="surveyIntroTitle" maxlength="120" placeholder="e.g. Share your thoughts">
                     </div>
                     <div class="admin-field">
                         <label for="surveyIntroText">Intro Text</label>
-                        <textarea id="surveyIntroText" rows="4" maxlength="800" placeholder="A sentence or two inviting feedback…"></textarea>
+                        <textarea id="surveyIntroText" rows="3" maxlength="800"></textarea>
                     </div>
                     <div class="admin-field">
                         <label for="surveyThankYouTitle">Thank-You Heading</label>
@@ -500,15 +320,24 @@
                     </div>
                     <div class="admin-field">
                         <label for="surveyThankYouMessage">Thank-You Message</label>
-                        <textarea id="surveyThankYouMessage" rows="5" maxlength="1000" placeholder="Shown after a visitor submits. Blank lines create separate paragraphs."></textarea>
+                        <textarea id="surveyThankYouMessage" rows="4" maxlength="1000"></textarea>
                     </div>
-                    <p style="color:#666;font-size:0.75rem;font-weight:500;margin:8px 0 0;">
-                        <strong>Note:</strong> submissions are sent via the visitor's email client to <code>profile.email</code>. Make sure that's set in the Profile tab.
-                    </p>
+                    <div class="admin-field">
+                        <label>Form fields</label>
+                        <div class="fields-editor" id="surveyFieldsEditor"></div>
+                        <button type="button" class="add-block-btn" id="addSurveyFieldBtn" style="margin-top:8px;">+ Add Field</button>
+                        <small style="color:#666;font-size:0.7rem;font-weight:normal;margin-top:6px;">
+                            Each field is one page. Click inside a field to add blocks (heading, text, textarea, select, radio, rating).
+                        </small>
+                    </div>
                     <div class="admin-form-actions">
                         <button type="submit" class="admin-primary">Save Survey</button>
+                        <button type="button" id="surveyCancelBtn">Cancel Edit</button>
                     </div>
                 </form>
+
+                <div class="admin-list" id="adminSurveyList"></div>
+                <div class="posts-slot" data-tab="survey"></div>
             </div>
 
             <div class="admin-tab-panel" id="adminPanelLabels">
@@ -621,6 +450,32 @@
                             <option value="digital24">Digital (24h)</option>
                             <option value="analog">Analog</option>
                         </select>
+                    </div>
+
+                    <hr class="settings-divider">
+
+                    <!-- Site (collapsible) -->
+                    <button type="button" class="settings-site-toggle" id="settingsSiteToggle">
+                        <span>Site Settings</span>
+                        <span class="settings-site-toggle-icon" id="settingsSiteToggleIcon">▼</span>
+                    </button>
+                    <div class="settings-site-panel" id="settingsSitePanel" style="display: none;">
+                        <div class="settings-row">
+                            <div class="settings-info">
+                                <label for="settingSiteName">Site name</label>
+                                <small>Shown in the header.</small>
+                            </div>
+                            <input type="text" id="settingSiteName" class="settings-input" maxlength="40" placeholder="PORTFOLIO">
+                        </div>
+                        <div class="settings-row">
+                            <div class="settings-info">
+                                <label for="settingTheme">Theme</label>
+                            </div>
+                            <select id="settingTheme" class="settings-select">
+                                <option value="retro">Retro (default)</option>
+                                <option value="retro-bold">Retro Bold</option>
+                            </select>
+                        </div>
                     </div>
 
                     <hr class="settings-divider">

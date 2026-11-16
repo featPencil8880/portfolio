@@ -402,28 +402,75 @@ const contentData = {
     ],
     posts: [
         {
-            date: "2024-11-20",
-            title: "Why Child Psychology Fascinates Me",
-            excerpt: "The moment I realized children aren't just 'small adults' — their minds work in completely different ways. This changed everything about how I approach mentorship.",
-            label: "cognitive",
-            author: "Me",
-            image: ""
-        },
-        {
-            date: "2024-11-15",
-            title: "First Week at the YMCA",
-            excerpt: "The energy in the room was infectious. Some reflections on what I learned from the kids in my very first week.",
-            label: "memory",
-            author: "Me",
-            image: ""
-        },
-        {
-            date: "2024-11-10",
-            title: "On Research Methods",
-            excerpt: "Data doesn't speak for itself — it speaks through the questions we ask. A note on why I love qualitative work.",
+            id: "p_about_default",
+            date: "2024-01-01",
+            tab: "home",
             label: "introspection",
             author: "Me",
-            image: ""
+            photos: [],
+            hideFromList: true,
+            fields: [
+                {
+                    name: "About Me",
+                    blocks: [
+                        { type: "title", content: "MY NAME" },
+                        { type: "subtitle", content: "Psychology Graduate & Educator" },
+                        { type: "paragraph", content: "I am a University of Manitoba graduate with a passion for human behavior, child development, and research. With hands-on experience mentoring children through the YMCA-YWCA of Winnipeg, I bring a supportive, analytical, and empathetic approach to everything I do." },
+                        { type: "actions", content: "Explore My Profile | profile.html | primary\nLeave Feedback | survey.html | secondary" }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "p_demo1",
+            date: "2024-11-20",
+            tab: "home",
+            label: "cognitive",
+            author: "Me",
+            photos: [],
+            fields: [
+                {
+                    name: "Opening",
+                    blocks: [
+                        { type: "title", content: "Why Child Psychology Fascinates Me" },
+                        { type: "paragraph", content: "The moment I realized children aren't just 'small adults' — their minds work in completely different ways. This changed everything about how I approach mentorship." }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "p_demo2",
+            date: "2024-11-15",
+            tab: "home",
+            label: "memory",
+            author: "Me",
+            photos: [],
+            fields: [
+                {
+                    name: "Opening",
+                    blocks: [
+                        { type: "title", content: "First Week at the YMCA" },
+                        { type: "paragraph", content: "The energy in the room was infectious. Some reflections on what I learned from the kids in my very first week." }
+                    ]
+                }
+            ]
+        },
+        {
+            id: "p_demo3",
+            date: "2024-11-10",
+            tab: "home",
+            label: "introspection",
+            author: "Me",
+            photos: [],
+            fields: [
+                {
+                    name: "Opening",
+                    blocks: [
+                        { type: "title", content: "On Research Methods" },
+                        { type: "paragraph", content: "Data doesn't speak for itself — it speaks through the questions we ask. A note on why I love qualitative work." }
+                    ]
+                }
+            ]
         }
     ],
     photos: [],
@@ -443,19 +490,55 @@ const contentData = {
     },
     site: {
         projectName: "PORTFOLIO",
-        theme:       "retro"
+        theme:       "retro",
+        heroPostIds: {
+            home: "p_about_default",
+            profile: null,
+            education: null,
+            experience: null,
+            skills: null,
+            survey: null
+        }
     },
-    survey: {
-        introTitle:     "Share your thoughts",
-        introText:      "Thanks for taking a look. I'd love to hear what you think — what stood out, what could be better, or just a hello.",
-        thankYouTitle:  "Thank you!",
-        thankYouMessage: "Your message means a lot. I read every submission and try to reply within a few days."
-    }
+    surveys: [
+        {
+            id: "s_default",
+            title: "Portfolio Feedback",
+            active: true,
+            introTitle: "Share your thoughts",
+            introText: "Thanks for taking a look. I'd love to hear what you think — what stood out, what could be better, or just a hello.",
+            thankYouTitle: "Thank you!",
+            thankYouMessage: "Your message means a lot. I read every submission and try to reply within a few days.",
+            fields: [
+                {
+                    name: "Basic Info",
+                    blocks: [
+                        { type: "heading",   content: "About you" },
+                        { type: "text",      label: "Your name", required: true, placeholder: "Who's this?" },
+                        { type: "text",      label: "Your email", required: false, placeholder: "So I can reply" },
+                        { type: "radio",     label: "How do you know me?", required: false, options: ["Recruiter", "Friend", "Family", "Colleague", "Just visiting"] }
+                    ]
+                },
+                {
+                    name: "Feedback",
+                    blocks: [
+                        { type: "heading",   content: "Your thoughts" },
+                        { type: "textarea",  label: "What stood out? What could be better?", required: true, placeholder: "A thoughtful note, a suggestion, or just a hello…" },
+                        { type: "rating",    label: "Rate this site", required: false }
+                    ]
+                }
+            ]
+        }
+    ]
 };
 
 /* Aliases — existing code reads these, no changes needed below */
 const heroData      = contentData.profile;
 const thoughtsPosts = contentData.posts;
+/* Ensure defaults are in new format */
+for (let i = 0; i < thoughtsPosts.length; i++) {
+    thoughtsPosts[i] = migratePost(thoughtsPosts[i]);
+}
 
 /* Snapshot of defaults for the Reset button */
 const DEFAULT_CONTENT = JSON.parse(JSON.stringify(contentData));
@@ -477,6 +560,128 @@ function formatLabelName(key) {
 }
 
 const LABEL_ICON_SVG = `<svg class="post-label-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4,20q-0.82,0-1.41-0.59T2,18V6Q2,5.18 2.59,4.59T4,4H15q0.48,0 0.9,0.21T16.6,4.8L22,12l-5.4,7.2q-0.28,0.38-0.7,0.59T15,20H4Zm0-2H15l4.5-6L15,6H4V18Zm5.5-6Z"/></svg>`;
+
+/* =========================================================
+   POST HELPERS & MIGRATION
+   ========================================================= */
+function genPostId() {
+    return 'p_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36).slice(-4);
+}
+
+function escapeHtml(s) {
+    return String(s || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+function migratePost(post) {
+    if (!post || typeof post !== 'object') return null;
+    if (Array.isArray(post.fields)) {
+        // Already new format — ensure required props
+        if (!post.id) post.id = genPostId();
+        if (!post.tab) post.tab = 'home';
+        if (!Array.isArray(post.photos)) post.photos = [];
+        return post;
+    }
+    // Old format (title + excerpt + image)
+    const blocks = [];
+    if (post.title)   blocks.push({ type: 'title',     content: post.title });
+    if (post.excerpt) blocks.push({ type: 'paragraph', content: post.excerpt });
+    const fields = blocks.length ? [{ name: 'Content', blocks }] : [];
+    const photos = post.image ? [{ image: post.image, position: 'top' }] : [];
+    return {
+        id: post.id || genPostId(),
+        date: post.date || '',
+        tab: post.tab || 'home',
+        label: post.label || 'general',
+        author: post.author || 'Me',
+        photos,
+        fields
+    };
+}
+
+function getPostTitle(post) {
+    if (!post || !Array.isArray(post.fields) || !post.fields.length) return '(untitled)';
+    for (const field of post.fields) {
+        if (!Array.isArray(field.blocks)) continue;
+        const tb = field.blocks.find(b => b.type === 'title' && b.content);
+        if (tb) return tb.content;
+    }
+    return post.fields[0].name || '(untitled)';
+}
+
+function getPostPreview(post) {
+    const empty = { title: '(untitled)', subtitle: '', excerpt: '' };
+    if (!post || !Array.isArray(post.fields) || !post.fields.length) return empty;
+    let title = '', subtitle = '', excerpt = '';
+    for (const field of post.fields) {
+        if (!Array.isArray(field.blocks)) continue;
+        for (const b of field.blocks) {
+            if (b.type === 'title' && !title) title = b.content || '';
+            else if (b.type === 'subtitle' && !subtitle) subtitle = b.content || '';
+            else if (b.type === 'paragraph' && !excerpt) excerpt = b.content || '';
+        }
+    }
+    if (!title) title = post.fields[0].name || '(untitled)';
+    if (excerpt.length > 200) excerpt = excerpt.slice(0, 200) + '…';
+    return { title, subtitle, excerpt };
+}
+
+function getPostTab(post) {
+    return (post && post.tab) || 'home';
+}
+
+function migrateHeroes() {
+    if (!contentData.site) contentData.site = { projectName: 'PORTFOLIO', theme: 'retro' };
+    if (!contentData.site.heroPostIds) {
+        contentData.site.heroPostIds = {
+            home: null, profile: null, education: null, experience: null, skills: null, survey: null
+        };
+    }
+
+    // Validate that each hero id references an existing post.
+    // Dangling references (from old exports) get reset to null.
+    Object.keys(contentData.site.heroPostIds).forEach(tab => {
+        const id = contentData.site.heroPostIds[tab];
+        if (id && !contentData.posts.find(p => p.id === id)) {
+            contentData.site.heroPostIds[tab] = null;
+        }
+    });
+
+    // If Home hero is null (either by default or after clearing a dangling ref),
+    // create an About Me post from profile data.
+    if (!contentData.site.heroPostIds.home) {
+        const p = contentData.profile || {};
+        if (p.name || p.bio) {
+            const aboutId = 'p_about_' + Date.now().toString(36);
+            const blocks = [];
+            if (p.name)  blocks.push({ type: 'title',     content: p.name });
+            if (p.title) blocks.push({ type: 'subtitle',  content: p.title });
+            if (p.bio)   blocks.push({ type: 'paragraph', content: p.bio });
+            if (Array.isArray(p.actions) && p.actions.length) {
+                blocks.push({
+                    type: 'actions',
+                    content: p.actions.map(a => `${a.label} | ${a.href} | ${a.style || 'primary'}`).join('\n')
+                });
+            }
+            if (blocks.length) {
+                contentData.posts.unshift({
+                    id: aboutId,
+                    date: '2024-01-01',
+                    tab: 'home',
+                    label: 'introspection',
+                    author: 'Me',
+                    photos: [],
+                    hideFromList: true,
+                    fields: [{ name: 'About Me', blocks }]
+                });
+                contentData.site.heroPostIds.home = aboutId;
+            }
+        }
+    }
+}
 
 /* =========================================================
    9. HERO RENDERING
@@ -538,7 +743,13 @@ function renderPosts() {
 
     document.body.classList.remove('post-focused');
 
+    const currentTab = getCurrentTab();
     let filtered = [...thoughtsPosts];
+
+    // Tab filter — Home shows all, subpages show only their tab
+    if (currentTab && currentTab !== 'home') {
+        filtered = filtered.filter(p => getPostTab(p) === currentTab);
+    }
 
     if (currentDateFilter) {
         const key = `${currentDateFilter.getFullYear()}-${String(currentDateFilter.getMonth() + 1).padStart(2, '0')}-${String(currentDateFilter.getDate()).padStart(2, '0')}`;
@@ -552,19 +763,24 @@ function renderPosts() {
     filtered.sort((a, b) => b.date.localeCompare(a.date));
 
     if (filtered.length === 0) {
-        let message = 'No thoughts for this day yet. Check back later!';
+        const tabLabel = currentTab && currentTab !== 'home'
+            ? (currentTab.charAt(0).toUpperCase() + currentTab.slice(1) + ' ')
+            : '';
+        let message = tabLabel ? `No ${tabLabel}posts yet.` : 'No thoughts for this day yet. Check back later!';
         if (currentDateFilter && activeLabelFilter) {
-            message = `No posts labeled "${formatLabelName(activeLabelFilter)}" on this date.`;
+            message = `No ${tabLabel}posts labeled "${formatLabelName(activeLabelFilter)}" on this date.`;
         } else if (activeLabelFilter) {
-            message = `No posts labeled "${formatLabelName(activeLabelFilter)}" yet.`;
+            message = `No ${tabLabel}posts labeled "${formatLabelName(activeLabelFilter)}" yet.`;
+        } else if (currentDateFilter) {
+            message = `No ${tabLabel}posts on this date.`;
         }
         postList.innerHTML = `<p class="no-posts">${message}</p>`;
     } else {
-            postList.innerHTML = filtered.map(post => {
+        postList.innerHTML = filtered.filter(p => !p.hideFromList).map(post => {
             const label = getLabel(post.label);
-            const postKey = `${post.date}|${post.title}`;
+            const preview = getPostPreview(post);
             return `
-                <article class="post-card" data-post-key="${postKey}" style="--label-color: ${label.color};">
+                <article class="post-card" data-post-id="${post.id}" style="--label-color: ${label.color};">
                     <div class="post-label">
                         ${LABEL_ICON_SVG}
                         <span class="post-label-text">${formatLabelName(post.label)}</span>
@@ -572,9 +788,10 @@ function renderPosts() {
                     <div class="post-card-date">
                       ${formatPostDate(post.date)}${post.author ? ` · ${post.author}` : ''}
                     </div>
-                    <h4 class="post-card-title">${post.title}</h4>
-                    ${post.image ? `<img src="${post.image}" alt="" class="post-card-image">` : ''}
-                    <p class="post-card-excerpt">${post.excerpt}</p>
+                    <h4 class="post-card-title">${escapeHtml(preview.title)}</h4>
+                    ${preview.subtitle ? `<p class="post-card-subtitle">${escapeHtml(preview.subtitle)}</p>` : ''}
+                    ${preview.excerpt ? `<p class="post-card-excerpt">${escapeHtml(preview.excerpt)}</p>` : ''}
+                    <div class="post-reading-view"></div>
                 </article>
             `;
         }).join('');
@@ -762,14 +979,9 @@ function renderCalendar(date) {
         }
 
         cell.addEventListener('click', () => {
-            if (document.getElementById('postList')) {
-                currentDateFilter = new Date(year, month, day);
-                renderCalendar(currentViewDate);
-                renderPosts();
-            } else {
-                const key = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
-                window.location.href = `index.html?date=${key}`;
-            }
+            currentDateFilter = new Date(year, month, day);
+            renderCalendar(currentViewDate);
+            renderPosts();
         });
 
         grid.appendChild(cell);
@@ -795,22 +1007,75 @@ if (prevYearBtn) {
    13. POST CLICK → READING MODE
    ========================================================= */
 document.getElementById('postList')?.addEventListener('click', (e) => {
+    // Handle pagination clicks first
+    if (e.target.closest('.page-prev')) { handlePostPage(-1); return; }
+    if (e.target.closest('.page-next')) { handlePostPage(1); return; }
+
     const card = e.target.closest('.post-card');
     if (!card) return;
     if (document.body.classList.contains('post-focused')) return;
 
+    openPostReading(card);
+});
+
+function openPostReading(card) {
+    const postId = card.dataset.postId;
+    const post = thoughtsPosts.find(p => p.id === postId);
+    if (!post) return;
+    activeReadingPostId = postId;
+    postReadingPage = 0;
     card.classList.add('is-expanded');
     document.body.classList.add('post-focused');
+    document.body.classList.remove('hero-focused');
+    renderPostReadingContent(post, card);
     window.scrollTo({ top: 0, behavior: 'smooth' });
-});
+}
+
+function renderPostReadingContent(post, card) {
+    const container = card.querySelector('.post-reading-view');
+    if (!container) return;
+    container.innerHTML = renderPaginatedFields(post, postReadingPage);
+}
+
+function closePostReading() {
+    document.body.classList.remove('post-focused');
+    document.querySelectorAll('.post-card.is-expanded').forEach(c => {
+        c.classList.remove('is-expanded');
+        const rv = c.querySelector('.post-reading-view');
+        if (rv) rv.innerHTML = '';
+    });
+    activeReadingPostId = null;
+    postReadingPage = 0;
+}
+
+function handlePostPage(delta) {
+    if (!activeReadingPostId) return;
+    const post = thoughtsPosts.find(p => p.id === activeReadingPostId);
+    if (!post) return;
+    const card = document.querySelector(`.post-card[data-post-id="${activeReadingPostId}"]`);
+    if (!card) return;
+    const total = (post.fields || []).length;
+    const newPage = Math.max(0, Math.min(postReadingPage + delta, total - 1));
+    if (newPage === postReadingPage) return;
+    postReadingPage = newPage;
+    renderPostReadingContent(post, card);
+}
 
 /* =========================================================
    14. BOOK TOGGLE (close reading mode)
    ========================================================= */
-document.getElementById('bookToggle')?.addEventListener('click', () => {
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('#bookToggle, .hero-expand-btn');
+    if (!btn) return;
+    e.preventDefault();
+
     if (document.body.classList.contains('post-focused')) {
-        document.querySelectorAll('.post-card.is-expanded').forEach(c => c.classList.remove('is-expanded'));
-        document.body.classList.remove('post-focused');
+        closePostReading();
+    } else if (document.body.classList.contains('hero-focused')) {
+        closeHeroReading();
+    } else {
+        const tab = btn.dataset.tab || getCurrentTab();
+        if (tab) openHeroReading(tab);
     }
 });
 
@@ -818,8 +1083,14 @@ document.getElementById('bookToggle')?.addEventListener('click', () => {
    15. PAGE INITS
    ========================================================= */
 if (document.getElementById('heroText')) {
-    renderHero();
+    renderHeroForTab('home');
 }
+
+/* Inject hero UIs for non-home tabs */
+['profile', 'education', 'experience', 'skills', 'survey'].forEach(t => {
+    prepareTabHero(t);
+    renderHeroForTab(t);
+});
 
 if (document.getElementById('educationTimeline')) {
     renderEducationPage();
@@ -866,55 +1137,7 @@ if (contentArea && widgetPanel) {
     });
 }
 
-/* =========================================================
-   17. HERO PHOTO UPLOAD
-   ========================================================= */
-const heroUploadBtn  = document.getElementById('heroUploadBtn');
-const heroPhotoInput = document.getElementById('heroPhotoInput');
-const polaroidImg    = document.getElementById('polaroidImg');
 
-if (heroUploadBtn && heroPhotoInput && polaroidImg) {
-    // Restore previously saved photo
-    const savedPhoto = localStorage.getItem('heroPhoto');
-    if (savedPhoto) polaroidImg.src = savedPhoto;
-
-    // Click the + button → open file picker
-    heroUploadBtn.addEventListener('click', () => heroPhotoInput.click());
-
-    // When a file is picked → resize → apply → save
-    heroPhotoInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (!file || !file.type.startsWith('image/')) return;
-
-        const reader = new FileReader();
-        reader.onload = (ev) => {
-            const img = new Image();
-            img.onload = () => {
-                // Resize so the longest side is 400px (keeps file small for storage)
-                const maxSize = 400;
-                let w = img.width, h = img.height;
-                if (w >= h && w > maxSize)      { h = Math.round(h * maxSize / w); w = maxSize; }
-                else if (h > w && h > maxSize)  { w = Math.round(w * maxSize / h); h = maxSize; }
-
-                const canvas = document.createElement('canvas');
-                canvas.width  = w;
-                canvas.height = h;
-                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-
-                const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
-                polaroidImg.src = dataUrl;
-
-                try {
-                    localStorage.setItem('heroPhoto', dataUrl);
-                } catch (err) {
-                    console.warn('Photo too large to save locally — will reset on refresh.', err);
-                }
-            };
-            img.src = ev.target.result;
-        };
-        reader.readAsDataURL(file);
-    });
-}
 
 /* =========================================================
    4-tier loader: portfolioContent > legacy thoughtsPosts key > content.json > legacy posts.json > defaults
@@ -972,6 +1195,9 @@ if (heroUploadBtn && heroPhotoInput && polaroidImg) {
 })();
 
 function applyContent(parsed) {
+    if (Array.isArray(parsed.posts)) {
+        parsed.posts = parsed.posts.map(migratePost).filter(Boolean);
+    }
     if (parsed.profile && typeof parsed.profile === 'object') {
         Object.assign(contentData.profile, parsed.profile);
     }
@@ -1004,11 +1230,24 @@ function applyContent(parsed) {
         if (!contentData.site) contentData.site = { projectName: 'PORTFOLIO', theme: 'retro' };
         Object.assign(contentData.site, parsed.site);
     }
-    if (parsed.survey && typeof parsed.survey === 'object') {
-        Object.assign(contentData.survey, parsed.survey);
+    if (Array.isArray(parsed.surveys)) {
+        contentData.surveys = parsed.surveys.slice();
+    } else if (parsed.survey && typeof parsed.survey === 'object') {
+        // Legacy: single survey → wrap in array
+        contentData.surveys = [{
+            id: 's_' + Math.random().toString(36).slice(2, 10),
+            title: 'Portfolio Feedback',
+            active: true,
+            introTitle: parsed.survey.introTitle || '',
+            introText: parsed.survey.introText || '',
+            thankYouTitle: parsed.survey.thankYouTitle || '',
+            thankYouMessage: parsed.survey.thankYouMessage || '',
+            fields: parsed.survey.fields || []
+        }];
     }
+    ensureSurveysArray();
 
-    if (document.getElementById('heroText')) renderHero();
+    if (document.getElementById('heroText')) renderHeroForTab('home');
     updateHeaderName();
     renderTheme();
     if (document.getElementById('postList')) {
@@ -1021,6 +1260,15 @@ function applyContent(parsed) {
     if (document.getElementById('educationTimeline')) renderEducationPage();
     if (document.getElementById('experienceTimeline')) renderExperiencePage();
     if (document.getElementById('profileName')) renderProfilePage();
+    migrateHeroes();
+
+    // Re-render ALL tab heroes with migrated state
+    ['home', 'profile', 'education', 'experience', 'skills', 'survey'].forEach(t => {
+        renderHeroForTab(t);
+    });
+
+    // Re-render posts list (Home hero's hideFromList flag may have changed)
+    if (document.getElementById('postList')) renderPosts();
     if (document.getElementById('skillsCard')) renderSkillsPage();
     if (document.getElementById('surveyFormCard')) renderSurveyPage();
 }
@@ -1038,8 +1286,6 @@ function updateHeaderName() {
     if (nameEl) {
         nameEl.textContent = (contentData.site && contentData.site.projectName) || 'PORTFOLIO';
     }
-    const nameLink = document.querySelector('.name-container');
-    if (nameLink) nameLink.setAttribute('href', 'index.html');
 }
 
 function renderTheme() {
@@ -1063,8 +1309,8 @@ const adminListEl    = document.getElementById('adminList');
 const adminForm      = document.getElementById('adminForm');
 const adminEditIndex = document.getElementById('adminEditIndex');
 const adminDate      = document.getElementById('adminDate');
-const adminTitleIn   = document.getElementById('adminTitleInput');
-const adminExcerpt   = document.getElementById('adminExcerpt');
+const adminTitleIn   = null;
+const adminExcerpt   = null;
 const adminLabelSel  = document.getElementById('adminLabel');
 const adminFormTitle = document.getElementById('adminFormTitle');
 const adminAuthorSel = document.getElementById('adminAuthor');
@@ -1088,13 +1334,23 @@ function openAdmin() {
     resetEducationForm();
     resetExperienceForm();
     populateSkillsForm();
-    populateSurveyForm();
+    populateSurveyAdminForm();
     resetLabelsForm();
     renderAdminLabelsList();
-    renderAdminList();
     renderAdminPhotoList();
     renderAdminEducationList();
     renderAdminExperienceList();
+
+    // Reset to Posts tab context
+    document.querySelectorAll('.admin-tab').forEach(t => {
+        t.classList.toggle('is-active', t.dataset.tab === 'posts');
+    });
+    document.querySelectorAll('.admin-tab-panel').forEach(p => {
+        p.classList.toggle('is-active', p.id === 'adminPanelPosts');
+    });
+    currentPostTab = 'home';
+    movePostsManagerInto('posts');
+
     adminBackdrop.hidden = false;
     document.body.style.overflow = 'hidden';
 
@@ -1116,8 +1372,14 @@ function resetAdminForm() {
     if (!adminForm) return;
     adminForm.reset();
     adminEditIndex.value = '';
-    adminFormTitle.textContent = 'Add New Post';
     adminDate.value = new Date().toISOString().slice(0, 10);
+    const replySel = document.getElementById('adminReplyTo');
+    if (replySel) replySel.value = '';
+    const replyComment = document.getElementById('adminReplyComment');
+    if (replyComment) replyComment.value = '';
+    resetPostsFieldsEditor();
+    updateAdminFormTitle();
+    populateReplyToSelect(null);
 }
 function persistPosts() {
     saveContent();
@@ -1129,25 +1391,37 @@ function refreshMainViews() {
 }
 function renderAdminList() {
     if (!adminListEl) return;
-    if (thoughtsPosts.length === 0) {
-        adminListEl.innerHTML = '<p class="admin-empty">No posts yet. Add one above.</p>';
+
+    const tabFiltered = thoughtsPosts
+        .map((p, i) => ({ p, i }))
+        .filter(({ p }) => getPostTab(p) === currentPostTab);
+
+    if (tabFiltered.length === 0) {
+        const label = currentPostTab === 'home' ? '' : currentPostTab + ' ';
+        adminListEl.innerHTML = `<p class="admin-empty">No ${label}posts yet. Add one above.</p>`;
         return;
     }
-    const sorted = thoughtsPosts
-        .map((p, i) => ({ p, i }))
-        .sort((a, b) => b.p.date.localeCompare(a.p.date));
-    adminListEl.innerHTML = sorted.map(({ p, i }) => `
-        <div class="admin-item">
-            <div class="admin-item-info">
-                <strong>${p.title}</strong>
-                <span>${p.date} · ${formatLabelName(p.label)}${p.author ? ` · ${p.author}` : ''}</span>
+
+    const currentHeroId = contentData.site && contentData.site.heroPostIds
+        ? contentData.site.heroPostIds[currentPostTab] : null;
+
+    const sorted = tabFiltered.sort((a, b) => b.p.date.localeCompare(a.p.date));
+    adminListEl.innerHTML = sorted.map(({ p, i }) => {
+        const isHero = p.id === currentHeroId;
+        return `
+            <div class="admin-item">
+                <div class="admin-item-info">
+                    <strong>${escapeHtml(getPostTitle(p))}${isHero ? ' ★' : ''}</strong>
+                    <span>${p.date} · ${formatLabelName(p.label)}${p.author ? ` · ${p.author}` : ''}</span>
+                </div>
+                <div class="admin-item-actions">
+                    <button data-action="edit" data-index="${i}" type="button">Edit</button>
+                    <button data-action="hero" data-index="${i}" type="button">${isHero ? '★ Remove Hero' : '☆ Set Hero'}</button>
+                    <button data-action="delete" data-index="${i}" type="button">Delete</button>
+                </div>
             </div>
-            <div class="admin-item-actions">
-                <button data-action="edit" data-index="${i}" type="button">Edit</button>
-                <button data-action="delete" data-index="${i}" type="button">Delete</button>
-            </div>
-        </div>
-    `).join('');
+        `;
+    }).join('');
 }
 
 /* --- Wire settings button --- */
@@ -1170,15 +1444,51 @@ document.addEventListener('keydown', (e) => {
 /* --- Save (add or edit) --- */
 adminForm?.addEventListener('submit', (e) => {
     e.preventDefault();
+
+    // Validate
+    if (!adminDate.value) { alert('Date is required.'); return; }
+
+    if (!workingFields.length) {
+        alert('Add at least one field before saving.');
+        return;
+    }
+    for (let i = 0; i < workingFields.length; i++) {
+        const f = workingFields[i];
+        if (!f.name || !f.name.trim()) {
+            alert(`Field ${i + 1} needs a name.`);
+            return;
+        }
+        if (!f.blocks || !f.blocks.length) {
+            alert(`Field "${f.name}" is empty — add at least one block.`);
+            return;
+        }
+        for (const b of f.blocks) {
+            if (!b.content || !b.content.trim()) {
+                alert(`Field "${f.name}" has an empty ${b.type} block.`);
+                return;
+            }
+        }
+    }
+
+    const replyToEl = document.getElementById('adminReplyTo');
+    const replyCommentEl = document.getElementById('adminReplyComment');
+    const replyTo = replyToEl ? replyToEl.value.trim() : '';
+    const replyComment = replyCommentEl ? replyCommentEl.value.trim() : '';
+
     const post = {
+        id:      adminEditIndex.value === '' ? genPostId() : (thoughtsPosts[parseInt(adminEditIndex.value, 10)] || {}).id || genPostId(),
         date:    adminDate.value,
-        title:   adminTitleIn.value.trim(),
-        excerpt: adminExcerpt.value.trim(),
+        tab:     currentPostTab,
         label:   adminLabelSel.value,
-        author: adminAuthorSel.value,
-        image: adminImage.value.trim() || undefined
+        author:  adminAuthorSel.value,
+        photos:  (adminEditIndex.value !== '' && thoughtsPosts[parseInt(adminEditIndex.value, 10)]?.photos) || [],
+        fields:  workingFields.map(f => ({
+            name:   f.name.trim(),
+            blocks: f.blocks.map(b => ({ type: b.type, content: b.content.trim() }))
+        }))
     };
-    if (!post.date || !post.title || !post.excerpt) return;
+    if (replyTo) post.replyTo = replyTo;
+    if (replyTo && replyComment) post.replyComment = replyComment;
 
     const idx = adminEditIndex.value;
     if (idx === '') {
@@ -1190,6 +1500,7 @@ adminForm?.addEventListener('submit', (e) => {
     refreshMainViews();
     renderAdminList();
     resetAdminForm();
+    playSound('success');
 });
 
 /* --- Edit / Delete from list --- */
@@ -1200,15 +1511,43 @@ adminListEl?.addEventListener('click', (e) => {
     const post = thoughtsPosts[idx];
     if (!post) return;
 
-    if (btn.dataset.action === 'edit') {
+    if (btn.dataset.action === 'hero') {
+        if (!contentData.site.heroPostIds) contentData.site.heroPostIds = {};
+        const currentHero = contentData.site.heroPostIds[currentPostTab];
+
+        if (currentHero === post.id) {
+            contentData.site.heroPostIds[currentPostTab] = null;
+            post.hideFromList = false;
+        } else {
+            if (currentHero) {
+                const oldHero = thoughtsPosts.find(p => p.id === currentHero);
+                if (oldHero) oldHero.hideFromList = false;
+            }
+            contentData.site.heroPostIds[currentPostTab] = post.id;
+            post.hideFromList = true;
+        }
+
+        saveContent();
+        renderAdminList();
+        renderHeroForTab(currentPostTab);
+        if (document.getElementById('postList')) renderPosts();
+        playSound('success');
+    } else if (btn.dataset.action === 'edit') {
         adminEditIndex.value = idx;
         adminDate.value = post.date;
-        adminTitleIn.value = post.title;
-        adminExcerpt.value = post.excerpt;
         adminLabelSel.value = post.label;
         if (post.author && adminAuthorSel) adminAuthorSel.value = post.author;
-        if (adminImage) adminImage.value = post.image || '';
-        adminFormTitle.textContent = 'Edit Post';
+        currentPostTab = getPostTab(post);
+        workingFields = JSON.parse(JSON.stringify(post.fields || [])).map(f => ({ ...f, _expanded: false }));
+        renderFieldsEditor();
+
+        populateReplyToSelect(post.id);
+        const replySel = document.getElementById('adminReplyTo');
+        if (replySel && post.replyTo) replySel.value = post.replyTo;
+        const replyComment = document.getElementById('adminReplyComment');
+        if (replyComment) replyComment.value = post.replyComment || '';
+
+        updateAdminFormTitle();
         adminForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else if (btn.dataset.action === 'delete') {
         if (!confirm('Delete this post?')) return;
@@ -1237,28 +1576,7 @@ function populateProfileForm() {
     setVal('siteProjectName', (contentData.site && contentData.site.projectName) || '');
     const themeSelect = document.getElementById('siteTheme');
     if (themeSelect) themeSelect.value = (contentData.site && contentData.site.theme) || 'retro';
-    setVal('profileName',     p.name);
-    setVal('profilePronouns', p.pronouns);
-    setVal('profileGreeting', p.greeting);
-    setVal('profileTitle',    p.title);
-    setVal('profileTagline',  p.tagline);
-    setVal('profileBio',      p.bio);
-    setVal('profileAbout',    p.about);
-    setVal('profileLocation', p.location);
-    setVal('profileEmail',    p.email);
-    setVal('profileLinkedin', p.linkedin);
-
-    const a0 = (p.actions && p.actions[0]) || {};
-    const a1 = (p.actions && p.actions[1]) || {};
-    setVal('profileAction1Label', a0.label);
-    setVal('profileAction1Href',  a0.href);
-    const a1Style = document.getElementById('profileAction1Style');
-    if (a1Style) a1Style.value = a0.style || 'primary';
-
-    setVal('profileAction2Label', a1.label);
-    setVal('profileAction2Href',  a1.href);
-    const a2Style = document.getElementById('profileAction2Style');
-    if (a2Style) a2Style.value = a1.style || 'secondary';
+    setVal('profileEmail', p.email);
 }
 
 /* --- Profile form: save --- */
@@ -1270,40 +1588,11 @@ function saveProfileForm() {
     const themeSelect = document.getElementById('siteTheme');
     contentData.site.theme = themeSelect ? themeSelect.value : 'retro';
 
-    contentData.profile.name     = g('profileName');
-    contentData.profile.pronouns = g('profilePronouns');
-    contentData.profile.greeting = g('profileGreeting');
-    contentData.profile.title    = g('profileTitle');
-    contentData.profile.tagline  = g('profileTagline');
-    contentData.profile.bio      = g('profileBio');
-    contentData.profile.about    = g('profileAbout');
-    contentData.profile.location = g('profileLocation');
-    contentData.profile.email    = g('profileEmail');
-    contentData.profile.linkedin = g('profileLinkedin');
-
-    const newActions = [];
-    const l1 = g('profileAction1Label'), h1 = g('profileAction1Href');
-    if (l1 && h1) {
-        newActions.push({
-            label: l1,
-            href:  h1,
-            style: document.getElementById('profileAction1Style')?.value || 'primary'
-        });
-    }
-    const l2 = g('profileAction2Label'), h2 = g('profileAction2Href');
-    if (l2 && h2) {
-        newActions.push({
-            label: l2,
-            href:  h2,
-            style: document.getElementById('profileAction2Style')?.value || 'secondary'
-        });
-    }
-    contentData.profile.actions = newActions;
+    contentData.profile.email = g('profileEmail');
 
     saveContent();
     updateHeaderName();
     renderTheme();
-    if (document.getElementById('heroText')) renderHero();
     playSound('success');
 }
 
@@ -1424,9 +1713,9 @@ const settingsClearDataBtn = document.getElementById('settingsClearDataBtn');
 
 function openSettings() {
     if (!settingsBackdrop) return;
-    applySettings(); // Sync UI with current state
+    applySettings();
+    populateSiteSettings();
     settingsBackdrop.hidden = false;
-    // Slight delay to trigger CSS transition
     setTimeout(() => settingsBackdrop.classList.add('is-open'), 10);
     document.body.style.overflow = 'hidden';
 }
@@ -1575,10 +1864,9 @@ let lastRandomIndex = -1;
 let diceAnimating = false;
 
 function openPostByReference(post) {
-    const targetKey = `${post.date}|${post.title}`;
     const cards = document.querySelectorAll('.post-card');
     for (const card of cards) {
-        if (card.dataset.postKey === targetKey) {
+        if (card.dataset.postId === post.id) {
             card.classList.add('is-expanded');
             document.body.classList.add('post-focused');
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -1620,7 +1908,7 @@ function rollDice() {
 
     // Respect Reduce Motion — skip the spin and flicker
     if (settings.reduceMotion) {
-        if (flickerText) flickerText.textContent = chosenPost.title;
+        if (flickerText) flickerText.textContent = getPostTitle(chosenPost);
         playSound('success');
         setTimeout(() => {
             overlay.hidden = true;
@@ -1631,11 +1919,11 @@ function rollDice() {
     }
 
     // Normal path: flicker titles + roll sounds
-    if (flickerText) flickerText.textContent = chosenPost.title;
+    if (flickerText) flickerText.textContent = getPostTitle(chosenPost);
 
     const flickerInterval = flickerText ? setInterval(() => {
         const rand = thoughtsPosts[Math.floor(Math.random() * thoughtsPosts.length)];
-        flickerText.textContent = rand.title;
+        flickerText.textContent = getPostTitle(rand);
     }, 90) : null;
 
     const rollInterval = setInterval(() => {
@@ -1646,7 +1934,7 @@ function rollDice() {
     setTimeout(() => {
         if (flickerInterval) clearInterval(flickerInterval);
         clearInterval(rollInterval);
-        if (flickerText) flickerText.textContent = chosenPost.title;
+        if (flickerText) flickerText.textContent = getPostTitle(chosenPost);
         playSound('success');
     }, 800);
 
@@ -1659,7 +1947,7 @@ function rollDice() {
 }
 
 document.getElementById('diceBtn')?.addEventListener('click', () => {
-    if (document.getElementById('postList')) {
+    if (getCurrentTab() === 'home') {
         rollDice();
     } else {
         window.location.href = 'index.html?roll=1';
@@ -1691,6 +1979,9 @@ document.querySelector('.admin-tabs')?.addEventListener('click', (e) => {
         const panelName = 'adminPanel' + target.charAt(0).toUpperCase() + target.slice(1);
         p.classList.toggle('is-active', p.id === panelName);
     });
+
+    // Move posts manager (form + list) into the correct tab's slot
+    movePostsManagerInto(target);
 });
 
 /* =========================================================
@@ -2652,7 +2943,7 @@ const params = new URLSearchParams(location.search);
 const rollParam = params.get('roll');
 const dateParam = params.get('date');
 
-if (rollParam === '1') {
+if (rollParam === '1' && getCurrentTab() === 'home') {
     setTimeout(() => { if (typeof rollDice === 'function') rollDice(); }, 300);
 }
 
@@ -2678,117 +2969,452 @@ if (rollParam || dateParam) {
 /* =========================================================
    33. SURVEY — ADMIN FORM
    ========================================================= */
-function populateSurveyForm() {
-    const s = contentData.survey || {};
-    const setVal = (id, val) => {
-        const el = document.getElementById(id);
-        if (el) el.value = val || '';
-    };
-    setVal('surveyIntroTitle',       s.introTitle);
-    setVal('surveyIntroText',        s.introText);
-    setVal('surveyThankYouTitle',    s.thankYouTitle);
-    setVal('surveyThankYouMessage',  s.thankYouMessage);
+function populateSurveyAdminForm() {
+    // Contact email is global (from profile)
+    const emailEl = document.getElementById('surveyContactEmail');
+    if (emailEl) emailEl.value = (contentData.profile && contentData.profile.email) || '';
+
+    // Reset to "Add New Survey" state
+    resetSurveyForm();
+    renderAdminSurveyList();
+}
+
+function resetSurveyForm() {
+    if (!Array.isArray(contentData.surveys)) contentData.surveys = [];
+    const titleEl = document.getElementById('surveyFormTitle');
+    if (titleEl) titleEl.textContent = 'Add New Survey';
+    const editId = document.getElementById('surveyEditId');
+    if (editId) editId.value = '';
+    const t = document.getElementById('surveyTitle');
+    if (t) t.value = '';
+    const a = document.getElementById('surveyActive');
+    if (a) a.checked = false;
+    const it = document.getElementById('surveyIntroTitle');
+    if (it) it.value = 'Share your thoughts';
+    const ix = document.getElementById('surveyIntroText');
+    if (ix) ix.value = '';
+    const tt = document.getElementById('surveyThankYouTitle');
+    if (tt) tt.value = 'Thank you!';
+    const tm = document.getElementById('surveyThankYouMessage');
+    if (tm) tm.value = '';
+    resetSurveyFieldsEditor();
+}
+
+function loadSurveyForEdit(surveyId) {
+    const s = contentData.surveys.find(x => x.id === surveyId);
+    if (!s) return;
+    document.getElementById('surveyFormTitle').textContent = 'Edit Survey';
+    document.getElementById('surveyEditId').value = s.id;
+    document.getElementById('surveyTitle').value = s.title || '';
+    document.getElementById('surveyActive').checked = !!s.active;
+    document.getElementById('surveyIntroTitle').value = s.introTitle || '';
+    document.getElementById('surveyIntroText').value = s.introText || '';
+    document.getElementById('surveyThankYouTitle').value = s.thankYouTitle || '';
+    document.getElementById('surveyThankYouMessage').value = s.thankYouMessage || '';
+    loadSurveyFieldsIntoEditor(s);
+    document.getElementById('surveyForm').scrollIntoView({ behavior: 'smooth' });
+}
+
+function renderAdminSurveyList() {
+    const listEl = document.getElementById('adminSurveyList');
+    if (!listEl) return;
+    if (!Array.isArray(contentData.surveys) || !contentData.surveys.length) {
+        listEl.innerHTML = '<p class="admin-empty">No surveys yet. Add one above.</p>';
+        return;
+    }
+    listEl.innerHTML = contentData.surveys.map(s => `
+        <div class="admin-item">
+            <div class="admin-item-info">
+                <strong>${escapeHtml(s.title || '(untitled)')} ${s.active ? '★' : ''}</strong>
+                <span>${s.active ? 'Active' : 'Inactive'} · ${(s.fields || []).length} field${(s.fields || []).length !== 1 ? 's' : ''}</span>
+            </div>
+            <div class="admin-item-actions">
+                <button data-survey-action="edit" data-survey-id="${s.id}" type="button">Edit</button>
+                ${!s.active ? `<button data-survey-action="activate" data-survey-id="${s.id}" type="button">Set Active</button>` : ''}
+                <button data-survey-action="delete" data-survey-id="${s.id}" type="button">Delete</button>
+            </div>
+        </div>
+    `).join('');
 }
 
 document.getElementById('surveyForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
-    const g = (id) => (document.getElementById(id)?.value || '').trim();
-    contentData.survey = {
-        introTitle:       g('surveyIntroTitle'),
-        introText:        g('surveyIntroText'),
-        thankYouTitle:    g('surveyThankYouTitle'),
-        thankYouMessage:  g('surveyThankYouMessage')
+    ensureSurveysArray();
+
+    const title = (document.getElementById('surveyTitle')?.value || '').trim();
+    if (!title) { alert('Survey title is required.'); return; }
+
+    if (!workingSurveyFields.length) { alert('Add at least one field before saving.'); return; }
+    for (let i = 0; i < workingSurveyFields.length; i++) {
+        const f = workingSurveyFields[i];
+        if (!f.name || !f.name.trim()) {
+            alert(`Field ${i + 1} needs a name.`);
+            return;
+        }
+        if (!f.blocks || !f.blocks.length) {
+            alert(`Field "${f.name}" is empty — add at least one block.`);
+            return;
+        }
+    }
+
+    const editId = document.getElementById('surveyEditId')?.value || '';
+    const active = !!document.getElementById('surveyActive')?.checked;
+
+    // If activating, deactivate all others
+    if (active) {
+        contentData.surveys.forEach(s => s.active = false);
+    }
+
+    const surveyObj = {
+        id: editId || ('s_' + Math.random().toString(36).slice(2, 10)),
+        title,
+        active,
+        introTitle: (document.getElementById('surveyIntroTitle')?.value || '').trim(),
+        introText: (document.getElementById('surveyIntroText')?.value || '').trim(),
+        thankYouTitle: (document.getElementById('surveyThankYouTitle')?.value || '').trim(),
+        thankYouMessage: (document.getElementById('surveyThankYouMessage')?.value || '').trim(),
+        fields: workingSurveyFields.map(f => ({
+            name: f.name.trim(),
+            blocks: (f.blocks || []).map(serializeSurveyBlock)
+        }))
     };
+
+    if (editId) {
+        const idx = contentData.surveys.findIndex(s => s.id === editId);
+        if (idx !== -1) contentData.surveys[idx] = surveyObj;
+        else contentData.surveys.push(surveyObj);
+    } else {
+        contentData.surveys.push(surveyObj);
+    }
+
+    // Contact email (global)
+    if (!contentData.profile) contentData.profile = {};
+    contentData.profile.email = (document.getElementById('surveyContactEmail')?.value || '').trim();
+
     saveContent();
-    if (document.getElementById('surveyFormCard')) renderSurveyPage();
+    resetSurveyForm();
+    renderAdminSurveyList();
+    if (document.getElementById('surveyDynamicContent')) renderSurveyPage();
     playSound('success');
+});
+
+document.getElementById('surveyCancelBtn')?.addEventListener('click', resetSurveyForm);
+
+document.getElementById('adminSurveyList')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-survey-action]');
+    if (!btn) return;
+    const id = btn.dataset.surveyId;
+    const action = btn.dataset.surveyAction;
+    const survey = contentData.surveys.find(s => s.id === id);
+    if (!survey) return;
+
+    if (action === 'edit') {
+        loadSurveyForEdit(id);
+    } else if (action === 'activate') {
+        contentData.surveys.forEach(s => s.active = false);
+        survey.active = true;
+        saveContent();
+        renderAdminSurveyList();
+        if (document.getElementById('surveyDynamicContent')) renderSurveyPage();
+    } else if (action === 'delete') {
+        if (!confirm(`Delete survey "${survey.title}"?`)) return;
+        contentData.surveys = contentData.surveys.filter(s => s.id !== id);
+        saveContent();
+        renderAdminSurveyList();
+        if (document.getElementById('surveyDynamicContent')) renderSurveyPage();
+    }
 });
 
 /* =========================================================
    34. SURVEY — PAGE RENDERER + VISITOR FORM
    ========================================================= */
-function renderSurveyPage() {
-    const s = contentData.survey || {};
+let surveyPage = 0;
+let surveyAnswers = {};
+let surveySubmitted = false;
 
-    const introTitleEl = document.getElementById('surveyIntroTitle');
-    const introTextEl  = document.getElementById('surveyIntroText');
+function renderSurveyPage() {
+    const container = document.getElementById('surveyDynamicContent');
+    if (!container) return;
+
+    const s = getActiveSurvey();
+    if (!s) {
+        container.innerHTML = '<p class="no-posts">No active survey. Check back later.</p>';
+        const thanksTitleEl0 = document.getElementById('surveyThanksTitle');
+        if (thanksTitleEl0) thanksTitleEl0.textContent = '';
+        return;
+    }
+    const fields = s.fields || [];
+
+    // Thank-you card content (state-independent)
     const thanksTitleEl = document.getElementById('surveyThanksTitle');
     const thanksMsgEl   = document.getElementById('surveyThanksMessage');
-    const fallbackEl    = document.getElementById('surveyFallback');
-
-    if (introTitleEl) introTitleEl.textContent = s.introTitle || '';
-    if (introTextEl)  introTextEl.textContent  = s.introText  || '';
-
-    if (thanksTitleEl) thanksTitleEl.textContent = s.thankYouTitle || 'Thank you';
-
+    if (thanksTitleEl) thanksTitleEl.textContent = s.thankYouTitle || 'Thank you!';
     if (thanksMsgEl) {
-        const msg = s.thankYouMessage || '';
-        const paragraphs = msg.split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
-        thanksMsgEl.innerHTML = paragraphs.length
-            ? paragraphs.map(p => `<p>${p}</p>`).join('')
-            : '';
+        const paragraphs = (s.thankYouMessage || '').split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+        thanksMsgEl.innerHTML = paragraphs.map(p => `<p>${escapeHtml(p)}</p>`).join('');
     }
 
-    if (fallbackEl) {
-        const email = contentData.profile && contentData.profile.email;
-        if (email) {
-            fallbackEl.innerHTML = `Prefer email? Reach me directly at <a href="mailto:${email}">${email}</a>.`;
-        } else {
-            fallbackEl.innerHTML = '';
-        }
+    const formCard   = document.getElementById('surveyFormCard');
+    const thanksCard = document.getElementById('surveyThanksCard');
+
+    const surveyContainer = container.closest('.survey-container');
+    if (surveySubmitted) {
+        if (formCard)   formCard.style.display   = 'none';
+        if (thanksCard) thanksCard.style.display = '';
+        if (surveyContainer) surveyContainer.classList.add('is-thanked');
+        return;
+    } else {
+        if (formCard)   formCard.style.display   = '';
+        if (thanksCard) thanksCard.style.display = 'none';
+        if (surveyContainer) surveyContainer.classList.remove('is-thanked');
     }
-}
 
-document.getElementById('visitorSurveyForm')?.addEventListener('submit', (e) => {
-    e.preventDefault();
-
-    const toEmail = (contentData.profile && contentData.profile.email || '').trim();
-    if (!toEmail) {
-        alert('The survey is not yet configured — please set your email in the Profile tab of the admin panel (add ?admin=1 to the URL), then try again.');
+    if (!fields.length) {
+        container.innerHTML = '<p class="no-posts">No survey fields configured yet.</p>';
         return;
     }
 
-    const name     = (document.getElementById('vName')?.value     || '').trim();
-    const email    = (document.getElementById('vEmail')?.value    || '').trim();
-    const relation = (document.getElementById('vRelation')?.value || '').trim();
-    const feedback = (document.getElementById('vFeedback')?.value || '').trim();
-    const word     = (document.getElementById('vWord')?.value     || '').trim();
+    if (surveyPage === 0) {
+        container.innerHTML = renderSurveyIntro(s);
+    } else {
+        const fieldIdx = surveyPage - 1;
+        container.innerHTML = renderSurveyFieldScreen(fields[fieldIdx], fieldIdx, surveyPage, fields.length);
+    }
+}
 
-    if (!name)     { alert('Please enter your name.'); document.getElementById('vName')?.focus(); return; }
-    if (!feedback) { alert('Please share some feedback.'); document.getElementById('vFeedback')?.focus(); return; }
+function renderSurveyIntro(s) {
+    const title = s.introTitle || 'Share your thoughts';
+    const text  = s.introText || '';
+    return `
+        <div class="survey-intro-screen">
+            <h2 class="survey-card-title">${escapeHtml(title)}</h2>
+            ${text ? `<p class="survey-intro">${escapeHtml(text)}</p>` : ''}
+            <button type="button" class="survey-submit survey-start-btn" data-survey-action="start">Start →</button>
+        </div>
+    `;
+}
 
-    const subject = `Portfolio feedback from ${name}`;
-    const bodyLines = [
-        `Name: ${name}`,
-        email    ? `Email: ${email}` : '',
-        relation ? `How they know you: ${relation}` : '',
-        '',
-        'Feedback:',
-        feedback,
-        word ? `\nOne word to describe the site: ${word}` : ''
-    ].filter(Boolean);
-    const body = bodyLines.join('\n');
+function renderSurveyFieldScreen(field, fieldIdx, pageNum, totalFields) {
+    if (!field) return '<p class="no-posts">Missing field.</p>';
+    const blocksHtml = (field.blocks || []).map((block, bi) => renderSurveyBlock(block, fieldIdx, bi)).join('');
+    const isFirst = pageNum === 1;
+    const isLast  = pageNum === totalFields;
+
+    const navHtml = `
+        <div class="survey-page-nav">
+            <button type="button" class="survey-nav-prev" ${isFirst ? 'disabled' : ''} data-survey-action="prev">‹ Prev</button>
+            <span class="survey-progress">${pageNum} / ${totalFields}</span>
+            ${isLast
+                ? `<button type="button" class="survey-nav-submit" data-survey-action="submit">Submit</button>`
+                : `<button type="button" class="survey-nav-next" data-survey-action="next">Next ›</button>`
+            }
+        </div>
+    `;
+
+    return `
+        <div class="survey-field-screen" data-field-idx="${fieldIdx}">
+            <div class="survey-field-name-badge">${escapeHtml(field.name || 'Section')}</div>
+            ${navHtml}
+            <div class="survey-field-content">${blocksHtml}</div>
+            ${navHtml}
+        </div>
+    `;
+}
+
+function renderSurveyBlock(block, fi, bi) {
+    const key = fi + '-' + bi;
+    const existing = surveyAnswers[key] || '';
+    const req = block.required ? ' <span class="survey-req">*</span>' : '';
+
+    if (block.type === 'heading') {
+        return `<h3 class="survey-field-heading">${escapeHtml(block.content || '')}</h3>`;
+    }
+    if (block.type === 'paragraph') {
+        return `<p class="survey-field-paragraph">${escapeHtml(block.content || '')}</p>`;
+    }
+    if (block.type === 'text') {
+        return `
+            <div class="survey-input-group">
+                <label>${escapeHtml(block.label || '')}${req}</label>
+                <input type="text" data-key="${key}" value="${escapeHtml(existing)}" placeholder="${escapeHtml(block.placeholder || '')}">
+            </div>`;
+    }
+    if (block.type === 'textarea') {
+        return `
+            <div class="survey-input-group">
+                <label>${escapeHtml(block.label || '')}${req}</label>
+                <textarea data-key="${key}" rows="5" placeholder="${escapeHtml(block.placeholder || '')}">${escapeHtml(existing)}</textarea>
+            </div>`;
+    }
+    if (block.type === 'select') {
+        const opts = (block.options || []).map(o =>
+            `<option value="${escapeHtml(o)}" ${existing === o ? 'selected' : ''}>${escapeHtml(o)}</option>`
+        ).join('');
+        return `
+            <div class="survey-input-group">
+                <label>${escapeHtml(block.label || '')}${req}</label>
+                <select data-key="${key}">
+                    <option value="">— Select —</option>
+                    ${opts}
+                </select>
+            </div>`;
+    }
+    if (block.type === 'radio') {
+        const opts = (block.options || []).map(o =>
+            `<label class="survey-radio-option">
+                <input type="radio" name="radio-${key}" data-key="${key}" value="${escapeHtml(o)}" ${existing === o ? 'checked' : ''}>
+                <span>${escapeHtml(o)}</span>
+            </label>`
+        ).join('');
+        return `
+            <div class="survey-input-group" data-key="${key}">
+                <label>${escapeHtml(block.label || '')}${req}</label>
+                <div class="survey-radio-group">${opts}</div>
+            </div>`;
+    }
+    if (block.type === 'rating') {
+        let stars = '';
+        for (let i = 5; i >= 1; i--) {
+            const checked = existing === String(i) ? 'checked' : '';
+            stars += `<input type="radio" name="rating-${key}" id="rating-${key}-${i}" data-key="${key}" value="${i}" ${checked}><label for="rating-${key}-${i}" title="${i} star${i !== 1 ? 's' : ''}">★</label>`;
+        }
+        return `
+            <div class="survey-input-group" data-key="${key}">
+                <label>${escapeHtml(block.label || '')}${req}</label>
+                <div class="rating-stars">${stars}</div>
+            </div>`;
+    }
+    return '';
+}
+
+/* Survey page navigation */
+document.getElementById('surveyDynamicContent')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('[data-survey-action]');
+    if (!btn) return;
+    const action = btn.dataset.surveyAction;
+
+    if (action === 'start') {
+        surveyPage = 1;
+        renderSurveyPage();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (action === 'prev') {
+        captureSurveyFieldAnswers();
+        if (surveyPage > 1) {
+            surveyPage--;
+            renderSurveyPage();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    } else if (action === 'next') {
+        captureSurveyFieldAnswers();
+        const fieldIdx = surveyPage - 1;
+        if (!validateSurveyField(fieldIdx)) return;
+        surveyPage++;
+        renderSurveyPage();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else if (action === 'submit') {
+        captureSurveyFieldAnswers();
+        const fieldIdx = surveyPage - 1;
+        if (!validateSurveyField(fieldIdx)) return;
+        submitSurvey();
+    }
+});
+
+function captureSurveyFieldAnswers() {
+    const container = document.getElementById('surveyDynamicContent');
+    if (!container) return;
+    container.querySelectorAll('[data-key]').forEach(el => {
+        const key = el.dataset.key;
+        if (el.type === 'radio') {
+            if (el.checked) surveyAnswers[key] = el.value;
+        } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.tagName === 'SELECT') {
+            surveyAnswers[key] = el.value;
+        }
+    });
+}
+
+function validateSurveyField(fieldIdx) {
+    const active = getActiveSurvey();
+    if (!active) return true;
+    const field = (active.fields || [])[fieldIdx];
+    if (!field) return true;
+    let allValid = true;
+
+    (field.blocks || []).forEach((block, bi) => {
+        if (!block.required) return;
+        if (block.type === 'heading' || block.type === 'paragraph') return;
+        const key = fieldIdx + '-' + bi;
+        const val = surveyAnswers[key];
+        const isEmpty = !val || (typeof val === 'string' && !val.trim());
+        if (isEmpty) {
+            allValid = false;
+            const group = document.querySelector(`.survey-input-group[data-key="${key}"]`);
+            const el    = document.querySelector(`[data-key="${key}"]`);
+            const target = group || el;
+            if (target) {
+                target.classList.add('has-error');
+                setTimeout(() => target.classList.remove('has-error'), 2500);
+            }
+        }
+    });
+    return allValid;
+}
+
+function submitSurvey() {
+    const toEmail = (contentData.profile && contentData.profile.email || '').trim();
+    if (!toEmail) {
+        alert('Survey submissions are not configured yet — no contact email set. Please try again later.');
+        return;
+    }
+
+    const active = getActiveSurvey();
+    if (!active) { alert('No active survey.'); return; }
+    const fields = active.fields || [];
+
+    // Find a name-like value for the subject line
+    let nameVal = '';
+    for (let fi = 0; fi < fields.length; fi++) {
+        for (let bi = 0; bi < (fields[fi].blocks || []).length; bi++) {
+            const b = fields[fi].blocks[bi];
+            if (b.type === 'text' && b.label && /name/i.test(b.label)) {
+                const v = surveyAnswers[fi + '-' + bi];
+                if (v) { nameVal = v; break; }
+            }
+        }
+        if (nameVal) break;
+    }
+
+    const subject = nameVal ? `Survey response from ${nameVal}` : 'Portfolio survey response';
+
+    const bodyLines = [];
+    fields.forEach((field, fi) => {
+        bodyLines.push(`── ${field.name || 'Field ' + (fi + 1)} ──`);
+        (field.blocks || []).forEach((block, bi) => {
+            if (block.type === 'heading' || block.type === 'paragraph') return;
+            const key = fi + '-' + bi;
+            const val = surveyAnswers[key];
+            if (val && (typeof val !== 'string' || val.trim())) {
+                bodyLines.push(`${block.label || block.type}: ${val}`);
+            }
+        });
+        bodyLines.push('');
+    });
+    const body = bodyLines.join('\n').trim();
 
     const mailto = `mailto:${toEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
     console.log('Survey mailto:', mailto);
-
     window.location.href = mailto;
 
-    // Show thank-you card
-    const formCard   = document.getElementById('surveyFormCard');
-    const thanksCard = document.getElementById('surveyThanksCard');
-    if (formCard)   formCard.style.display   = 'none';
-    if (thanksCard) thanksCard.style.display = '';
+    surveySubmitted = true;
+    renderSurveyPage();
     playSound('success');
-});
+}
 
 document.getElementById('surveyResetBtn')?.addEventListener('click', () => {
-    const form = document.getElementById('visitorSurveyForm');
-    if (form) form.reset();
-    const formCard   = document.getElementById('surveyFormCard');
-    const thanksCard = document.getElementById('surveyThanksCard');
-    if (formCard)   formCard.style.display   = '';
-    if (thanksCard) thanksCard.style.display = 'none';
+    surveyPage = 0;
+    surveyAnswers = {};
+    surveySubmitted = false;
+    renderSurveyPage();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 });
 
 /* =========================================================
@@ -2951,3 +3577,715 @@ function refreshAfterLabelsChange() {
     const photosModal = document.getElementById('photosModal');
     if (photosModal && !photosModal.hidden) renderPhotosModal();
 }
+
+/* =========================================================
+   36. POSTS FIELDS EDITOR
+   ========================================================= */
+let workingFields = [];
+let currentPostTab = 'home';
+
+function resetPostsFieldsEditor() {
+    workingFields = [];
+    renderFieldsEditor();
+}
+
+function renderFieldsEditor() {
+    const editor = document.getElementById('fieldsEditor');
+    if (!editor) return;
+
+    if (!workingFields.length) {
+        editor.innerHTML = '<p class="admin-empty">No fields yet. Click <strong>+ Add Field</strong> to begin.</p>';
+        return;
+    }
+
+    editor.innerHTML = workingFields.map((field, fi) => {
+        const isExpanded = field._expanded !== false;
+        const blockCount = (field.blocks || []).length;
+        return `
+        <div class="field-editor ${isExpanded ? 'is-expanded' : 'is-collapsed'}" data-fi="${fi}">
+            <div class="field-editor-header">
+                <button type="button" class="field-toggle-btn" data-action="toggle-field" data-fi="${fi}" title="${isExpanded ? 'Collapse' : 'Expand'}">
+                    ${isExpanded ? '▼' : '▶'}
+                </button>
+                <input type="text" class="field-name" data-fi="${fi}" value="${escapeHtml(field.name || '')}" placeholder="Field name (required)">
+                ${!isExpanded ? `<span class="field-collapsed-meta">${blockCount} block${blockCount !== 1 ? 's' : ''}</span>` : ''}
+                <button type="button" class="field-remove-btn" data-action="remove-field" data-fi="${fi}" title="Remove field">×</button>
+            </div>
+            ${isExpanded ? `
+            <div class="field-blocks">
+                ${(field.blocks || []).map((block, bi) => `
+                    <div class="block-editor" data-fi="${fi}" data-bi="${bi}">
+                        <span class="block-type-badge">${block.type}</span>
+                        ${block.type === 'paragraph'
+                            ? `<textarea class="block-content-textarea" data-fi="${fi}" data-bi="${bi}" rows="3" placeholder="Paragraph text…">${escapeHtml(block.content || '')}</textarea>`
+                            : block.type === 'actions'
+                            ? `<textarea class="block-content-textarea" data-fi="${fi}" data-bi="${bi}" rows="3" placeholder="One per line: Label | href | primary">${escapeHtml(block.content || '')}</textarea>`
+                            : `<input type="text" class="block-content-input" data-fi="${fi}" data-bi="${bi}" value="${escapeHtml(block.content || '')}" placeholder="${block.type} text…">`
+                        }
+                        <button type="button" class="block-remove-btn" data-action="remove-block" data-fi="${fi}" data-bi="${bi}" title="Remove block">×</button>
+                    </div>
+                `).join('')}
+            </div>
+            <div class="field-add-block-row">
+                <button type="button" class="add-block-btn" data-action="add-block" data-type="title" data-fi="${fi}">+ Title</button>
+                <button type="button" class="add-block-btn" data-action="add-block" data-type="subtitle" data-fi="${fi}">+ Subtitle</button>
+                <button type="button" class="add-block-btn" data-action="add-block" data-type="paragraph" data-fi="${fi}">+ Paragraph</button>
+                <button type="button" class="add-block-btn" data-action="add-block" data-type="actions" data-fi="${fi}">+ Actions</button>
+            </div>
+            ` : ''}
+        </div>
+    `;
+    }).join('');
+}
+
+document.getElementById('addFieldBtn')?.addEventListener('click', () => {
+    workingFields.push({ name: '', blocks: [], _expanded: true });
+    renderFieldsEditor();
+});
+
+document.getElementById('fieldsEditor')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const fi = parseInt(btn.dataset.fi, 10);
+    if (isNaN(fi)) return;
+
+    if (btn.dataset.action === 'toggle-field') {
+        if (!workingFields[fi]) return;
+        workingFields[fi]._expanded = workingFields[fi]._expanded === false;
+        renderFieldsEditor();
+    } else if (btn.dataset.action === 'remove-field') {
+        if (!confirm('Remove this field and all its blocks?')) return;
+        workingFields.splice(fi, 1);
+        renderFieldsEditor();
+    } else if (btn.dataset.action === 'add-block') {
+        const type = btn.dataset.type;
+        if (!workingFields[fi]) return;
+        workingFields[fi].blocks.push({ type, content: '' });
+        renderFieldsEditor();
+    } else if (btn.dataset.action === 'remove-block') {
+        const bi = parseInt(btn.dataset.bi, 10);
+        if (isNaN(bi) || !workingFields[fi]) return;
+        workingFields[fi].blocks.splice(bi, 1);
+        renderFieldsEditor();
+    }
+});
+
+/* Live-sync field name + block content into workingFields */
+document.getElementById('fieldsEditor')?.addEventListener('input', (e) => {
+    const t = e.target;
+    const fi = parseInt(t.dataset.fi, 10);
+    if (isNaN(fi) || !workingFields[fi]) return;
+
+    if (t.classList.contains('field-name')) {
+        workingFields[fi].name = t.value;
+    } else if (t.classList.contains('block-content-input') || t.classList.contains('block-content-textarea')) {
+        const bi = parseInt(t.dataset.bi, 10);
+        if (!isNaN(bi) && workingFields[fi].blocks[bi]) {
+            workingFields[fi].blocks[bi].content = t.value;
+        }
+    }
+});
+
+/* =========================================================
+   37. POSTS MANAGER — TAB CONTEXT
+   ========================================================= */
+function movePostsManagerInto(tab) {
+    const form = document.getElementById('adminForm');
+    const list = document.getElementById('adminList');
+    const postsPanel = document.getElementById('adminPanelPosts');
+    if (!form || !list || !postsPanel) return;
+
+    // Hide on Photos/Labels (no posts manager there)
+    if (tab === 'photos' || tab === 'labels') {
+        form.style.display = 'none';
+        list.style.display = 'none';
+        return;
+    }
+    form.style.display = '';
+    list.style.display = '';
+
+    if (tab === 'posts') {
+        // Home posts — form lives directly in the Posts panel
+        postsPanel.appendChild(form);
+        postsPanel.appendChild(list);
+        currentPostTab = 'home';
+    } else {
+        const panelId = 'adminPanel' + tab.charAt(0).toUpperCase() + tab.slice(1);
+        const panel = document.getElementById(panelId);
+        const slot = panel?.querySelector('.posts-slot');
+        if (slot) {
+            slot.appendChild(form);
+            slot.appendChild(list);
+        }
+        currentPostTab = tab;
+    }
+
+    updateAdminFormTitle();
+    renderAdminList();
+}
+
+function updateAdminFormTitle() {
+    const titleEl = document.getElementById('adminFormTitle');
+    if (!titleEl) return;
+    const label = currentPostTab === 'home' ? 'Home' : (currentPostTab.charAt(0).toUpperCase() + currentPostTab.slice(1));
+    if (adminEditIndex.value === '') {
+        titleEl.textContent = 'Add New ' + label + ' Post';
+    } else {
+        titleEl.textContent = 'Edit ' + label + ' Post';
+    }
+}
+
+/* =========================================================
+   38. PAGINATION & READING MODES
+   ========================================================= */
+let activeReadingPostId = null;
+let postReadingPage = 0;
+let heroReadingTab = null;
+let heroReadingPage = 0;
+
+function getCurrentTab() {
+    const b = document.body;
+    if (b.classList.contains('page-home')) return 'home';
+    if (b.classList.contains('theme-profile')) return 'profile';
+    if (b.classList.contains('theme-education')) return 'education';
+    if (b.classList.contains('theme-experience')) return 'experience';
+    if (b.classList.contains('theme-skills')) return 'skills';
+    if (b.classList.contains('theme-survey')) return 'survey';
+    return null;
+}
+
+function renderBlockHtml(block) {
+    if (!block || !block.content) return '';
+    if (block.type === 'title')     return `<h2 class="post-field-title">${escapeHtml(block.content)}</h2>`;
+    if (block.type === 'subtitle')  return `<h3 class="post-field-subtitle">${escapeHtml(block.content)}</h3>`;
+    if (block.type === 'paragraph') return `<p class="post-field-paragraph">${escapeHtml(block.content)}</p>`;
+    if (block.type === 'actions') {
+        const actions = String(block.content).split('\n').map(line => {
+            const [label, href, style] = line.split('|').map(s => (s || '').trim());
+            return label && href ? { label, href, style: style || 'primary' } : null;
+        }).filter(Boolean);
+        if (!actions.length) return '';
+        return `<div class="post-field-actions">${actions.map(a =>
+            `<a href="${escapeHtml(a.href)}" class="btn btn-${escapeHtml(a.style)}">${escapeHtml(a.label)}</a>`
+        ).join('')}</div>`;
+    }
+    return '';
+}
+
+function renderPaginatedFields(post, pageNum, opts = {}) {
+    const showNav     = opts.showNav !== false;
+    const showBanners = opts.showBanners !== false;
+    const fields = (post && post.fields) || [];
+    const total = fields.length;
+    if (total === 0) return '<p class="no-content">This post is empty.</p>';
+
+    const clampedPage = Math.max(0, Math.min(pageNum, total - 1));
+    const field = fields[clampedPage];
+    const blocksHtml = (field.blocks || []).map(renderBlockHtml).join('');
+    const showArrows = showNav && total > 1;
+
+    const navHtml = showArrows ? `
+        <div class="post-page-nav">
+            <button class="page-prev" ${clampedPage === 0 ? 'disabled' : ''} type="button" aria-label="Previous page">‹</button>
+            <span class="page-counter">${clampedPage + 1} / ${total}</span>
+            <button class="page-next" ${clampedPage === total - 1 ? 'disabled' : ''} type="button" aria-label="Next page">›</button>
+        </div>
+    ` : '';
+
+    const topBanner    = (showBanners && clampedPage === 0)          ? renderReplyToBanner(post)   : '';
+    const bottomBanner = (showBanners && clampedPage === total - 1)  ? renderReplyFromBanner(post) : '';
+
+    return `
+        ${topBanner}
+        ${navHtml}
+        <div class="post-page-content" data-page="${clampedPage}">
+            ${blocksHtml}
+        </div>
+        ${navHtml}
+        ${bottomBanner}
+    `;
+}
+
+/* =========================================================
+   39. HERO-AS-POST — RENDERING & FOCUS MODE
+   ========================================================= */
+function getHeroPostForTab(tabName) {
+    const id = contentData.site.heroPostIds && contentData.site.heroPostIds[tabName];
+    return id ? thoughtsPosts.find(p => p.id === id) : null;
+}
+
+function getHeroContainer(tabName) {
+    if (tabName === 'home') return document.getElementById('heroText');
+    return document.getElementById(tabName + 'HeroContent');
+}
+
+function renderHeroForTab(tabName) {
+    const container = getHeroContainer(tabName);
+    if (!container) return;
+
+    const heroBox = container.closest('.retro-box');
+    const post = getHeroPostForTab(tabName);
+
+    if (!post) {
+        if (heroBox) heroBox.style.display = 'none';
+        return;
+    }
+    if (heroBox) heroBox.style.display = '';
+
+    if (document.body.classList.contains('hero-focused') && heroReadingTab === tabName) {
+        container.innerHTML = renderPaginatedFields(post, heroReadingPage);
+    } else {
+        container.innerHTML = renderPaginatedFields(post, 0, { showNav: false, showBanners: false });
+    }
+}
+
+function openHeroReading(tabName) {
+    const post = getHeroPostForTab(tabName);
+    if (!post) { alert('No hero post set for this tab. Pick one in admin.'); return; }
+    heroReadingTab = tabName;
+    heroReadingPage = 0;
+    document.body.classList.add('hero-focused');
+    document.body.classList.remove('post-focused');
+    renderHeroForTab(tabName);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function closeHeroReading() {
+    if (!heroReadingTab) return;
+    const tab = heroReadingTab;
+    document.body.classList.remove('hero-focused');
+    heroReadingTab = null;
+    heroReadingPage = 0;
+    renderHeroForTab(tab);
+}
+
+function handleHeroPage(delta) {
+    if (!heroReadingTab) return;
+    const post = getHeroPostForTab(heroReadingTab);
+    if (!post) return;
+    const total = (post.fields || []).length;
+    const newPage = Math.max(0, Math.min(heroReadingPage + delta, total - 1));
+    if (newPage === heroReadingPage) return;
+    heroReadingPage = newPage;
+    renderHeroForTab(heroReadingTab);
+}
+
+/* Handle pagination clicks globally (works in both modes) */
+document.addEventListener('click', (e) => {
+    const prev = e.target.closest('.page-prev');
+    const next = e.target.closest('.page-next');
+    if (!prev && !next) return;
+    e.stopPropagation();
+
+    if (document.body.classList.contains('hero-focused')) {
+        if (prev) handleHeroPage(-1);
+        if (next) handleHeroPage(1);
+    } else if (document.body.classList.contains('post-focused')) {
+        // handled by postList delegation
+    }
+});
+
+/* Inject expand button + content slot into non-Home tab heroes */
+function prepareTabHero(tabName) {
+    const hero = document.querySelector('.' + tabName + '-hero');
+    if (!hero || hero.dataset.prepared === 'true') return;
+    hero.dataset.prepared = 'true';
+
+    // Remove existing hardcoded content
+    hero.querySelectorAll('h1, h2, p, .' + tabName + '-hero-title, .' + tabName + '-hero-subtitle').forEach(el => el.remove());
+
+    // Insert expand button at top
+    hero.insertAdjacentHTML('afterbegin', `
+        <button class="hero-header hero-expand-btn" data-tab="${tabName}" type="button" title="Expand">
+            <svg class="book-icon book-icon-closed" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6,22q-1.25,0-2.13-0.88T3,19V5Q3,3.75 3.88,2.88T6,2H17V18H6q-0.42,0-0.71,0.29T5,19t0.29,0.71T6,20H19V4h2V22H6Zm3-6h6V4H9V16ZM7,16V4H6Q5.58,4 5.29,4.29T5,5V16.18q0.25-0.07 0.49-0.13T6,16H7ZM5,4V16.18V4Z"/></svg>
+            <svg class="book-icon book-icon-opened" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.75,22q-1.13,0-1.94-0.76T4,19.35V5.4Q4,4.45 4.59,3.7T6.13,2.75L16,0.8v16L6.53,18.7Q6.3,18.75 6.15,18.94T6,19.35q0,0.27 0.23,0.46T6.75,20H18V4h2V22H6.75ZM9,16.18l5-0.98V3.25L9,4.22V16.18Zm-2,0.4V4.63L6.63,4.7Q6.35,4.75 6.18,4.94T6,5.4V16.83q0.13-0.05 0.26-0.09t0.26-0.06L7,16.58ZM6,4.77V16.83V4.77Z"/></svg>
+        </button>
+    `);
+
+    // Insert content slot at end
+    hero.insertAdjacentHTML('beforeend', `<div class="tab-hero-content" id="${tabName}HeroContent"></div>`);
+}
+
+/* =========================================================
+   40. SITE CONFIG IN SETTINGS DRAWER
+   ========================================================= */
+function populateSiteSettings() {
+    const siteNameEl = document.getElementById('settingSiteName');
+    if (siteNameEl) siteNameEl.value = (contentData.site && contentData.site.projectName) || 'PORTFOLIO';
+
+    const themeEl = document.getElementById('settingTheme');
+    if (themeEl) themeEl.value = (contentData.site && contentData.site.theme) || 'retro';
+
+    const emailEl = document.getElementById('settingContactEmail');
+    if (emailEl) emailEl.value = (contentData.profile && contentData.profile.email) || '';
+}
+
+document.getElementById('settingSiteName')?.addEventListener('change', (e) => {
+    if (!contentData.site) contentData.site = { projectName: 'PORTFOLIO', theme: 'retro' };
+    contentData.site.projectName = e.target.value.trim() || 'PORTFOLIO';
+    saveContent();
+    updateHeaderName();
+});
+
+document.getElementById('settingTheme')?.addEventListener('change', (e) => {
+    if (!contentData.site) contentData.site = { projectName: 'PORTFOLIO', theme: 'retro' };
+    contentData.site.theme = e.target.value;
+    saveContent();
+    renderTheme();
+});
+
+document.getElementById('settingContactEmail')?.addEventListener('change', (e) => {
+    if (!contentData.profile) contentData.profile = {};
+    contentData.profile.email = e.target.value.trim();
+    saveContent();
+});
+
+/* =========================================================
+   41. SETTINGS — site panel toggle
+   ========================================================= */
+document.getElementById('settingsSiteToggle')?.addEventListener('click', () => {
+    const panel = document.getElementById('settingsSitePanel');
+    const icon  = document.getElementById('settingsSiteToggleIcon');
+    if (!panel) return;
+    const isOpen = panel.style.display !== 'none';
+    panel.style.display = isOpen ? 'none' : 'flex';
+    if (icon) icon.textContent = isOpen ? '▼' : '▲';
+});
+
+/* =========================================================
+   42. SURVEY MIGRATION & HELPERS
+   ========================================================= */
+function ensureSurveyFields() {
+    if (!contentData.survey) return;
+    if (!Array.isArray(contentData.survey.fields)) {
+        // Upgrade old shape (no fields array) with a default feedback form
+        contentData.survey.fields = [
+            {
+                name: "Feedback",
+                blocks: [
+                    { type: "heading",   content: "Your thoughts" },
+                    { type: "text",      label: "Your name", required: true, placeholder: "" },
+                    { type: "textarea",  label: "Feedback", required: true, placeholder: "" }
+                ]
+            }
+        ];
+    }
+}
+
+ensureSurveyFields();
+
+/* =========================================================
+   43. SURVEY FIELDS EDITOR (admin)
+   ========================================================= */
+let workingSurveyFields = [];
+
+function resetSurveyFieldsEditor() {
+    workingSurveyFields = [];
+    renderSurveyFieldsEditor();
+}
+
+function loadSurveyFieldsIntoEditor(survey) {
+    workingSurveyFields = JSON.parse(JSON.stringify((survey && survey.fields) || []))
+        .map(f => ({ ...f, _expanded: false }));
+    renderSurveyFieldsEditor();
+}
+
+function renderSurveyFieldsEditor() {
+    const editor = document.getElementById('surveyFieldsEditor');
+    if (!editor) return;
+
+    if (!workingSurveyFields.length) {
+        editor.innerHTML = '<p class="admin-empty">No fields yet. Click <strong>+ Add Field</strong> to begin.</p>';
+        return;
+    }
+
+    editor.innerHTML = workingSurveyFields.map((field, fi) => {
+        const isExpanded = field._expanded !== false;
+        const blockCount = (field.blocks || []).length;
+        return `
+        <div class="field-editor ${isExpanded ? 'is-expanded' : 'is-collapsed'}" data-fi="${fi}">
+            <div class="field-editor-header">
+                <button type="button" class="field-toggle-btn" data-action="toggle-field" data-fi="${fi}" title="${isExpanded ? 'Collapse' : 'Expand'}">
+                    ${isExpanded ? '▼' : '▶'}
+                </button>
+                <input type="text" class="field-name" data-fi="${fi}" value="${escapeHtml(field.name || '')}" placeholder="Field name (required)">
+                ${!isExpanded ? `<span class="field-collapsed-meta">${blockCount} block${blockCount !== 1 ? 's' : ''}</span>` : ''}
+                <button type="button" class="field-remove-btn" data-action="remove-field" data-fi="${fi}" title="Remove field">×</button>
+            </div>
+            ${isExpanded ? `
+            <div class="field-blocks">
+                ${(field.blocks || []).map((block, bi) => renderSurveyBlockEditor(block, fi, bi)).join('')}
+            </div>
+            <div class="field-add-block-row">
+                <button type="button" class="add-block-btn" data-action="add-block" data-type="heading"   data-fi="${fi}">+ Heading</button>
+                <button type="button" class="add-block-btn" data-action="add-block" data-type="paragraph" data-fi="${fi}">+ Paragraph</button>
+                <button type="button" class="add-block-btn" data-action="add-block" data-type="text"      data-fi="${fi}">+ Text</button>
+                <button type="button" class="add-block-btn" data-action="add-block" data-type="textarea"  data-fi="${fi}">+ Textarea</button>
+                <button type="button" class="add-block-btn" data-action="add-block" data-type="select"    data-fi="${fi}">+ Select</button>
+                <button type="button" class="add-block-btn" data-action="add-block" data-type="radio"     data-fi="${fi}">+ Radio</button>
+                <button type="button" class="add-block-btn" data-action="add-block" data-type="rating"    data-fi="${fi}">+ Rating</button>
+            </div>
+            ` : ''}
+        </div>
+    `;
+    }).join('');
+}
+
+function renderSurveyBlockEditor(block, fi, bi) {
+    const base = `<div class="block-editor" data-fi="${fi}" data-bi="${bi}">
+        <span class="block-type-badge">${block.type}</span>
+        <div class="block-config">
+            ${renderSurveyBlockConfig(block, fi, bi)}
+        </div>
+        <button type="button" class="block-remove-btn" data-action="remove-block" data-fi="${fi}" data-bi="${bi}" title="Remove block">×</button>
+    </div>`;
+    return base;
+}
+
+function renderSurveyBlockConfig(block, fi, bi) {
+    const f = (cls, val, attrs = '') =>
+        `<input type="text" class="${cls}" data-fi="${fi}" data-bi="${bi}" ${attrs} value="${escapeHtml(val || '')}">`;
+    const ta = (cls, val, attrs = '') =>
+        `<textarea class="${cls}" data-fi="${fi}" data-bi="${bi}" ${attrs}>${escapeHtml(val || '')}</textarea>`;
+
+    if (block.type === 'heading' || block.type === 'paragraph') {
+        return ta('block-content-textarea', block.content, `rows="2" placeholder="${block.type} text…"`);
+    }
+
+    if (block.type === 'text' || block.type === 'textarea') {
+        return `
+            ${f('block-label-input', block.label, 'placeholder="Label (required)"')}
+            ${f('block-placeholder-input', block.placeholder, 'placeholder="Placeholder (optional)"')}
+            <label class="block-required-toggle">
+                <input type="checkbox" class="block-required-cb" data-fi="${fi}" data-bi="${bi}" ${block.required ? 'checked' : ''}>
+                Required
+            </label>
+        `;
+    }
+
+    if (block.type === 'select' || block.type === 'radio') {
+        const optionsStr = (block.options || []).join('\n');
+        return `
+            ${f('block-label-input', block.label, 'placeholder="Label (required)"')}
+            ${ta('block-options-textarea', optionsStr, 'rows="3" placeholder="One option per line…"')}
+            <label class="block-required-toggle">
+                <input type="checkbox" class="block-required-cb" data-fi="${fi}" data-bi="${bi}" ${block.required ? 'checked' : ''}>
+                Required
+            </label>
+        `;
+    }
+
+    if (block.type === 'rating') {
+        return `
+            ${f('block-label-input', block.label, 'placeholder="Label (required)"')}
+            <label class="block-required-toggle">
+                <input type="checkbox" class="block-required-cb" data-fi="${fi}" data-bi="${bi}" ${block.required ? 'checked' : ''}>
+                Required
+            </label>
+        `;
+    }
+
+    return '';
+}
+
+document.getElementById('addSurveyFieldBtn')?.addEventListener('click', () => {
+    workingSurveyFields.push({ name: '', blocks: [], _expanded: true });
+    renderSurveyFieldsEditor();
+});
+
+document.getElementById('surveyFieldsEditor')?.addEventListener('click', (e) => {
+    const btn = e.target.closest('button[data-action]');
+    if (!btn) return;
+    const fi = parseInt(btn.dataset.fi, 10);
+    if (isNaN(fi) || !workingSurveyFields[fi]) return;
+
+    if (btn.dataset.action === 'toggle-field') {
+        workingSurveyFields[fi]._expanded = workingSurveyFields[fi]._expanded === false;
+        renderSurveyFieldsEditor();
+    } else if (btn.dataset.action === 'remove-field') {
+        if (!confirm('Remove this field and all its blocks?')) return;
+        workingSurveyFields.splice(fi, 1);
+        renderSurveyFieldsEditor();
+    } else if (btn.dataset.action === 'add-block') {
+        const type = btn.dataset.type;
+        const newBlock = { type };
+        if (type === 'heading' || type === 'paragraph') newBlock.content = '';
+        if (type === 'text' || type === 'textarea') { newBlock.label = ''; newBlock.placeholder = ''; newBlock.required = false; }
+        if (type === 'select' || type === 'radio') { newBlock.label = ''; newBlock.options = []; newBlock.required = false; }
+        if (type === 'rating') { newBlock.label = ''; newBlock.required = false; }
+        workingSurveyFields[fi].blocks.push(newBlock);
+        renderSurveyFieldsEditor();
+    } else if (btn.dataset.action === 'remove-block') {
+        const bi = parseInt(btn.dataset.bi, 10);
+        if (isNaN(bi) || !workingSurveyFields[fi].blocks[bi]) return;
+        workingSurveyFields[fi].blocks.splice(bi, 1);
+        renderSurveyFieldsEditor();
+    }
+});
+
+document.getElementById('surveyFieldsEditor')?.addEventListener('input', (e) => {
+    const t = e.target;
+    const fi = parseInt(t.dataset.fi, 10);
+    const bi = parseInt(t.dataset.bi, 10);
+    if (isNaN(fi) || !workingSurveyFields[fi]) return;
+
+    if (t.classList.contains('field-name')) {
+        workingSurveyFields[fi].name = t.value;
+        return;
+    }
+    if (isNaN(bi) || !workingSurveyFields[fi].blocks[bi]) return;
+    const block = workingSurveyFields[fi].blocks[bi];
+
+    if (t.classList.contains('block-content-textarea')) {
+        block.content = t.value;
+    } else if (t.classList.contains('block-label-input')) {
+        block.label = t.value;
+    } else if (t.classList.contains('block-placeholder-input')) {
+        block.placeholder = t.value;
+    } else if (t.classList.contains('block-options-textarea')) {
+        block.options = t.value.split('\n').map(s => s.trim()).filter(Boolean);
+    } else if (t.classList.contains('block-required-cb')) {
+        block.required = t.checked;
+    }
+});
+
+/* =========================================================
+   44. MULTI-SURVEY HELPERS
+   ========================================================= */
+function getActiveSurvey() {
+    if (!Array.isArray(contentData.surveys) || !contentData.surveys.length) return null;
+    return contentData.surveys.find(s => s.active) || contentData.surveys[0];
+}
+
+function ensureSurveysArray() {
+    if (!Array.isArray(contentData.surveys)) contentData.surveys = [];
+    contentData.surveys.forEach(s => {
+        if (!s.id) s.id = 's_' + Math.random().toString(36).slice(2, 10);
+        if (typeof s.active !== 'boolean') s.active = false;
+        if (!Array.isArray(s.fields)) s.fields = [];
+    });
+}
+
+function serializeSurveyBlock(b) {
+    const out = { type: b.type };
+    if (b.type === 'heading' || b.type === 'paragraph') out.content = (b.content || '').trim();
+    if (b.type === 'text' || b.type === 'textarea') {
+        out.label = (b.label || '').trim();
+        out.placeholder = (b.placeholder || '').trim();
+        out.required = !!b.required;
+    }
+    if (b.type === 'select' || b.type === 'radio') {
+        out.label = (b.label || '').trim();
+        out.options = Array.isArray(b.options) ? b.options.slice() : [];
+        out.required = !!b.required;
+    }
+    if (b.type === 'rating') {
+        out.label = (b.label || '').trim();
+        out.required = !!b.required;
+    }
+    return out;
+}
+
+/* =========================================================
+   45. POST REPLY / CONTINUATION
+   ========================================================= */
+function populateReplyToSelect(excludeId) {
+    const sel = document.getElementById('adminReplyTo');
+    if (!sel) return;
+
+    const tabLabels = { home: 'Home', profile: 'Profile', education: 'Education', experience: 'Experience', skills: 'Skills', survey: 'Survey' };
+    const grouped = {};
+    thoughtsPosts.forEach(p => {
+        if (p.id === excludeId) return;
+        const tab = getPostTab(p);
+        if (!grouped[tab]) grouped[tab] = [];
+        grouped[tab].push(p);
+    });
+
+    let html = '<option value="">— Not a reply —</option>';
+    Object.keys(grouped).sort().forEach(tab => {
+        html += `<optgroup label="${escapeHtml(tabLabels[tab] || tab)}">`;
+        grouped[tab]
+            .sort((a, b) => (b.date || '').localeCompare(a.date || ''))
+            .forEach(p => {
+                html += `<option value="${p.id}">${escapeHtml(getPostTitle(p))}</option>`;
+            });
+        html += '</optgroup>';
+    });
+    sel.innerHTML = html;
+}
+
+function renderReplyToBanner(post) {
+    if (!post || !post.replyTo) return '';
+    const parent = thoughtsPosts.find(p => p.id === post.replyTo);
+    if (!parent) return '';
+    const comment = (post.replyComment || 'continued').trim();
+    return `
+        <div class="post-continuation-banner post-continuation-top">
+            <span class="post-continuation-icon">↩</span>
+            <span class="post-continuation-text">
+                ${escapeHtml(comment)} from
+                <button class="post-continuation-link" data-open-post="${parent.id}" type="button">${escapeHtml(getPostTitle(parent))}</button>
+            </span>
+        </div>
+    `;
+}
+
+function renderReplyFromBanner(post) {
+    if (!post || !post.id) return '';
+    const children = thoughtsPosts.filter(p => p.replyTo === post.id);
+    if (!children.length) return '';
+    return `
+        <div class="post-continuation-banner post-continuation-bottom">
+            <span class="post-continuation-icon">↪</span>
+            <span class="post-continuation-text">Continues in:</span>
+            <div class="post-continuation-links">
+                ${children.map(c => {
+                    const comment = (c.replyComment || 'continued').trim();
+                    return `<button class="post-continuation-link" data-open-post="${c.id}" type="button">${escapeHtml(getPostTitle(c))} <em>(${escapeHtml(comment)})</em></button>`;
+                }).join('')}
+            </div>
+        </div>
+    `;
+}
+
+/* =========================================================
+   46. CONTINUATION LINK CLICK + ?post= URL PARAM
+   ========================================================= */
+document.addEventListener('click', (e) => {
+    const link = e.target.closest('[data-open-post]');
+    if (!link) return;
+    e.preventDefault();
+    const postId = link.dataset.openPost;
+    const post = thoughtsPosts.find(p => p.id === postId);
+    if (!post) return;
+
+    // Close any open reading/hero mode first
+    if (document.body.classList.contains('post-focused')) closePostReading();
+    if (document.body.classList.contains('hero-focused')) closeHeroReading();
+
+    // Try local card
+    const card = document.querySelector(`.post-card[data-post-id="${postId}"]`);
+    if (card) {
+        openPostReading(card);
+        return;
+    }
+
+    // Not on this page — navigate to Home and open there
+    window.location.href = `index.html?post=${encodeURIComponent(postId)}`;
+});
+
+/* Extend URL param handling — append ?post= support */
+(function handlePostParam() {
+    if (!document.getElementById('postList')) return;
+    const params = new URLSearchParams(location.search);
+    const postParam = params.get('post');
+    if (!postParam) return;
+
+    setTimeout(() => {
+        const card = document.querySelector(`.post-card[data-post-id="${postParam}"]`);
+        if (card && typeof openPostReading === 'function') openPostReading(card);
+    }, 350);
+
+    history.replaceState({}, '', location.pathname);
+})();

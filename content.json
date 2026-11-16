@@ -78,32 +78,31 @@
   ],
   "posts": [
     {
-      "date": "2026-11-11",
-      "title": "Why Child Psychology Fascinates Me",
-      "excerpt": "The moment I realized children aren't just 'small adults' — their minds work in completely different ways. This changed everything about how I approach mentorship.",
-      "label": "cognitive",
-      "author": "Me"
-    },
-    {
-      "date": "2024-11-15",
-      "title": "First Week at the YMCA",
-      "excerpt": "The energy in the room was infectious. Some reflections on what I learned from the kids in my very first week.",
-      "label": "memory",
-      "author": "Me"
-    },
-    {
-      "date": "2024-11-10",
-      "title": "On Research Methods",
-      "excerpt": "Data doesn't speak for itself — it speaks through the questions we ask. A note on why I love qualitative work.",
+      "id": "p_5mbwammked42",
+      "date": "2026-11-15",
+      "tab": "home",
       "label": "introspection",
-      "author": "Me"
-    },
-    {
-      "date": "2026-11-13",
-      "title": "Sample Birthday Post",
-      "excerpt": "Happy birthday ! :)",
-      "label": "birthday",
-      "author": "Me"
+      "author": "Me",
+      "photos": [],
+      "fields": [
+        {
+          "name": "Abstract",
+          "blocks": [
+            {
+              "type": "title",
+              "content": "WHERE DO WE EXIST IN OUR MINDS?"
+            },
+            {
+              "type": "subtitle",
+              "content": "An introspective and empirical problem."
+            },
+            {
+              "type": "paragraph",
+              "content": "Introduction."
+            }
+          ]
+        }
+      ]
     }
   ],
   "photos": [],
@@ -143,6 +142,18 @@
     },
     "introspection": {
       "color": "#A8C9E8"
+    }
+  },
+  "site": {
+    "projectName": "PORTFOLIO",
+    "theme": "retro",
+    "heroPostIds": {
+      "home": "p_pxy9gwrj1a3k",
+      "profile": null,
+      "education": null,
+      "experience": null,
+      "skills": null,
+      "survey": null
     }
   },
   "survey": {
