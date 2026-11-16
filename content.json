@@ -4,7 +4,7 @@
     "pronouns": "XY",
     "greeting": "Hello there!",
     "title": "Psychology Graduate & Educator",
-    "tagline": "",
+    "tagline": "Curious about how children learn, remember, and relate to the people around them.",
     "bio": "I am a University of Manitoba graduate with a passion for human behavior, child development, and research. With hands-on experience mentoring children through the YMCA-YWCA of Winnipeg, I bring a supportive, analytical, and empathetic approach to everything I do.",
     "about": "",
     "location": "Winnipeg, MB",
@@ -30,7 +30,7 @@
       "years": "2020-2026",
       "sortYear": 2026,
       "location": "Winnipeg, MB",
-      "description": "Edit this entry in the admin panel (Education tab, coming in session 3).",
+      "description": "Coursework across research methods, developmental and abnormal psychology, with a focus on how children learn, remember and relate to the people around them.",
       "highlights": [
         "Research Methods",
         "Abnormal Psychology",
@@ -145,21 +145,40 @@
     }
   },
   "site": {
-    "projectName": "PORTFOLIO",
+    "projectName": "IAN — Portfolio",
     "theme": "retro",
     "heroPostIds": {
-      "home": "p_pxy9gwrj1a3k",
-      "profile": null,
-      "education": null,
-      "experience": null,
-      "skills": null,
-      "survey": null
+      "home": null
     }
   },
-  "survey": {
-    "introTitle": "Share your thoughts",
-    "introText": "Thanks for taking a look. I'd love to hear what you think — what stood out, what could be better, or just a hello.",
-    "thankYouTitle": "Thank you!",
-    "thankYouMessage": "Your message means a lot. I read every submission and try to reply within a few days."
-  }
+  "surveys": [
+    {
+      "id": "s_default",
+      "title": "Portfolio Feedback",
+      "active": true,
+      "introTitle": "Share your thoughts",
+      "introText": "Thanks for taking a look. I'd love to hear what you think — what stood out, what could be better, or just a hello.",
+      "thankYouTitle": "Thank you!",
+      "thankYouMessage": "Your message means a lot. I read every submission and try to reply within a few days.",
+      "fields": [
+        {
+          "name": "Basic Info",
+          "blocks": [
+            { "type": "heading", "content": "About you" },
+            { "type": "text", "label": "Your name", "required": true, "placeholder": "Who's this?" },
+            { "type": "text", "label": "Your email", "required": false, "placeholder": "So I can reply" },
+            { "type": "radio", "label": "How do you know me?", "required": false, "options": ["Recruiter", "Friend", "Family", "Colleague", "Just visiting"] }
+          ]
+        },
+        {
+          "name": "Feedback",
+          "blocks": [
+            { "type": "heading", "content": "Your thoughts" },
+            { "type": "textarea", "label": "What stood out? What could be better?", "required": true, "placeholder": "A thoughtful note, a suggestion, or just a hello…" },
+            { "type": "rating", "label": "Rate this site", "required": false }
+          ]
+        }
+      ]
+    }
+  ]
 }

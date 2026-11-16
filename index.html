@@ -3,519 +3,93 @@
 <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <style>
-    /* Prevent FOUC — critical sizing before external CSS loads */
-    .nav-icon { width: 32px; height: 32px; flex-shrink: 0; }
-    .widget-btn svg { width: 24px; height: 24px; }
-    .widget-btn-small svg { width: 18px; height: 18px; }
-    .menu-button svg, .canvas-button svg { width: 24px; height: 24px; }
-    .hero-header .book-icon { width: 22px; height: 22px; }
-    </style>
-    <title>Home | My Interactive Resume</title>
-    <script src="portfolio.js" defer></script>
+    <title>IAN — Portfolio</title>
+    <meta name="description" content="Portfolio and field notes of Ian — psychology graduate and educator based in Winnipeg, Manitoba."/>
+    <meta name="theme-color" content="#f2ece0"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="IAN — Portfolio"/>
+    <meta property="og:description" content="Portfolio and field notes of Ian — psychology graduate and educator based in Winnipeg, Manitoba."/>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
     <link rel="stylesheet" href="style.css"/>
+    <script src="chrome.js" defer></script>
+    <script src="portfolio.js" defer></script>
 </head>
-<body class="page-home">
+<body data-page="home" data-page-title="Portfolio">
+    <a class="skip-link" href="#main">Skip to content</a>
 
-    <header class="header">
-        <div class="menu-container">
-            <button class="menu-button" id="navBtn" type="button" aria-expanded="false"></button>
-        </div>
-        <div class="name-container">
-            <h1 class="name">MY NAME</h1>
-        </div>
-        <button class="canvas-button" id="canvasBtn" type="button" aria-pressed="false" title="Toggle Canvas Mode">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
-        </button>
-    </header>
+    <header class="site-header" id="site-header"></header>
 
     <div class="layout-container">
-        <div class="left-panel" id="leftPanel">
-            <nav class="menu-list-container" id="menuList" aria-label="Contents">
-                <ul class="list">
-                    <li><a class="left-panel-btn" id="homeBtn" href="index.html">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M17,9h2V7H17V9Zm0,4h2V11H17v2Zm0,4h2V15H17v2Zm0,4V19h4V5H12V6.4L10,4.95V3H23V21H17ZM1,21V11L8,6l7,5V21H9V16H7v5H1Zm2-2H5V14h6v5h2V12L8,8.45L3,12v7Zm14-9Zm-6,9V14H5v5V14H8h3v5Z"/></svg>
-                        <span class="nav-text">HOME</span></a></li>
-                    <li><a class="left-panel-btn" id="profileBtn" href="profile.html">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.18,10.83Q8,9.65 8,8T9.18,5.18T12,4t2.83,1.18T16,8t-1.17,2.82T12,12T9.18,10.83ZM4,20V17.2q0-0.85 0.44-1.56q0.44-0.71 1.16-1.09q1.55-0.78 3.15-1.16T12,13t3.25,0.39t3.15,1.16q0.72,0.38 1.16,1.09T20,17.2V20H4Zm2-2H18V17.2q0-0.27-0.14-0.5q-0.14-0.22-0.36-0.35q-1.35-0.68-2.72-1.01T12,15T9.23,15.34T6.5,16.35Q6.28,16.48 6.14,16.7Q6,16.93 6,17.2V18Zm7.41-8.59Q14,8.82 14,8T13.41,6.59T12,6T10.59,6.59Q10,7.18 10,8t0.59,1.41T12,10t1.41-0.59ZM12,8Zm0,10Z"/></svg>
-                        <span class="nav-text">PROFILE</span></a></li>
-                    <li><a class="left-panel-btn" id="educationBtn" href="education.html">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12.5,13.68V10H15L14,9H12.5V5q0-0.43 0.29-0.71T13.5,4h2.43q0.27,0 0.51,0.14T16.8,4.52L18.75,8H17.3l-1-2H14V7h1.7l1,2h2.6l1.48,2.57q-0.65-0.28-1.35-0.43T18,11q-1.68,0-3.11,0.72T12.5,13.68ZM10.5,20H8.08Q7.8,20 7.56,19.86Q7.33,19.73 7.2,19.48L5.25,16H6.7l1,2H10V17H8.3l-1-2H4.7L3.28,12.5q-0.05-0.13-0.09-0.25T3.15,12q0-0.1 0.13-0.5L4.7,9H7.3l1-2H10V6H7.7l-1,2H5.25L7.2,4.52Q7.33,4.27 7.56,4.14T8.08,4H10.5q0.43,0 0.71,0.29T11.5,5V9H10L9,10h2.5v3H9.3l-1-2H6L5,12H7.7l1,2h2.8v1.4q-0.25,0.6-0.38,1.25T11,18q0,0.43 0.04,0.85q0.04,0.42 0.16,0.85q-0.13,0.13-0.31,0.21T10.5,20ZM18,21l3-3l-0.7-0.7l-1.8,1.8V15h-1v4.1l-1.8-1.8L15,18l3,3Zm-3.54,0.54Q13,20.08 13,18t1.46-3.54T18,13t3.54,1.46T23,18t-1.46,3.54T18,23q-2.07,0-3.54-1.46Z"/></svg>
-                        <span class="nav-text">EDUCATION</span></a></li>
-                    <li><a class="left-panel-btn" id="experienceBtn" href="experience.html">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4,19V8V19q0-0.5 0-0.38T4,19Zm0,2q-0.82,0-1.41-0.59T2,19V8Q2,7.18 2.59,6.59T4,6H8V4Q8,3.17 8.59,2.59T10,2h4q0.83,0 1.41,0.59T16,4V6h4q0.83,0 1.41,0.59Q22,7.18 22,8v4.27q-0.45-0.32-0.95-0.56Q20.55,11.48 20,11.3V8H4V19h7.08q0.07,0.52 0.22,1.02T11.68,21H4ZM10,6h4V4H10V6Zm4.46,15.54Q13,20.08 13,18t1.46-3.54T18,13t3.54,1.46T23,18t-1.46,3.54T18,23q-2.07,0-3.54-1.46ZM18.5,17.8V15h-1v3.2l2.15,2.15l0.7-0.7L18.5,17.8Z"/></svg>
-                        <span class="nav-text">EXPERIENCE</span></a></li>
-                    <li><a class="left-panel-btn" id="skillsBtn" href="skills.html">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.48,21.91q-0.18-0.06-0.32-0.21l-5.1-5.1q-0.15-0.15-0.21-0.33T12.78,15.9t0.06-0.38t0.21-0.33l2.13-2.13q0.15-0.15 0.32-0.21t0.38-0.06t0.38,0.06t0.32,0.21l5.1,5.1q0.15,0.15 0.21,0.32t0.06,0.38t-0.06,0.38t-0.21,0.32L19.55,21.7q-0.15,0.15-0.32,0.21t-0.38,0.06t-0.38-0.06Zm0.38-2.31l0.73-0.73L15.9,15.2l-0.72,0.72l3.68,3.68ZM4.74,21.93Q4.55,21.85 4.4,21.7L2.3,19.6q-0.15-0.15-0.23-0.34T2,18.88T2.08,18.5T2.3,18.18l5.3-5.3H9.73l0.85-0.85L6.45,7.9H5.03L2,4.88L4.83,2.05L7.85,5.07V6.5l4.13,4.13l2.9-2.9L13.8,6.65l1.4-1.4H12.38l-0.7-0.7L15.23,1l0.7,0.7V4.52l1.4-1.4l3.55,3.55Q21.3,7.1 21.53,7.64q0.22,0.54 0.22,1.14q0,0.6-0.22,1.15q-0.23,0.55-0.65,0.97L18.75,8.77l-1.4,1.4L16.3,9.13L11.13,14.3v2.1l-5.3,5.3Q5.68,21.85 5.5,21.93Q5.33,22 5.13,22T4.74,21.93ZM5.13,19.6l4.25-4.25V14.63H8.65L4.4,18.88L5.13,19.6Zm0,0L4.4,18.88l0.38,0.35L5.13,19.6Zm13.73,0l0.73-0.73L18.85,19.6Z"/></svg>
-                        <span class="nav-text">SKILLS</span></a></li>
-                    <li><a class="left-panel-btn" id="surveyBtn" href="survey.html">
-                        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12,12Zm0,10q-2.07,0-3.9-0.79q-1.82-0.79-3.17-2.14Q3.58,17.73 2.79,15.9T2,12Q2,9.92 2.79,8.1Q3.58,6.27 4.93,4.93Q6.28,3.57 8.1,2.79Q9.93,2 12,2q1.08,0 2.08,0.21T16,2.82V5.07q-0.88-0.5-1.89-0.79T12,4Q8.68,4 6.34,6.34T4,12t2.34,5.66T12,20t5.66-2.34T20,12q0-0.8-0.16-1.55T19.4,9h2.15q0.23,0.72 0.34,1.46T22,12q0,2.07-0.79,3.9t-2.14,3.17q-1.35,1.35-3.17,2.14T12,22ZM20,7V5H18V3h2V1h2V3h2V5H22V7H20Zm-4.5,4q0.63,0 1.06-0.44T17,9.5T16.56,8.44T15.5,8T14.44,8.44T14,9.5t0.44,1.06T15.5,11Zm-7,0q0.63,0 1.06-0.44T10,9.5T9.56,8.44T8.5,8T7.44,8.44T7,9.5t0.44,1.06T8.5,11Zm6.59,5.54Q16.48,15.58 17.1,14H6.9q0.63,1.57 2.01,2.54T12,17.5t3.09-0.96Z"/></svg>
-                        <span class="nav-text">SURVEY</span></a></li>
-                </ul>
-            </nav>
-        </div>
+        <aside class="left-panel" id="leftPanel" aria-label="Sections">
+            <div id="site-rail"></div>
+        </aside>
 
         <div class="content">
-            <div class="content-container hero-container">
-                <div class="retro-box hero-box">
-                    <button class="hero-header" id="bookToggle" data-tab="home" type="button" title="Expand">
-                        <svg class="book-icon book-icon-closed" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <path d="M6,22q-1.25,0-2.13-0.88T3,19V5Q3,3.75 3.88,2.88T6,2H17V18H6q-0.42,0-0.71,0.29T5,19t0.29,0.71T6,20H19V4h2V22H6Zm3-6h6V4H9V16ZM7,16V4H6Q5.58,4 5.29,4.29T5,5V16.18q0.25-0.07 0.49-0.13T6,16H7ZM5,4V16.18V4Z"/>
-                        </svg>
-                        <svg class="book-icon book-icon-opened" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                            <path d="M6.75,22q-1.13,0-1.94-0.76T4,19.35V5.4Q4,4.45 4.59,3.7T6.13,2.75L16,0.8v16L6.53,18.7Q6.3,18.75 6.15,18.94T6,19.35q0,0.27 0.23,0.46T6.75,20H18V4h2V22H6.75ZM9,16.18l5-0.98V3.25L9,4.22V16.18Zm-2,0.4V4.63L6.63,4.7Q6.35,4.75 6.18,4.94T6,5.4V16.83q0.13-0.05 0.26-0.09t0.26-0.06L7,16.58ZM6,4.77V16.83V4.77Z"/>
-                        </svg>
-                    </button>
+            <main class="content-main" id="main">
 
-                    <div class="hero-content-row">
-                        <div class="hero-text" id="heroText"></div>
-                    </div>
-                </div>
-
-                <div class="post-section">
-                    <div class="post-section-header">
-                        <h3>Thoughts &amp; Reflections</h3>
-                            <button class="post-filter-clear" id="clearPostFilter" style="display: none;" type="button">Show All Posts</button>
-                    </div>
-                    <div class="post-filter-chips" id="postFilterChips"></div>
-                    <div class="post-list" id="postList"></div>
-                </div>
-            </div>
-
-            <div class="widget-panel">
-                <div class="widget-header">
-                    <!-- Dice: random post -->
-                    <button class="widget-btn" id="diceBtn" title="Surprise me with a random post" type="button">
-                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7.5 18c-.83 0-1.5-.67-1.5-1.5S6.67 15 7.5 15s1.5.67 1.5 1.5S8.33 18 7.5 18zm0-9C6.67 9 6 8.33 6 7.5S6.67 6 7.5 6 9 6.67 9 7.5 8.33 9 7.5 9zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm0-9c-.83 0-1.5-.67-1.5-1.5S15.67 6 16.5 6s1.5.67 1.5 1.5S17.33 9 16.5 9z"/></svg>
-                    </button>
-                    
-                    <!-- Camera: view all photos -->
-                    <button class="widget-btn" id="photosBtn" title="View photo gallery" type="button">
-                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12,17.27L18.18,21l-1.64-7.03L22,9.24l-7.19-0.61L12,2L9.19,8.63L2,9.24l5.46,4.73L5.82,21L12,17.27z"/></svg>
-                    </button>
-
-                    <!-- Thought / Lightbulb: Manage Posts -->
-                    <button class="widget-btn" id="thoughtBtn" title="Manage Posts" type="button">
-                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.59,21.41Q10,20.83 10,20h4q0,0.82-0.59,1.41T12,22t-1.41-0.59ZM8,19V17h8v2H8Zm0.25-3q-1.72-1.03-2.74-2.75Q4.5,11.52 4.5,9.5q0-3.13 2.19-5.31T12,2t5.31,2.19T19.5,9.5q0,2.02-1.01,3.75T15.75,16H8.25Zm0.6-2h6.3q1.13-0.8 1.74-1.98T17.5,9.5q0-2.3-1.6-3.9T12,4T8.1,5.6T6.5,9.5q0,1.35 0.61,2.52T8.85,14ZM12,14Z"/></svg>
-                    </button>
-
-                    <!-- Clock toggle -->
-                    <button class="widget-btn widget-btn-small" id="clockToggleBtn" title="Toggle Clock Type" type="button">
-                        <svg id="digitalIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.63,13.9h0.6V10.1H6.8L5.68,10.9L6,11.38l0.63-0.45V13.9Zm1.43,0.03h2.5V13.35H8.9V13.3l0.97-1q0.3-0.3 0.45-0.6t0.15-0.6q0-0.5-0.34-0.8T9.28,10Q8.83,10 8.5,10.23q-0.32,0.22-0.45,0.63L8.58,11.1q0.1-0.25 0.27-0.38Q9.03,10.6 9.28,10.6q0.28,0 0.44,0.14q0.16,0.14 0.16,0.39q0,0.3-0.42,0.77l-1.4,1.45v0.57Zm3.85-0.15q0.13-0.13 0.13-0.32T11.9,13.13T11.58,13t-0.33,0.13t-0.13,0.32t0.13,0.32t0.33,0.13t0.32-0.13Zm0-2.02q0.13-0.13 0.13-0.33q0-0.2-0.13-0.32t-0.32-0.13T11.25,11.1t-0.13,0.32q0,0.2 0.13,0.33t0.33,0.13t0.32-0.13ZM13.88,14q0.58,0 0.93-0.33t0.35-0.82q0-0.35-0.17-0.59T14.5,11.9V11.88q0.25-0.13 0.39-0.34t0.14-0.49q0-0.42-0.35-0.74T13.83,10q-0.43,0-0.74,0.21q-0.31,0.21-0.46,0.59l0.55,0.22q0.1-0.22 0.26-0.34t0.39-0.11q0.28,0 0.42,0.14t0.15,0.34q0,0.25-0.19,0.41q-0.19,0.16-0.46,0.16h-0.3V12.2h0.32q0.35,0 0.54,0.14q0.19,0.14 0.19,0.41q0,0.27-0.2,0.46T13.8,13.4q-0.28,0-0.44-0.15T13.1,12.77L12.53,13q0.15,0.47 0.5,0.74T13.88,14ZM17,14q0.55,0 0.94-0.38t0.39-0.93q0-0.5-0.32-0.86q-0.32-0.36-0.82-0.36q-0.05,0-0.4,0.1l-0.03-0.03l0.88-1.2L17.13,10l-0.97,1.4q-0.3,0.43-0.4,0.7t-0.1,0.53q0,0.57 0.39,0.97T17,14Zm-0.54-0.79Q16.25,13 16.25,12.7t0.21-0.51t0.51-0.21t0.51,0.21T17.7,12.7t-0.21,0.51q-0.21,0.21-0.51,0.21t-0.51-0.21ZM12,22q-2.07,0-3.9-0.79q-1.82-0.79-3.17-2.14Q3.58,17.73 2.79,15.9T2,12Q2,9.92 2.79,8.1Q3.58,6.27 4.93,4.93Q6.28,3.57 8.1,2.79Q9.93,2 12,2t3.9,0.79t3.17,2.14q1.35,1.35 2.14,3.17Q22,9.92 22,12t-0.79,3.9t-2.14,3.17q-1.35,1.35-3.17,2.14T12,22Zm0-10Zm0,8q3.33,0 5.66-2.34T20,12q0-3.33-2.34-5.66T12,4Q8.68,4 6.34,6.34T4,12t2.34,5.66T12,20Z"/></svg>
-                        <svg id="analogIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display: none;"><path d="M14.55,16.55L11,13V8h2v4.17l2.95,2.95l-1.4,1.43ZM11,6V4h2V6H11Zm7,7V11h2v2H18Zm-7,7V18h2v2H11ZM4,13V11H6v2H4Zm8,9q-2.07,0-3.9-0.79q-1.82-0.79-3.17-2.14Q3.58,17.73 2.79,15.9T2,12Q2,9.92 2.79,8.1Q3.58,6.27 4.93,4.93Q6.28,3.57 8.1,2.79Q9.93,2 12,2t3.9,0.79t3.17,2.14q1.35,1.35 2.14,3.17Q22,9.92 22,12t-0.79,3.9t-2.14,3.17q-1.35,1.35-3.17,2.14T12,22Zm0-2q3.35,0 5.68-2.32T20,12T17.68,6.32T12,4T6.33,6.32T4,12t2.33,5.68T12,20Zm0-8Z"/></svg>
-                    </button>
-
-                    <!-- Settings gear -->
-                    <button class="widget-btn" id="settingsBtn" title="Settings" type="button">
-                        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.25,22l-0.4-3.2q-0.32-0.13-0.61-0.3T7.68,18.13L4.7,19.38L1.95,14.63l2.58-1.95Q4.5,12.5 4.5,12.34q0-0.16 0-0.34t0-0.34t0.03-0.34L1.95,9.38L4.7,4.63L7.68,5.88Q7.95,5.68 8.25,5.5t0.6-0.3L9.25,2h5.5l0.4,3.2q0.33,0.13 0.61,0.3t0.56,0.38L19.3,4.63l2.75,4.75l-2.57,1.95q0.02,0.18 0.02,0.34t0,0.34t0,0.34t-0.05,0.34l2.57,1.95l-2.75,4.75l-2.95-1.25q-0.27,0.2-0.57,0.38t-0.6,0.3L14.75,22H9.25ZM11,20h1.98l0.35-2.65q0.78-0.2 1.44-0.59t1.21-0.94l2.47,1.03l0.98-1.7l-2.15-1.63q0.13-0.35 0.17-0.74T17.5,12t-0.05-0.79q-0.05-0.39-0.17-0.74l2.15-1.63l-0.98-1.7L15.98,8.2q-0.55-0.57-1.21-0.96T13.33,6.65L13,4H11.03L10.68,6.65Q9.9,6.85 9.24,7.24T8.03,8.17L5.55,7.15L4.58,8.85l2.15,1.6Q6.6,10.83 6.55,11.2T6.5,12q0,0.4 0.05,0.77t0.17,0.75L4.58,15.15l0.98,1.7L8.03,15.8q0.55,0.58 1.21,0.96t1.44,0.59L11,20Zm1.05-4.5q1.45,0 2.47-1.03T15.55,12T14.53,9.52T12.05,8.5q-1.47,0-2.49,1.02T8.55,12t1.01,2.47t2.49,1.03ZM12,12Z"/></svg>
-                    </button>
-                </div>
-                <div class="widget-body">
-                    <div class="widget-clock-container">
-                        <div id="digitalClock" class="clock-digital">00:00:00</div>
-                        <div id="analogClock" class="clock-analog" style="display: none;">
-                            <div class="clock-center"></div>
-                            <div class="hand hour-hand" id="hourHand"></div>
-                            <div class="hand min-hand" id="minHand"></div>
-                            <div class="hand sec-hand" id="secHand"></div>
-                        </div>
-                    </div>
-                    <div class="widget-calendar">
-                        <div class="calendar-header">
-                            <div class="calendar-nav">
-                                <button class="calendar-btn" id="prevYear" title="Previous Year" type="button">&laquo;</button>
-                                <button class="calendar-btn" id="prevMonth" title="Previous Month" type="button">&lsaquo;</button>
-                            </div>
-                            <span id="calendarMonthYear" class="calendar-title">Loading...</span>
-                            <div class="calendar-nav">
-                                <button class="calendar-btn" id="nextMonth" title="Next Month" type="button">&rsaquo;</button>
-                                <button class="calendar-btn" id="nextYear" title="Next Year" type="button">&raquo;</button>
+            <div class="content-container home">
+                <section class="hero" aria-labelledby="heroName">
+                    <div class="hero-main">
+                        <div id="heroText" class="hero-text">
+                            <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Portfolio · Winnipeg, MB</p>
+                            <h1 class="hero-name" id="heroName">IAN</h1>
+                            <p class="hero-role">Psychology graduate &amp; educator</p>
+                            <p class="hero-bio">I am a University of Manitoba graduate with a passion for human behaviour, child development, and research. I bring a supportive, analytical, and empathetic approach to everything I do.</p>
+                            <div class="hero-actions">
+                                <a class="btn btn--primary" href="profile.html">Explore my profile</a>
+                                <a class="btn btn--ghost" href="survey.html">Leave feedback</a>
                             </div>
                         </div>
-                        <div class="calendar-grid" id="calendarGrid"></div>
-                        <div class="calendar-worded-date" id="wordedDate"></div>
-                        <button class="calendar-today-btn" id="calendarTodayBtn" type="button" style="display: none;">Back to Today</button>
                     </div>
+
+                    <aside class="hero-card" aria-label="At a glance">
+                        <span class="tape" aria-hidden="true"></span>
+                        <p class="hero-card__kicker">Index card · 001</p>
+                        <dl class="hero-facts">
+                            <div><dt>Based</dt><dd data-fact="location">Winnipeg, MB</dd></div>
+                            <div><dt>Studied</dt><dd data-fact="studied">BSc Psychology, University of Manitoba</dd></div>
+                            <div><dt>Focus</dt><dd data-fact="focus">Child development, research &amp; mentorship</dd></div>
+                            <div><dt>Off the clock</dt><dd data-fact="offclock">Reading, photography, hiking</dd></div>
+                        </dl>
+                        <p class="hero-card__stamp" data-monogram aria-hidden="true">I</p>
+                    </aside>
+                </section>
+
+            <section class="section section--notes" aria-labelledby="notesHeading">
+                <div class="section-head">
+                    <div>
+                        <p class="eyebrow"><span class="eyebrow-num">✳</span> Journal</p>
+                        <h2 class="section-title" id="notesHeading">Field notes</h2>
+                    </div>
+                    <button class="link-btn" id="clearPostFilter" type="button" style="display:none">Clear filter</button>
                 </div>
+                <p class="section-lede">Small observations, half-formed thoughts, and things worth remembering.</p>
+                <div class="post-filter-chips" id="postFilterChips"></div>
+                <div class="post-list" id="postList"></div>
+            </section>
             </div>
+            </main>
+
+            <div id="site-widget"></div>
+            <footer class="site-footer" id="site-footer"></footer>
         </div>
     </div>
 
-    <!-- Admin Post Editor (hidden until triggered) -->
-    <div class="admin-backdrop" id="adminBackdrop" hidden>
-        <div class="admin-panel" role="dialog" aria-labelledby="adminTitle">
-            <div class="admin-header">
-                <h2 id="adminTitle">Manage Posts</h2>
-                <button class="admin-close" id="adminCloseBtn" type="button" aria-label="Close">&times;</button>
-            </div>
-
-            <div class="admin-actions">
-                <button id="adminExportBtn" type="button">Export JSON</button>
-                <button id="adminImportBtn" type="button">Import JSON</button>
-                <button id="adminResetBtn" type="button" class="admin-danger">Reset to Defaults</button>
-                <input type="file" id="adminImportInput" accept="application/json,.json" hidden>
-            </div>
-
-            <div class="admin-migration-banner" id="adminMigrationBanner" style="display:none;">
-                ⚠️ Legacy <code>posts.json</code> detected. Click <strong>Export JSON</strong> to save the new <code>content.json</code>, then replace <code>posts.json</code> in your project folder.
-            </div>
-
-            <div class="admin-tabs" role="tablist">
-                <button class="admin-tab is-active" data-tab="posts" role="tab" type="button">Posts</button>
-                <button class="admin-tab" data-tab="photos" role="tab" type="button">Photos</button>
-                <button class="admin-tab" data-tab="profile" role="tab" type="button">Profile</button>
-                <button class="admin-tab" data-tab="education" role="tab" type="button">Education</button>
-                <button class="admin-tab" data-tab="experience" role="tab" type="button">Experience</button>
-                <button class="admin-tab" data-tab="skills" role="tab" type="button">Skills</button>
-                <button class="admin-tab" data-tab="survey" role="tab" type="button">Survey</button>
-                <button class="admin-tab" data-tab="labels" role="tab" type="button">Labels</button>
-            </div>
-
-            <div class="admin-tab-panel is-active" id="adminPanelPosts">
-                <form id="adminForm" class="admin-form">
-                    <h3 id="adminFormTitle">Add New Post</h3>
-                    <input type="hidden" id="adminEditIndex" value="">
-                    <div class="admin-field">
-                        <label for="adminDate">Date</label>
-                        <div class="admin-date-row">
-                            <input type="date" id="adminDate" lang="en" required>
-                            <button type="button" id="adminTodayBtn" class="admin-today-btn">Today</button>
-                        </div>
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            Format: YYYY-MM-DD (e.g., 2024-11-20)
-                        </small>
-                    </div>
-                    <div class="admin-field">
-                        <label for="adminLabel">Label</label>
-                        <select id="adminLabel"></select>
-                    </div>
-                    <div class="admin-field">
-                        <label for="adminAuthor">Author</label>
-                        <select id="adminAuthor"></select>
-                    </div>
-                    <div class="admin-field">
-                        <label for="adminReplyTo">Reply to (optional)</label>
-                        <select id="adminReplyTo">
-                            <option value="">— Not a reply —</option>
-                        </select>
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            Link this post as a continuation of another.
-                        </small>
-                    </div>
-                    <div class="admin-field">
-                        <label for="adminReplyComment">Reply comment</label>
-                        <input type="text" id="adminReplyComment" maxlength="60" placeholder="continued">
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            Shows in the continuation banner. Blank defaults to "continued".
-                        </small>
-                    </div>
-                    <div class="admin-field">
-                        <label>Content fields</label>
-                        <div class="fields-editor" id="fieldsEditor"></div>
-                        <button type="button" class="add-block-btn" id="addFieldBtn" style="margin-top:8px;">+ Add Field</button>
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;margin-top:6px;">
-                            Each field is one page in the reader. Add title / subtitle / paragraph blocks inside.
-                        </small>
-                    </div>
-                    <div class="admin-form-actions">
-                        <button type="submit" class="admin-primary">Save Post</button>
-                        <button type="button" id="adminCancelBtn">Cancel Edit</button>
-                    </div>
-                </form>
-                <div class="admin-list" id="adminList"></div>
-            </div><!-- /#adminPanelPosts -->
-
-            <div class="admin-tab-panel" id="adminPanelPhotos">
-                <form id="photoForm" class="admin-form">
-                    <h3 id="photoFormTitle">Add New Photo</h3>
-                    <input type="hidden" id="photoEditIndex" value="">
-                    <div class="admin-field">
-                        <label for="photoDate">Date</label>
-                        <div class="admin-date-row">
-                            <input type="date" id="photoDate" lang="en" required>
-                            <button type="button" id="photoTodayBtn" class="admin-today-btn">Today</button>
-                        </div>
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            Format: YYYY-MM-DD (e.g., 2024-11-20)
-                        </small>
-                    </div>
-                    <div class="admin-field">
-                        <label for="photoMemo">Memo</label>
-                        <textarea id="photoMemo" rows="3" maxlength="200" placeholder="The handwritten caption on the polaroid…"></textarea>
-                    </div>
-                    <div class="admin-field">
-                        <label for="photoImage">Image path</label>
-                        <div class="photo-file-row">
-                            <input type="text" id="photoImage" placeholder="photos/polaroid/2024-11-20-beach.jpg">
-                            <button type="button" id="photoChooseFileBtn" class="admin-today-btn">Choose File</button>
-                        </div>
-                        <input type="file" id="photoFileInput" accept="image/*" hidden>
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            Click <strong>Choose File</strong> to resize and save automatically, or paste a path manually.
-                        </small>
-                    </div>
-                    <div class="admin-field">
-                        <label>Labels (click to toggle)</label>
-                        <div class="photo-label-picker" id="photoLabelPicker"></div>
-                    </div>
-                    <div class="admin-form-actions">
-                        <button type="submit" class="admin-primary">Save Photo</button>
-                        <button type="button" id="photoCancelBtn">Cancel Edit</button>
-                    </div>
-                </form>
-
-                <div class="admin-list" id="adminPhotoList"></div>
-            </div><!-- /#adminPanelPhotos -->
-
-            <div class="admin-tab-panel" id="adminPanelProfile">
-                <div class="posts-slot" data-tab="profile"></div>
-            </div>
-
-            <div class="admin-tab-panel" id="adminPanelEducation">
-                <div class="posts-slot" data-tab="education"></div>
-            </div>
-
-            <div class="admin-tab-panel" id="adminPanelExperience">
-                <div class="posts-slot" data-tab="experience"></div>
-            </div>
-
-            <div class="admin-tab-panel" id="adminPanelSkills">
-                <div class="posts-slot" data-tab="skills"></div>
-            </div>
-
-            <div class="admin-tab-panel" id="adminPanelSurvey">
-                <div class="admin-field" style="margin-bottom: 20px;">
-                    <label for="surveyContactEmail">Contact email (all surveys)</label>
-                    <input type="email" id="surveyContactEmail" maxlength="80" placeholder="you@example.com">
-                    <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                        Submissions go here via mailto.
-                    </small>
-                </div>
-
-                <form id="surveyForm" class="admin-form">
-                    <h3 id="surveyFormTitle">Add New Survey</h3>
-                    <input type="hidden" id="surveyEditId" value="">
-                    <div class="admin-field">
-                        <label for="surveyTitle">Survey Title</label>
-                        <input type="text" id="surveyTitle" maxlength="120" required placeholder="e.g. Portfolio Feedback">
-                    </div>
-                    <div class="admin-field">
-                        <label class="block-required-toggle" style="text-transform: none; font-size: 0.85rem;">
-                            <input type="checkbox" id="surveyActive">
-                            <span style="font-weight: 700;">Active — shown publicly (only one at a time)</span>
-                        </label>
-                    </div>
-                    <hr class="settings-divider">
-                    <div class="admin-field">
-                        <label for="surveyIntroTitle">Intro Heading</label>
-                        <input type="text" id="surveyIntroTitle" maxlength="120" placeholder="e.g. Share your thoughts">
-                    </div>
-                    <div class="admin-field">
-                        <label for="surveyIntroText">Intro Text</label>
-                        <textarea id="surveyIntroText" rows="3" maxlength="800"></textarea>
-                    </div>
-                    <div class="admin-field">
-                        <label for="surveyThankYouTitle">Thank-You Heading</label>
-                        <input type="text" id="surveyThankYouTitle" maxlength="120" placeholder="e.g. Thank you!">
-                    </div>
-                    <div class="admin-field">
-                        <label for="surveyThankYouMessage">Thank-You Message</label>
-                        <textarea id="surveyThankYouMessage" rows="4" maxlength="1000"></textarea>
-                    </div>
-                    <div class="admin-field">
-                        <label>Form fields</label>
-                        <div class="fields-editor" id="surveyFieldsEditor"></div>
-                        <button type="button" class="add-block-btn" id="addSurveyFieldBtn" style="margin-top:8px;">+ Add Field</button>
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;margin-top:6px;">
-                            Each field is one page. Click inside a field to add blocks (heading, text, textarea, select, radio, rating).
-                        </small>
-                    </div>
-                    <div class="admin-form-actions">
-                        <button type="submit" class="admin-primary">Save Survey</button>
-                        <button type="button" id="surveyCancelBtn">Cancel Edit</button>
-                    </div>
-                </form>
-
-                <div class="admin-list" id="adminSurveyList"></div>
-                <div class="posts-slot" data-tab="survey"></div>
-            </div>
-
-            <div class="admin-tab-panel" id="adminPanelLabels">
-                <form id="labelsForm" class="admin-form">
-                    <h3 id="labelsFormTitle">Add New Label</h3>
-                    <input type="hidden" id="labelEditKey" value="">
-                    <div class="admin-field">
-                        <label for="labelKeyInput">Label name</label>
-                        <input type="text" id="labelKeyInput" maxlength="40" required placeholder="e.g. nostalgia">
-                        <small style="color:#666;font-size:0.7rem;font-weight:normal;">
-                            Lowercase. Any characters allowed (spaces become part of the key).
-                        </small>
-                    </div>
-                    <div class="admin-field">
-                        <label for="labelColor">Color</label>
-                        <div class="label-color-swatches">
-                            <button type="button" class="label-swatch" data-color="#FFB3C6" style="background:#FFB3C6;" aria-label="Pink"></button>
-                            <button type="button" class="label-swatch" data-color="#FFCE80" style="background:#FFCE80;" aria-label="Peach"></button>
-                            <button type="button" class="label-swatch" data-color="#FFE566" style="background:#FFE566;" aria-label="Yellow"></button>
-                            <button type="button" class="label-swatch" data-color="#B5E8A0" style="background:#B5E8A0;" aria-label="Green"></button>
-                            <button type="button" class="label-swatch" data-color="#80D9DE" style="background:#80D9DE;" aria-label="Teal"></button>
-                            <button type="button" class="label-swatch" data-color="#9CC0FF" style="background:#9CC0FF;" aria-label="Blue"></button>
-                            <button type="button" class="label-swatch" data-color="#C7A8FF" style="background:#C7A8FF;" aria-label="Purple"></button>
-                            <button type="button" class="label-swatch" data-color="#FFA8E6" style="background:#FFA8E6;" aria-label="Pink Purple"></button>
-                        </div>
-                        <div class="label-color-row">
-                            <input type="color" id="labelColor" value="#B5E8A0">
-                            <span class="label-preview" id="labelPreview">Preview</span>
-                        </div>
-                    </div>
-                    <div class="admin-form-actions">
-                        <button type="submit" class="admin-primary">Save Label</button>
-                        <button type="button" id="labelsCancelBtn">Cancel Edit</button>
-                    </div>
-                </form>
-
-                <div class="admin-list" id="adminLabelsList"></div>
-            </div>
-
-            <p class="admin-hint">
-                Edits save to <strong>your browser only</strong>. Click <em>Export JSON</em> → replace <code>content.json</code> in your project folder → commit. Then click <em>Reset to Defaults</em> here to sync your browser with the published version.
-            </p>
-            </div>
+    <div id="site-overlays"></div>
+    <noscript>
+        <div class="noscript-bar">
+            <a class="noscript-brand" href="index.html">IAN — Portfolio</a>
+            <nav aria-label="Sections">
+                <a href="index.html">Home</a>
+                <a href="profile.html">Profile</a>
+                <a href="education.html">Education</a>
+                <a href="experience.html">Experience</a>
+                <a href="skills.html">Skills</a>
+                <a href="survey.html">Survey</a>
+                <a href="games.html">Games</a>
+            </nav>
+            <p>This portfolio renders its notes with JavaScript. Please enable it, or use the links above to read the résumé pages.</p>
         </div>
-        <!-- Settings Drawer (hidden until triggered) -->
-        <div class="settings-backdrop" id="settingsBackdrop" hidden>
-            <div class="settings-panel" role="dialog" aria-labelledby="settingsTitle">
-                <div class="settings-header">
-                    <h2 id="settingsTitle">Settings</h2>
-                    <button class="settings-close" id="settingsCloseBtn" type="button" aria-label="Close">&times;</button>
-                </div>
-
-                <div class="settings-body">
-                    <!-- Reduce Motion -->
-                    <div class="settings-row">
-                        <div class="settings-info">
-                            <label for="settingReduceMotion">Reduce Motion</label>
-                            <small>Disable animations and fades.</small>
-                        </div>
-                        <label class="retro-toggle">
-                            <input type="checkbox" id="settingReduceMotion">
-                            <span class="retro-slider"></span>
-                        </label>
-                    </div>
-
-                    <!-- Sound Effects -->
-                    <div class="settings-row">
-                        <div class="settings-info">
-                            <label for="settingSoundEffects">Sound Effects</label>
-                            <small>Play retro chiptune blips.</small>
-                        </div>
-                        <label class="retro-toggle">
-                            <input type="checkbox" id="settingSoundEffects">
-                            <span class="retro-slider"></span>
-                        </label>
-                    </div>
-
-                    <!-- Sound Profile -->
-                    <div class="settings-row" id="soundProfileRow" style="display: none;">
-                        <div class="settings-info">
-                            <label for="settingSoundProfile">Sound Profile</label>
-                        </div>
-                        <select id="settingSoundProfile" class="settings-select">
-                            <option value="classic">Classic</option>
-                            <option value="soft">Soft</option>
-                            <option value="typewriter">Typewriter</option>
-                            <option value="chime">Chime</option>
-                        </select>
-                    </div>
-
-                    <!-- Font Size -->
-                    <div class="settings-row">
-                        <div class="settings-info">
-                            <label>Font Size</label>
-                        </div>
-                        <div class="settings-btn-group" id="fontSizeGroup">
-                            <button type="button" data-value="small" title="Small">A-</button>
-                            <button type="button" data-value="normal" class="is-active" title="Normal">A</button>
-                            <button type="button" data-value="large" title="Large">A+</button>
-                        </div>
-                    </div>
-
-                    <!-- Clock Mode -->
-                    <div class="settings-row">
-                        <div class="settings-info">
-                            <label for="settingClockMode">Clock Display</label>
-                        </div>
-                        <select id="settingClockMode" class="settings-select">
-                            <option value="digital">Digital (12h)</option>
-                            <option value="digital24">Digital (24h)</option>
-                            <option value="analog">Analog</option>
-                        </select>
-                    </div>
-
-                    <hr class="settings-divider">
-
-                    <!-- Site (collapsible) -->
-                    <button type="button" class="settings-site-toggle" id="settingsSiteToggle">
-                        <span>Site Settings</span>
-                        <span class="settings-site-toggle-icon" id="settingsSiteToggleIcon">▼</span>
-                    </button>
-                    <div class="settings-site-panel" id="settingsSitePanel" style="display: none;">
-                        <div class="settings-row">
-                            <div class="settings-info">
-                                <label for="settingSiteName">Site name</label>
-                                <small>Shown in the header.</small>
-                            </div>
-                            <input type="text" id="settingSiteName" class="settings-input" maxlength="40" placeholder="PORTFOLIO">
-                        </div>
-                        <div class="settings-row">
-                            <div class="settings-info">
-                                <label for="settingTheme">Theme</label>
-                            </div>
-                            <select id="settingTheme" class="settings-select">
-                                <option value="retro">Retro (default)</option>
-                                <option value="retro-bold">Retro Bold</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <hr class="settings-divider">
-
-                    <!-- Clear Data -->
-                    <button id="settingsClearDataBtn" class="settings-danger-btn" type="button">
-                        Clear Local Data
-                    </button>
-                    <small class="settings-hint">
-                        Wipes drafts, photos, and settings. Reverts to a fresh visitor state.
-                    </small>
-                </div>
-            </div>
-        </div>
-        <!-- Random Post Dice Overlay -->
-        <div class="dice-overlay" id="diceOverlay" hidden>
-            <div class="dice-overlay-backdrop"></div>
-            <div class="dice-overlay-content">
-                <div class="dice-display">
-                    <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7.5 18c-.83 0-1.5-.67-1.5-1.5S6.67 15 7.5 15s1.5.67 1.5 1.5S8.33 18 7.5 18zm0-9C6.67 9 6 8.33 6 7.5S6.67 6 7.5 6 9 6.67 9 7.5 8.33 9 7.5 9zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm0-9c-.83 0-1.5-.67-1.5-1.5S15.67 6 16.5 6s1.5.67 1.5 1.5S17.33 9 16.5 9z"/></svg>
-                </div>
-                <div class="dice-flicker-text" id="diceFlickerText">Rolling...</div>
-            </div>
-        </div>
-
-        <!-- Photo Gallery Modal -->
-        <div class="photos-modal" id="photosModal" hidden>
-            <div class="photos-modal-backdrop" id="photosModalBackdrop"></div>
-            <div class="photos-modal-panel" role="dialog" aria-labelledby="photosTitle">
-                <div class="photos-modal-header">
-                    <h2 id="photosTitle">Photo Gallery</h2>
-                    <button class="photos-modal-close" id="photosModalClose" type="button" aria-label="Close">&times;</button>
-                </div>
-                <div class="photos-modal-layout">
-                    <aside class="photos-sidebar" id="photosSidebar"></aside>
-                    <div class="photos-modal-body" id="photosModalBody">
-                        <p class="photos-empty">No photos yet. Add them in the admin panel.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </body>
+    </noscript>
+</body>
 </html>

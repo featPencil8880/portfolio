@@ -1,79 +1,10 @@
 // portfolio.js
 
 /* =========================================================
-   WIDGET INJECTION — subpages get the widget via JS
-   (Home already has it inline, so this is a no-op there)
+   SHARED CHROME
+   Header, rail, desk widget, footer and overlays are injected by
+   chrome.js so every page shares one canonical copy.
    ========================================================= */
-const WIDGET_HTML = `
-<div class="widget-panel">
-    <div class="widget-header">
-        <button class="widget-btn" id="diceBtn" title="Surprise me with a random post" type="button">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM7.5 18c-.83 0-1.5-.67-1.5-1.5S6.67 15 7.5 15s1.5.67 1.5 1.5S8.33 18 7.5 18zm0-9C6.67 9 6 8.33 6 7.5S6.67 6 7.5 6 9 6.67 9 7.5 8.33 9 7.5 9zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm4.5 4.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm0-9c-.83 0-1.5-.67-1.5-1.5S15.67 6 16.5 6s1.5.67 1.5 1.5S17.33 9 16.5 9z"/></svg>
-        </button>
-        <button class="widget-btn" id="photosBtn" title="View photo gallery" type="button">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12,17.27L18.18,21l-1.64-7.03L22,9.24l-7.19-0.61L12,2L9.19,8.63L2,9.24l5.46,4.73L5.82,21L12,17.27z"/></svg>
-        </button>
-        <button class="widget-btn" id="thoughtBtn" title="Manage Posts" type="button">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M10.59,21.41Q10,20.83 10,20h4q0,0.82-0.59,1.41T12,22t-1.41-0.59ZM8,19V17h8v2H8Zm0.25-3q-1.72-1.03-2.74-2.75Q4.5,11.52 4.5,9.5q0-3.13 2.19-5.31T12,2t5.31,2.19T19.5,9.5q0,2.02-1.01,3.75T15.75,16H8.25Zm0.6-2h6.3q1.13-0.8 1.74-1.98T17.5,9.5q0-2.3-1.6-3.9T12,4T8.1,5.6T6.5,9.5q0,1.35 0.61,2.52T8.85,14ZM12,14Z"/></svg>
-        </button>
-        <button class="widget-btn widget-btn-small" id="clockToggleBtn" title="Toggle Clock Type" type="button">
-            <svg id="digitalIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.63,13.9h0.6V10.1H6.8L5.68,10.9L6,11.38l0.63-0.45V13.9Zm1.43,0.03h2.5V13.35H8.9V13.3l0.97-1q0.3-0.3 0.45-0.6t0.15-0.6q0-0.5-0.34-0.8T9.28,10Q8.83,10 8.5,10.23q-0.32,0.22-0.45,0.63L8.58,11.1q0.1-0.25 0.27-0.38Q9.03,10.6 9.28,10.6q0.28,0 0.44,0.14q0.16,0.14 0.16,0.39q0,0.3-0.42,0.77l-1.4,1.45v0.57Zm3.85-0.15q0.13-0.13 0.13-0.32T11.9,13.13T11.58,13t-0.33,0.13t-0.13,0.32t0.13,0.32t0.33,0.13t0.32-0.13Zm0-2.02q0.13-0.13 0.13-0.33q0-0.2-0.13-0.32t-0.32-0.13T11.25,11.1t-0.13,0.32q0,0.2 0.13,0.33t0.33,0.13t0.32-0.13ZM13.88,14q0.58,0 0.93-0.33t0.35-0.82q0-0.35-0.17-0.59T14.5,11.9V11.88q0.25-0.13 0.39-0.34t0.14-0.49q0-0.42-0.35-0.74T13.83,10q-0.43,0-0.74,0.21q-0.31,0.21-0.46,0.59l0.55,0.22q0.1-0.22 0.26-0.34t0.39-0.11q0.28,0 0.42,0.14t0.15,0.34q0,0.25-0.19,0.41q-0.19,0.16-0.46,0.16h-0.3V12.2h0.32q0.35,0 0.54,0.14q0.19,0.14 0.19,0.41q0,0.27-0.2,0.46T13.8,13.4q-0.28,0-0.44-0.15T13.1,12.77L12.53,13q0.15,0.47 0.5,0.74T13.88,14ZM17,14q0.55,0 0.94-0.38t0.39-0.93q0-0.5-0.32-0.86q-0.32-0.36-0.82-0.36q-0.05,0-0.4,0.1l-0.03-0.03l0.88-1.2L17.13,10l-0.97,1.4q-0.3,0.43-0.4,0.7t-0.1,0.53q0,0.57 0.39,0.97T17,14Zm-0.54-0.79Q16.25,13 16.25,12.7t0.21-0.51t0.51-0.21t0.51,0.21T17.7,12.7t-0.21,0.51q-0.21,0.21-0.51,0.21t-0.51-0.21ZM12,22q-2.07,0-3.9-0.79q-1.82-0.79-3.17-2.14Q3.58,17.73 2.79,15.9T2,12Q2,9.92 2.79,8.1Q3.58,6.27 4.93,4.93Q6.28,3.57 8.1,2.79Q9.93,2 12,2t3.9,0.79t3.17,2.14q1.35,1.35 2.14,3.17Q22,9.92 22,12t-0.79,3.9t-2.14,3.17q-1.35,1.35-3.17,2.14T12,22Zm0-10Zm0,8q3.33,0 5.66-2.34T20,12q0-3.33-2.34-5.66T12,4Q8.68,4 6.34,6.34T4,12t2.34,5.66T12,20Z"/></svg>
-            <svg id="analogIcon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" style="display: none;"><path d="M14.55,16.55L11,13V8h2v4.17l2.95,2.95l-1.4,1.43ZM11,6V4h2V6H11Zm7,7V11h2v2H18Zm-7,7V18h2v2H11ZM4,13V11H6v2H4Zm8,9q-2.07,0-3.9-0.79q-1.82-0.79-3.17-2.14Q3.58,17.73 2.79,15.9T2,12Q2,9.92 2.79,8.1Q3.58,6.27 4.93,4.93Q6.28,3.57 8.1,2.79Q9.93,2 12,2t3.9,0.79t3.17,2.14q1.35,1.35 2.14,3.17Q22,9.92 22,12t-0.79,3.9t-2.14,3.17q-1.35,1.35-3.17,2.14T12,22Zm0-2q3.35,0 5.68-2.32T20,12T17.68,6.32T12,4T6.33,6.32T4,12t2.33,5.68T12,20Zm0-8Z"/></svg>
-        </button>
-        <button class="widget-btn" id="settingsBtn" title="Settings" type="button">
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M9.25,22l-0.4-3.2q-0.32-0.13-0.61-0.3T7.68,18.13L4.7,19.38L1.95,14.63l2.58-1.95Q4.5,12.5 4.5,12.34q0-0.16 0-0.34t0-0.34t0.03-0.34L1.95,9.38L4.7,4.63L7.68,5.88Q7.95,5.68 8.25,5.5t0.6-0.3L9.25,2h5.5l0.4,3.2q0.33,0.13 0.61,0.3t0.56,0.38L19.3,4.63l2.75,4.75l-2.57,1.95q0.02,0.18 0.02,0.34t0,0.34t0,0.34t-0.05,0.34l2.57,1.95l-2.75,4.75l-2.95-1.25q-0.27,0.2-0.57,0.38t-0.6,0.3L14.75,22H9.25ZM11,20h1.98l0.35-2.65q0.78-0.2 1.44-0.59t1.21-0.94l2.47,1.03l0.98-1.7l-2.15-1.63q0.13-0.35 0.17-0.74T17.5,12t-0.05-0.79q-0.05-0.39-0.17-0.74l2.15-1.63l-0.98-1.7L15.98,8.2q-0.55-0.57-1.21-0.96T13.33,6.65L13,4H11.03L10.68,6.65Q9.9,6.85 9.24,7.24T8.03,8.17L5.55,7.15L4.58,8.85l2.15,1.6Q6.6,10.83 6.55,11.2T6.5,12q0,0.4 0.05,0.77t0.17,0.75L4.58,15.15l0.98,1.7L8.03,15.8q0.55,0.58 1.21,0.96t1.44,0.59L11,20Zm1.05-4.5q1.45,0 2.47-1.03T15.55,12T14.53,9.52T12.05,8.5q-1.47,0-2.49,1.02T8.55,12t1.01,2.47t2.49,1.03ZM12,12Z"/></svg>
-        </button>
-    </div>
-    <div class="widget-body">
-        <div class="widget-clock-container">
-            <div id="digitalClock" class="clock-digital">00:00:00</div>
-            <div id="analogClock" class="clock-analog" style="display: none;">
-                <div class="clock-center"></div>
-                <div class="hand hour-hand" id="hourHand"></div>
-                <div class="hand min-hand" id="minHand"></div>
-                <div class="hand sec-hand" id="secHand"></div>
-            </div>
-        </div>
-        <div class="widget-calendar">
-            <div class="calendar-header">
-                <div class="calendar-nav">
-                    <button class="calendar-btn" id="prevYear" title="Previous Year" type="button">&laquo;</button>
-                    <button class="calendar-btn" id="prevMonth" title="Previous Month" type="button">&lsaquo;</button>
-                </div>
-                <span id="calendarMonthYear" class="calendar-title">Loading...</span>
-                <div class="calendar-nav">
-                    <button class="calendar-btn" id="nextMonth" title="Next Month" type="button">&rsaquo;</button>
-                    <button class="calendar-btn" id="nextYear" title="Next Year" type="button">&raquo;</button>
-                </div>
-            </div>
-            <div class="calendar-grid" id="calendarGrid"></div>
-            <div class="calendar-worded-date" id="wordedDate"></div>
-            <button class="calendar-today-btn" id="calendarTodayBtn" type="button" style="display: none;">Back to Today</button>
-        </div>
-    </div>
-</div>
-`;
-
-(function injectWidgetIfMissing() {
-    if (document.querySelector('.widget-panel')) return;
-    const content = document.querySelector('.content');
-    if (!content) return;
-    const template = document.createElement('template');
-    template.innerHTML = WIDGET_HTML.trim();
-    content.appendChild(template.content.firstChild);
-})();
-
-(function injectNavGamesItem() {
-    const menuList = document.querySelector('#menuList .list');
-    if (!menuList) return;
-    if (menuList.querySelector('#gamesBtn')) return;
-    const li = document.createElement('li');
-    li.innerHTML = `<a class="left-panel-btn" id="gamesBtn" href="games.html">
-        <svg class="nav-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4.73,20q-1.5,0-2.56-1.07t-1.11-2.6q0-0.22 0.02-0.45t0.08-0.45l2.1-8.4Q3.6,5.68 4.68,4.84T7.13,4h9.75q1.38,0 2.45,0.84q1.07,0.84 1.42,2.19l2.1,8.4q0.05,0.23 0.09,0.46t0.04,0.46q0,1.52-1.09,2.59T19.28,20q-1.05,0-1.95-0.55q-0.9-0.55-1.35-1.5l-0.7-1.45q-0.13-0.25-0.38-0.38T14.38,16H9.63Q9.35,16 9.1,16.13T8.73,16.5l-0.7,1.45q-0.45,0.95-1.35,1.5T4.73,20ZM4.8,18q0.47,0 0.86-0.25t0.59-0.68l0.7-1.42q0.38-0.78 1.1-1.21T9.63,14h4.75q0.85,0 1.58,0.45t1.12,1.2l0.7,1.42q0.2,0.43 0.59,0.68T19.23,18q0.7,0 1.2-0.46t0.53-1.16q0,0.02-0.05-0.47L18.8,7.52q-0.18-0.68-0.7-1.1T16.88,6H7.13Q6.43,6 5.89,6.43T5.2,7.52L3.1,15.9q-0.05,0.15-0.05,0.45q0,0.7 0.51,1.17Q4.08,18 4.8,18Zm9.41-7.29Q14.5,10.43 14.5,10q0-0.43-0.29-0.71T13.5,9T12.79,9.29T12.5,10t0.29,0.71T13.5,11t0.71-0.29Zm2-2Q16.5,8.42 16.5,8q0-0.43-0.29-0.71T15.5,7T14.79,7.29T14.5,8q0,0.42 0.29,0.71T15.5,9t0.71-0.29Zm0,4Q16.5,12.43 16.5,12t-0.29-0.71T15.5,11t-0.71,0.29T14.5,12t0.29,0.71T15.5,13t0.71-0.29Zm2-2Q18.5,10.43 18.5,10q0-0.43-0.29-0.71T17.5,9T16.79,9.29T16.5,10t0.29,0.71T17.5,11t0.71-0.29ZM9.04,12.29q0.21-0.21 0.21-0.54v-1h1q0.33,0 0.54-0.21T11,10q0-0.33-0.21-0.54T10.25,9.25h-1v-1q0-0.32-0.21-0.54Q8.83,7.5 8.5,7.5q-0.32,0-0.54,0.21Q7.75,7.93 7.75,8.25v1h-1q-0.32,0-0.54,0.21T6,10t0.21,0.54t0.54,0.21h1v1q0,0.32 0.21,0.54T8.5,12.5q0.33,0 0.54-0.21ZM12,12Z"/></svg>
-        <span class="nav-text">GAMES</span>
-    </a>`;
-    menuList.appendChild(li);
-})();
 
 /* =========================================================
    SETTINGS & AUDIO ENGINE
@@ -251,40 +182,33 @@ applySettings();
 const navBtn    = document.getElementById('navBtn');
 const leftPanel = document.getElementById('leftPanel');
 const navLinks  = document.querySelectorAll('.left-panel-btn');
-const isHome    = document.body.classList.contains('page-home');
 
 /* =========================================================
-   1. RESET TO HOME ON REFRESH
-   ========================================================= */
-const navEntries = performance.getEntriesByType("navigation");
-if (navEntries.length > 0 && navEntries[0].type === "reload") {
-    if (!isHome) window.location.href = 'index.html';
-}
-
-/* =========================================================
-   2. MENU vs BACK BUTTON
+   2. MENU / RAIL TOGGLE
    ========================================================= */
 if (navBtn) {
-    if (isHome) {
-        navBtn.innerHTML = 'MENU';
-        navBtn.setAttribute('aria-expanded', 'false');
-        navBtn.addEventListener('click', () => {
-            const isOpen = leftPanel.classList.toggle('is-open');
-            navBtn.setAttribute('aria-expanded', String(isOpen));
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && leftPanel.classList.contains('is-open')) {
-                leftPanel.classList.remove('is-open');
-                navBtn.setAttribute('aria-expanded', 'false');
-                navBtn.focus();
-            }
-        });
-    } else {
-        const backIcon = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12,16l1.4-1.4L11.8,13H16V11H11.8l1.6-1.6L12,8L8,12l4,4Zm0,6q-2.07,0-3.9-0.79q-1.82-0.79-3.17-2.14Q3.58,17.73 2.79,15.9T2,12Q2,9.92 2.79,8.1Q3.58,6.27 4.93,4.93Q6.28,3.57 8.1,2.79Q9.93,2 12,2t3.9,0.79t3.17,2.14q1.35,1.35 2.14,3.17Q22,9.92 22,12t-0.79,3.9t-2.14,3.17q-1.35,1.35-3.17,2.14T12,22Zm0-2q3.35,0 5.68-2.32T20,12T17.68,6.32T12,4T6.33,6.32T4,12t2.33,5.68T12,20Zm0-8Z"/></svg>`;
-        navBtn.innerHTML = backIcon;
-        navBtn.title = "Go Back";
-        navBtn.addEventListener('click', () => window.history.back());
-    }
+    const setRail = (open) => {
+        if (!leftPanel) return;
+        leftPanel.classList.toggle('is-open', open);
+        document.body.classList.toggle('rail-open', open);
+        navBtn.setAttribute('aria-expanded', String(open));
+    };
+
+    navBtn.innerHTML = '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M3 6h18v2H3V6Zm0 5h18v2H3v-2Zm0 5h18v2H3v-2Z"/></svg>';
+    navBtn.setAttribute('aria-label', 'Toggle navigation');
+    navBtn.addEventListener('click', () => setRail(!leftPanel.classList.contains('is-open')));
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && leftPanel.classList.contains('is-open')) {
+            setRail(false);
+            navBtn.focus();
+        }
+    });
+
+    // Close the mobile drawer after choosing a section
+    navLinks.forEach(link => link.addEventListener('click', () => {
+        if (window.innerWidth <= 640) setRail(false);
+    }));
 }
 
 /* =========================================================
@@ -354,7 +278,7 @@ const contentData = {
             years:       "20XX–20XX",
             sortYear:    2023,
             location:    "Winnipeg, MB",
-            description: "Edit this entry in the admin panel to fill in your actual details.",
+            description: "Edit this entry in the editor to fill in your actual details.",
             highlights: [
                 "Research Methods",
                 "Abnormal Psychology",
@@ -533,7 +457,6 @@ const contentData = {
 };
 
 /* Aliases — existing code reads these, no changes needed below */
-const heroData      = contentData.profile;
 const thoughtsPosts = contentData.posts;
 /* Ensure defaults are in new format */
 for (let i = 0; i < thoughtsPosts.length; i++) {
@@ -636,9 +559,21 @@ function getPostTab(post) {
 function migrateHeroes() {
     if (!contentData.site) contentData.site = { projectName: 'PORTFOLIO', theme: 'retro' };
     if (!contentData.site.heroPostIds) {
-        contentData.site.heroPostIds = {
-            home: null, profile: null, education: null, experience: null, skills: null, survey: null
-        };
+        contentData.site.heroPostIds = { home: null };
+    }
+
+    // Older versions generated a hidden "About" note from the profile and
+    // promoted it to the home hero. The hero now falls back to the profile
+    // directly, so remove those generated notes when we find them.
+    const heroId = contentData.site.heroPostIds.home;
+    if (heroId && String(heroId).startsWith('p_about_')) {
+        contentData.site.heroPostIds.home = null;
+    }
+    for (let i = contentData.posts.length - 1; i >= 0; i--) {
+        const post = contentData.posts[i];
+        if (post && String(post.id || '').startsWith('p_about_')) {
+            contentData.posts.splice(i, 1);
+        }
     }
 
     // Validate that each hero id references an existing post.
@@ -649,38 +584,6 @@ function migrateHeroes() {
             contentData.site.heroPostIds[tab] = null;
         }
     });
-
-    // If Home hero is null (either by default or after clearing a dangling ref),
-    // create an About Me post from profile data.
-    if (!contentData.site.heroPostIds.home) {
-        const p = contentData.profile || {};
-        if (p.name || p.bio) {
-            const aboutId = 'p_about_' + Date.now().toString(36);
-            const blocks = [];
-            if (p.name)  blocks.push({ type: 'title',     content: p.name });
-            if (p.title) blocks.push({ type: 'subtitle',  content: p.title });
-            if (p.bio)   blocks.push({ type: 'paragraph', content: p.bio });
-            if (Array.isArray(p.actions) && p.actions.length) {
-                blocks.push({
-                    type: 'actions',
-                    content: p.actions.map(a => `${a.label} | ${a.href} | ${a.style || 'primary'}`).join('\n')
-                });
-            }
-            if (blocks.length) {
-                contentData.posts.unshift({
-                    id: aboutId,
-                    date: '2024-01-01',
-                    tab: 'home',
-                    label: 'introspection',
-                    author: 'Me',
-                    photos: [],
-                    hideFromList: true,
-                    fields: [{ name: 'About Me', blocks }]
-                });
-                contentData.site.heroPostIds.home = aboutId;
-            }
-        }
-    }
 }
 
 /* =========================================================
@@ -688,38 +591,47 @@ function migrateHeroes() {
    ========================================================= */
 function renderProfileMeta(p) {
     const parts = [];
-    if (p.location) parts.push(`<span class="profile-meta-item">📍 ${p.location}</span>`);
+    if (p.location) parts.push(`<span class="profile-meta-item">⌖ ${escapeHtml(p.location)}</span>`);
     if (p.email) {
-        parts.push(`<span class="profile-meta-item"><a href="mailto:${p.email}">✉️ ${p.email}</a></span>`);
+        parts.push(`<span class="profile-meta-item"><a href="mailto:${escapeHtml(p.email)}">✉ Email</a></span>`);
     }
     if (p.linkedin) {
         const url = p.linkedin.startsWith('http') ? p.linkedin : `https://${p.linkedin}`;
-        parts.push(`<span class="profile-meta-item"><a href="${url}" target="_blank" rel="noopener">🔗 LinkedIn</a></span>`);
+        parts.push(`<span class="profile-meta-item"><a href="${escapeHtml(url)}" target="_blank" rel="noopener">↗ LinkedIn</a></span>`);
     }
     if (parts.length === 0) return '';
-    return `<div class="hero-meta">${parts.join('<span class="meta-sep">·</span>')}</div>`;
+    return `<div class="hero-meta">${parts.join('<span class="meta-sep">/</span>')}</div>`;
+}
+
+function actionClass(style) {
+    if (style === 'primary') return 'btn btn--primary';
+    if (style === 'secondary') return 'btn btn--ghost';
+    return 'btn btn--ghost';
+}
+
+function renderActions(actions, className = 'hero-actions') {
+    if (!Array.isArray(actions) || !actions.length) return '';
+    return `<div class="${className}">
+        ${actions.map(a =>
+            `<a href="${escapeHtml(a.href || '#')}" class="${actionClass(a.style)}">${escapeHtml(a.label || '')}</a>`
+        ).join('')}
+    </div>`;
 }
 
 function renderHero() {
     const el = document.getElementById('heroText');
     if (!el) return;
+    const p = contentData.profile || {};
+    const name = (p.name || 'IAN').trim() || 'IAN';
+
     el.innerHTML = `
-        ${heroData.greeting ? `<p class="greeting">${heroData.greeting}</p>` : ''}
-        <h1 class="hero-name">
-            ${heroData.name || ''}
-            ${heroData.pronouns ? `<span class="hero-pronouns">(${heroData.pronouns})</span>` : ''}
-        </h1>
-        ${heroData.title ? `<h2 class="hero-title">${heroData.title}</h2>` : ''}
-        ${heroData.tagline ? `<p class="hero-tagline">${heroData.tagline}</p>` : ''}
-        ${heroData.bio ? `<p class="hero-bio">${heroData.bio}</p>` : ''}
-        ${renderProfileMeta(heroData)}
-        ${heroData.actions && heroData.actions.length ? `
-            <div class="hero-actions">
-                ${heroData.actions.map(a =>
-                    `<a href="${a.href}" class="btn btn-${a.style}">${a.label}</a>`
-                ).join('')}
-            </div>
-        ` : ''}
+        <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Portfolio${p.location ? ' · ' + escapeHtml(p.location) : ''}</p>
+        <h1 class="hero-name" id="heroName">${escapeHtml(name)}${p.pronouns ? ` <span class="hero-pronouns">(${escapeHtml(p.pronouns)})</span>` : ''}</h1>
+        ${p.title ? `<p class="hero-role">${escapeHtml(p.title)}</p>` : ''}
+        ${p.tagline ? `<p class="hero-tagline">${escapeHtml(p.tagline)}</p>` : ''}
+        ${p.bio ? `<p class="hero-bio">${escapeHtml(p.bio)}</p>` : ''}
+        ${renderActions(p.actions)}
+        ${renderProfileMeta(p)}
     `;
 }
 
@@ -730,6 +642,7 @@ let currentDateFilter = null;
 let activeLabelFilter = null;
 
 function formatPostDate(dateStr) {
+    if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return dateStr || 'Undated';
     const [y, m, d] = dateStr.split('-');
     return new Date(y, m - 1, d).toLocaleDateString('en-US', {
         month: 'long', day: 'numeric', year: 'numeric'
@@ -760,33 +673,36 @@ function renderPosts() {
         filtered = filtered.filter(p => (p.label || 'general') === activeLabelFilter);
     }
 
-    filtered.sort((a, b) => b.date.localeCompare(a.date));
+    filtered.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
 
-    if (filtered.length === 0) {
+    const visible = filtered.filter(p => !p.hideFromList);
+
+    if (visible.length === 0) {
         const tabLabel = currentTab && currentTab !== 'home'
             ? (currentTab.charAt(0).toUpperCase() + currentTab.slice(1) + ' ')
             : '';
-        let message = tabLabel ? `No ${tabLabel}posts yet.` : 'No thoughts for this day yet. Check back later!';
+        let message = tabLabel ? `No ${tabLabel}notes yet.` : 'No notes for this day yet.';
         if (currentDateFilter && activeLabelFilter) {
-            message = `No ${tabLabel}posts labeled "${formatLabelName(activeLabelFilter)}" on this date.`;
+            message = `No ${tabLabel}notes labelled “${formatLabelName(activeLabelFilter)}” on this date.`;
         } else if (activeLabelFilter) {
-            message = `No ${tabLabel}posts labeled "${formatLabelName(activeLabelFilter)}" yet.`;
+            message = `No ${tabLabel}notes labelled “${formatLabelName(activeLabelFilter)}” yet.`;
         } else if (currentDateFilter) {
-            message = `No ${tabLabel}posts on this date.`;
+            message = `No ${tabLabel}notes on this date.`;
         }
-        postList.innerHTML = `<p class="no-posts">${message}</p>`;
+        postList.innerHTML = `<p class="no-posts">${escapeHtml(message)}</p>`;
     } else {
-        postList.innerHTML = filtered.filter(p => !p.hideFromList).map(post => {
+        postList.innerHTML = visible.map(post => {
             const label = getLabel(post.label);
+            const safeColor = /^#[0-9a-f]{3,8}$/i.test(label.color || '') ? label.color : '#d6cebf';
             const preview = getPostPreview(post);
             return `
-                <article class="post-card" data-post-id="${post.id}" style="--label-color: ${label.color};">
+                <article class="post-card" data-post-id="${escapeHtml(post.id)}" style="--label-color: ${safeColor};" tabindex="0" role="button" aria-label="Read ${escapeHtml(preview.title)}">
                     <div class="post-label">
                         ${LABEL_ICON_SVG}
-                        <span class="post-label-text">${formatLabelName(post.label)}</span>
+                        <span class="post-label-text">${escapeHtml(formatLabelName(post.label))}</span>
                     </div>
                     <div class="post-card-date">
-                      ${formatPostDate(post.date)}${post.author ? ` · ${post.author}` : ''}
+                      ${escapeHtml(formatPostDate(post.date))}${post.author ? ` · ${escapeHtml(post.author)}` : ''}
                     </div>
                     <h4 class="post-card-title">${escapeHtml(preview.title)}</h4>
                     ${preview.subtitle ? `<p class="post-card-subtitle">${escapeHtml(preview.subtitle)}</p>` : ''}
@@ -984,6 +900,17 @@ function renderCalendar(date) {
             renderPosts();
         });
 
+        // Make the calendar usable without a mouse
+        cell.tabIndex = 0;
+        cell.setAttribute('role', 'button');
+        cell.setAttribute('aria-label', `${monthNames[month]} ${day}, ${year}`);
+        cell.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                cell.click();
+            }
+        });
+
         grid.appendChild(cell);
     }
 
@@ -1018,6 +945,14 @@ document.getElementById('postList')?.addEventListener('click', (e) => {
     openPostReading(card);
 });
 
+document.getElementById('postList')?.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const card = e.target.closest('.post-card');
+    if (!card) return;
+    e.preventDefault();
+    openPostReading(card);
+});
+
 function openPostReading(card) {
     const postId = card.dataset.postId;
     const post = thoughtsPosts.find(p => p.id === postId);
@@ -1025,9 +960,16 @@ function openPostReading(card) {
     activeReadingPostId = postId;
     postReadingPage = 0;
     card.classList.add('is-expanded');
+    card.removeAttribute('role');
+    card.removeAttribute('tabindex');
     document.body.classList.add('post-focused');
     document.body.classList.remove('hero-focused');
     renderPostReadingContent(post, card);
+    const heading = card.querySelector('.post-field-title');
+    if (heading) {
+        heading.setAttribute('tabindex', '-1');
+        heading.focus({ preventScroll: true });
+    }
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1038,15 +980,24 @@ function renderPostReadingContent(post, card) {
 }
 
 function closePostReading() {
+    const expanded = document.querySelector('.post-card.is-expanded');
     document.body.classList.remove('post-focused');
     document.querySelectorAll('.post-card.is-expanded').forEach(c => {
         c.classList.remove('is-expanded');
+        c.setAttribute('role', 'button');
+        c.setAttribute('tabindex', '0');
         const rv = c.querySelector('.post-reading-view');
         if (rv) rv.innerHTML = '';
     });
     activeReadingPostId = null;
     postReadingPage = 0;
+    if (expanded) expanded.focus({ preventScroll: true });
 }
+
+document.getElementById('readingClose')?.addEventListener('click', closePostReading);
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.body.classList.contains('post-focused')) closePostReading();
+});
 
 function handlePostPage(delta) {
     if (!activeReadingPostId) return;
@@ -1082,40 +1033,29 @@ document.addEventListener('click', (e) => {
 /* =========================================================
    15. PAGE INITS
    ========================================================= */
-if (document.getElementById('heroText')) {
-    renderHeroForTab('home');
+function renderAllViews() {
+    updateHeaderName();
+    renderTheme();
+
+    if (document.getElementById('heroText')) renderHeroForTab('home');
+    if (document.getElementById('educationTimeline')) renderEducationPage();
+    if (document.getElementById('experienceTimeline')) renderExperiencePage();
+    if (document.getElementById('profileName')) renderProfilePage();
+    if (document.getElementById('skillsCard')) renderSkillsPage();
+    if (document.getElementById('surveyFormCard')) renderSurveyPage();
+    if (document.getElementById('postList')) {
+        renderLabelChips();
+        renderPosts();
+    }
+    if (typeof currentViewDate !== 'undefined' && document.getElementById('calendarGrid')) {
+        renderCalendar(currentViewDate);
+    }
 }
 
-/* Inject hero UIs for non-home tabs */
-['profile', 'education', 'experience', 'skills', 'survey'].forEach(t => {
-    prepareTabHero(t);
-    renderHeroForTab(t);
-});
+window.renderAllViews = renderAllViews;
 
-if (document.getElementById('educationTimeline')) {
-    renderEducationPage();
-}
-
-if (document.getElementById('experienceTimeline')) {
-    renderExperiencePage();
-}
-
-if (document.getElementById('profileName')) {
-    renderProfilePage();
-}
-
-if (document.getElementById('skillsCard')) {
-    renderSkillsPage();
-}
-
-if (document.getElementById('surveyFormCard')) {
-    renderSurveyPage();
-}
-
-if (document.getElementById('postList')) {
-    renderLabelChips();
-    renderPosts();
-    document.getElementById('clearPostFilter')?.addEventListener('click', () => {
+if (document.getElementById('clearPostFilter')) {
+    document.getElementById('clearPostFilter').addEventListener('click', () => {
         currentDateFilter = null;
         activeLabelFilter = null;
         renderCalendar(currentViewDate);
@@ -1125,24 +1065,15 @@ if (document.getElementById('postList')) {
 }
 
 /* =========================================================
-   16. SCROLL COLLAPSE (Desktop Only)
+   16. DESK PANEL
+   The panel is sticky on desktop and stacks under the content on
+   small screens; there is no collapse state to manage any more.
    ========================================================= */
-const contentArea = document.querySelector('.content');
-const widgetPanel = document.querySelector('.widget-panel');
-
-if (contentArea && widgetPanel) {
-    contentArea.addEventListener('scroll', () => {
-        if (window.innerWidth <= 1000) return;
-        widgetPanel.classList.toggle('is-collapsed', contentArea.scrollTop > 50);
-    });
-}
-
-
 
 /* =========================================================
    4-tier loader: portfolioContent > legacy thoughtsPosts key > content.json > legacy posts.json > defaults
    ========================================================= */
-(async function loadContent() {
+async function loadContent() {
     // Tier 1: portfolioContent in localStorage
     try {
         const stored = localStorage.getItem('portfolioContent');
@@ -1192,22 +1123,27 @@ if (contentArea && widgetPanel) {
             }
         }
     } catch (e) { /* posts.json not found, use hardcoded defaults */ }
-})();
+
+    // Nothing loaded: render the built-in defaults
+    renderAllViews();
+}
 
 function applyContent(parsed) {
     if (Array.isArray(parsed.posts)) {
         parsed.posts = parsed.posts.map(migratePost).filter(Boolean);
+        thoughtsPosts.length = 0;
+        thoughtsPosts.push(...parsed.posts);
     }
     if (parsed.profile && typeof parsed.profile === 'object') {
         Object.assign(contentData.profile, parsed.profile);
     }
-    if (Array.isArray(parsed.posts) && parsed.posts.length > 0) {
-        thoughtsPosts.length = 0;
-        thoughtsPosts.push(...parsed.posts);
-    }
     if (Array.isArray(parsed.education)) {
         contentData.education.length = 0;
         contentData.education.push(...parsed.education);
+    }
+    if (Array.isArray(parsed.experience)) {
+        contentData.experience.length = 0;
+        contentData.experience.push(...parsed.experience);
     }
     if (Array.isArray(parsed.photos)) {
         contentData.photos.length = 0;
@@ -1229,11 +1165,15 @@ function applyContent(parsed) {
     if (parsed.site && typeof parsed.site === 'object') {
         if (!contentData.site) contentData.site = { projectName: 'PORTFOLIO', theme: 'retro' };
         Object.assign(contentData.site, parsed.site);
+        if (!contentData.site.heroPostIds) {
+            contentData.site.heroPostIds = { home: null };
+        }
     }
     if (Array.isArray(parsed.surveys)) {
         contentData.surveys = parsed.surveys.slice();
     } else if (parsed.survey && typeof parsed.survey === 'object') {
-        // Legacy: single survey → wrap in array
+        // Legacy: single survey → wrap in array, keeping usable default fields
+        const fallbackFields = (DEFAULT_CONTENT.surveys && DEFAULT_CONTENT.surveys[0] && DEFAULT_CONTENT.surveys[0].fields) || [];
         contentData.surveys = [{
             id: 's_' + Math.random().toString(36).slice(2, 10),
             title: 'Portfolio Feedback',
@@ -1242,50 +1182,84 @@ function applyContent(parsed) {
             introText: parsed.survey.introText || '',
             thankYouTitle: parsed.survey.thankYouTitle || '',
             thankYouMessage: parsed.survey.thankYouMessage || '',
-            fields: parsed.survey.fields || []
+            fields: (Array.isArray(parsed.survey.fields) && parsed.survey.fields.length)
+                ? parsed.survey.fields
+                : JSON.parse(JSON.stringify(fallbackFields))
         }];
     }
     ensureSurveysArray();
-
-    if (document.getElementById('heroText')) renderHeroForTab('home');
-    updateHeaderName();
-    renderTheme();
-    if (document.getElementById('postList')) {
-        renderLabelChips();
-        renderPosts();
-    }
-    if (typeof currentViewDate !== 'undefined') renderCalendar(currentViewDate);
-    if (typeof populateProfileForm === 'function') populateProfileForm();
-    if (typeof populateSkillsForm === 'function') populateSkillsForm();
-    if (document.getElementById('educationTimeline')) renderEducationPage();
-    if (document.getElementById('experienceTimeline')) renderExperiencePage();
-    if (document.getElementById('profileName')) renderProfilePage();
     migrateHeroes();
 
-    // Re-render ALL tab heroes with migrated state
-    ['home', 'profile', 'education', 'experience', 'skills', 'survey'].forEach(t => {
-        renderHeroForTab(t);
-    });
+    renderAllViews();
 
-    // Re-render posts list (Home hero's hideFromList flag may have changed)
-    if (document.getElementById('postList')) renderPosts();
-    if (document.getElementById('skillsCard')) renderSkillsPage();
-    if (document.getElementById('surveyFormCard')) renderSurveyPage();
+    if (typeof populateProfileForm === 'function' && document.getElementById('pfName')) populateProfileForm();
+    if (typeof populateSkillsForm === 'function' && document.getElementById('skillsList')) populateSkillsForm();
+    if (typeof populateSiteForm === 'function' && document.getElementById('siteForm')) populateSiteForm();
+    if (document.getElementById('adminList')) renderAdminList();
+    if (document.getElementById('heroSelects')) renderHeroSelects();
 }
 
 function saveContent() {
     try {
         localStorage.setItem('portfolioContent', JSON.stringify(contentData));
+        markDraftSaved();
     } catch (e) {
         alert('Could not save locally — storage may be full or blocked.');
     }
 }
 
-function updateHeaderName() {
-    const nameEl = document.querySelector('.name');
-    if (nameEl) {
-        nameEl.textContent = (contentData.site && contentData.site.projectName) || 'PORTFOLIO';
+function markDraftSaved() {
+    const stamp = document.getElementById('adminSaveTime');
+    if (stamp) {
+        stamp.textContent = new Date().toLocaleString('en-CA', {
+            month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+        });
     }
+    if (document.getElementById('storageUsage')) updateStorageMeter();
+}
+
+function updateHeaderName() {
+    const p = contentData.profile || {};
+    const name = (p.name || 'IAN').trim() || 'IAN';
+    const monogram = (name.replace(/[^A-Za-z0-9]/g, '').charAt(0) || 'I').toUpperCase();
+
+    document.querySelectorAll('[data-profile-name]').forEach(el => { el.textContent = name; });
+    document.querySelectorAll('[data-profile-role]').forEach(el => { el.textContent = p.title || ''; });
+    document.querySelectorAll('[data-monogram]').forEach(el => { el.textContent = monogram; });
+
+    const email = (p.email || '').trim();
+    document.querySelectorAll('[data-contact-email]').forEach(el => {
+        el.setAttribute('href', email ? 'mailto:' + email : 'survey.html');
+    });
+
+    const pageTitle = document.body.dataset.pageTitle || 'Portfolio';
+    const siteTitle = ((contentData.site && contentData.site.projectName) || '').trim();
+    document.title = (pageTitle === 'Portfolio' && siteTitle)
+        ? siteTitle
+        : `${name} — ${pageTitle}`;
+
+    const footerMeta = document.querySelector('.footer-meta');
+    if (footerMeta) {
+        footerMeta.textContent = [p.title, p.location].filter(Boolean).join(' · ');
+    }
+
+    updateHeroCard();
+}
+
+function updateHeroCard() {
+    const set = (key, value) => {
+        const el = document.querySelector(`[data-fact="${key}"]`);
+        if (el && value) el.textContent = value;
+    };
+    const p = contentData.profile || {};
+    const edu = (contentData.education || [])[0];
+    const skills = (contentData.skills || []).slice(0, 3);
+    const hobbies = (contentData.hobbies || []).slice(0, 3);
+
+    set('location', p.location);
+    if (edu) set('studied', [edu.degree, edu.institution].filter(Boolean).join(', '));
+    if (skills.length) set('focus', skills.join(', '));
+    if (hobbies.length) set('offclock', hobbies.join(', '));
 }
 
 function renderTheme() {
@@ -1295,11 +1269,8 @@ function renderTheme() {
     ['retro', 'retro-bold'].forEach(t => {
         document.body.classList.toggle('site-theme-' + t, t === theme);
     });
+    document.body.dataset.theme = theme;
 }
-
-/* Run immediately so every page has the current name even before loader finishes */
-updateHeaderName();
-renderTheme();
 
 /* =========================================================
    18. ADMIN POST EDITOR
@@ -1309,12 +1280,9 @@ const adminListEl    = document.getElementById('adminList');
 const adminForm      = document.getElementById('adminForm');
 const adminEditIndex = document.getElementById('adminEditIndex');
 const adminDate      = document.getElementById('adminDate');
-const adminTitleIn   = null;
-const adminExcerpt   = null;
 const adminLabelSel  = document.getElementById('adminLabel');
 const adminFormTitle = document.getElementById('adminFormTitle');
 const adminAuthorSel = document.getElementById('adminAuthor');
-const adminImage = document.getElementById('adminImage');
 
 function populateAuthorSelect() {
     if (!adminAuthorSel) return;
@@ -1323,11 +1291,22 @@ function populateAuthorSelect() {
         .join('');
 }
 
+let lastFocusedEl = null;
+
 function openAdmin() {
     if (!adminBackdrop) return;
+    lastFocusedEl = document.activeElement;
+
+    currentPostTab = 'home';
+    const search = document.getElementById('adminPostSearch');
+    if (search) search.value = '';
+
     populateLabelSelect();
     populateAuthorSelect();
     populateProfileForm();
+    populateSiteForm();
+    populateAdminPostTabSelect();
+    renderHeroSelects();
     populatePhotoLabelPicker();
     resetAdminForm();
     resetPhotoForm();
@@ -1340,34 +1319,32 @@ function openAdmin() {
     renderAdminPhotoList();
     renderAdminEducationList();
     renderAdminExperienceList();
-
-    // Reset to Posts tab context
-    document.querySelectorAll('.admin-tab').forEach(t => {
-        t.classList.toggle('is-active', t.dataset.tab === 'posts');
-    });
-    document.querySelectorAll('.admin-tab-panel').forEach(p => {
-        p.classList.toggle('is-active', p.id === 'adminPanelPosts');
-    });
-    currentPostTab = 'home';
-    movePostsManagerInto('posts');
+    updateStorageMeter();
 
     adminBackdrop.hidden = false;
     document.body.style.overflow = 'hidden';
+    activateAdminTab('posts');
 
-    const banner = document.getElementById('adminMigrationBanner');
-    if (banner) banner.style.display = window.__legacyMigration ? 'block' : 'none';
+    const panel = adminBackdrop.querySelector('.admin-panel');
+    if (panel) panel.focus({ preventScroll: true });
 }
+
 function closeAdmin() {
     if (!adminBackdrop) return;
     adminBackdrop.hidden = true;
     document.body.style.overflow = '';
+    if (lastFocusedEl && typeof lastFocusedEl.focus === 'function') {
+        lastFocusedEl.focus({ preventScroll: true });
+    }
 }
+
 function populateLabelSelect() {
     if (!adminLabelSel) return;
     adminLabelSel.innerHTML = Object.keys(postLabels)
         .map(k => `<option value="${k}">${formatLabelName(k)}</option>`)
         .join('');
 }
+
 function resetAdminForm() {
     if (!adminForm) return;
     adminForm.reset();
@@ -1387,18 +1364,33 @@ function persistPosts() {
 function refreshMainViews() {
     renderLabelChips();
     renderPosts();
-    if (typeof currentViewDate !== 'undefined') renderCalendar(currentViewDate);
+    if (typeof currentViewDate !== 'undefined' && document.getElementById('calendarGrid')) {
+        renderCalendar(currentViewDate);
+    }
+    if (document.getElementById('heroText')) renderHeroForTab('home');
+    if (document.getElementById('profileName')) renderProfilePage();
+    updateHeaderName();
 }
+
 function renderAdminList() {
     if (!adminListEl) return;
 
+    const query = (document.getElementById('adminPostSearch')?.value || '').trim().toLowerCase();
+
     const tabFiltered = thoughtsPosts
         .map((p, i) => ({ p, i }))
-        .filter(({ p }) => getPostTab(p) === currentPostTab);
+        .filter(({ p }) => getPostTab(p) === currentPostTab)
+        .filter(({ p }) => {
+            if (!query) return true;
+            const haystack = [
+                getPostTitle(p), p.date, p.label, p.author, getPostPreview(p).excerpt
+            ].join(' ').toLowerCase();
+            return haystack.includes(query);
+        });
 
     if (tabFiltered.length === 0) {
         const label = currentPostTab === 'home' ? '' : currentPostTab + ' ';
-        adminListEl.innerHTML = `<p class="admin-empty">No ${label}posts yet. Add one above.</p>`;
+        adminListEl.innerHTML = `<p class="admin-empty">No ${label}notes${query ? ' match that search' : ' yet'}.</p>`;
         return;
     }
 
@@ -1408,15 +1400,19 @@ function renderAdminList() {
     const sorted = tabFiltered.sort((a, b) => b.p.date.localeCompare(a.p.date));
     adminListEl.innerHTML = sorted.map(({ p, i }) => {
         const isHero = p.id === currentHeroId;
+        const heroBtn = currentPostTab === 'home'
+            ? `<button data-action="hero" data-index="${i}" type="button" title="Promote to the Home hero">${isHero ? '★ Featured' : '☆ Feature'}</button>`
+            : '';
         return `
             <div class="admin-item">
                 <div class="admin-item-info">
                     <strong>${escapeHtml(getPostTitle(p))}${isHero ? ' ★' : ''}</strong>
-                    <span>${p.date} · ${formatLabelName(p.label)}${p.author ? ` · ${p.author}` : ''}</span>
+                    <span>${escapeHtml(p.date)} / ${escapeHtml(formatLabelName(p.label))}${p.author ? ` / ${escapeHtml(p.author)}` : ''}</span>
                 </div>
                 <div class="admin-item-actions">
                     <button data-action="edit" data-index="${i}" type="button">Edit</button>
-                    <button data-action="hero" data-index="${i}" type="button">${isHero ? '★ Remove Hero' : '☆ Set Hero'}</button>
+                    <button data-action="duplicate" data-index="${i}" type="button">Duplicate</button>
+                    ${heroBtn}
                     <button data-action="delete" data-index="${i}" type="button">Delete</button>
                 </div>
             </div>
@@ -1424,21 +1420,45 @@ function renderAdminList() {
     }).join('');
 }
 
-/* --- Wire settings button --- */
+/* --- Editor access ---
+   `?admin=1` unlocks the editor for this page view. The content never
+   leaves the browser until it is exported, so this is a convenience
+   gate rather than a security boundary. */
 const isAdmin = new URLSearchParams(location.search).get('admin') === '1';
+document.body.classList.toggle('is-admin', isAdmin);
+
 if (isAdmin) {
     document.getElementById('thoughtBtn')?.addEventListener('click', openAdmin);
-} else {
-    document.getElementById('thoughtBtn')?.addEventListener('click', () => {
-        alert('Thought of the Day — coming soon!');
-    });
 }
+
 document.getElementById('adminCloseBtn')?.addEventListener('click', closeAdmin);
 adminBackdrop?.addEventListener('click', (e) => {
     if (e.target === adminBackdrop) closeAdmin();
 });
+
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && adminBackdrop && !adminBackdrop.hidden) closeAdmin();
+});
+
+// Keep keyboard focus inside whatever dialog is open
+document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Tab') return;
+    const dialog = [adminBackdrop, settingsBackdrop, photosModal]
+        .find(el => el && !el.hidden);
+    if (!dialog) return;
+    const focusables = dialog.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+    );
+    if (!focusables.length) return;
+    const first = focusables[0];
+    const last = focusables[focusables.length - 1];
+    if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+    } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+    }
 });
 
 /* --- Save (add or edit) --- */
@@ -1514,19 +1534,7 @@ adminListEl?.addEventListener('click', (e) => {
     if (btn.dataset.action === 'hero') {
         if (!contentData.site.heroPostIds) contentData.site.heroPostIds = {};
         const currentHero = contentData.site.heroPostIds[currentPostTab];
-
-        if (currentHero === post.id) {
-            contentData.site.heroPostIds[currentPostTab] = null;
-            post.hideFromList = false;
-        } else {
-            if (currentHero) {
-                const oldHero = thoughtsPosts.find(p => p.id === currentHero);
-                if (oldHero) oldHero.hideFromList = false;
-            }
-            contentData.site.heroPostIds[currentPostTab] = post.id;
-            post.hideFromList = true;
-        }
-
+        contentData.site.heroPostIds[currentPostTab] = currentHero === post.id ? null : post.id;
         saveContent();
         renderAdminList();
         renderHeroForTab(currentPostTab);
@@ -1549,6 +1557,20 @@ adminListEl?.addEventListener('click', (e) => {
 
         updateAdminFormTitle();
         adminForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } else if (btn.dataset.action === 'duplicate') {
+        const copy = JSON.parse(JSON.stringify(post));
+        copy.id = genPostId();
+        copy.hideFromList = false;
+        copy.date = new Date().toISOString().slice(0, 10);
+        if (copy.fields && copy.fields[0] && Array.isArray(copy.fields[0].blocks)) {
+            const titleBlock = copy.fields[0].blocks.find(b => b.type === 'title');
+            if (titleBlock) titleBlock.content = (titleBlock.content || 'Untitled') + ' (copy)';
+        }
+        thoughtsPosts.push(copy);
+        persistPosts();
+        refreshMainViews();
+        renderAdminList();
+        showAdminToast('Note duplicated');
     } else if (btn.dataset.action === 'delete') {
         if (!confirm('Delete this post?')) return;
         thoughtsPosts.splice(idx, 1);
@@ -1573,44 +1595,63 @@ function populateProfileForm() {
         const el = document.getElementById(id);
         if (el) el.value = val || '';
     };
-    setVal('siteProjectName', (contentData.site && contentData.site.projectName) || '');
-    const themeSelect = document.getElementById('siteTheme');
-    if (themeSelect) themeSelect.value = (contentData.site && contentData.site.theme) || 'retro';
-    setVal('profileEmail', p.email);
+    setVal('pfName', p.name);
+    setVal('pfPronouns', p.pronouns);
+    setVal('pfGreeting', p.greeting);
+    setVal('pfTitle', p.title);
+    setVal('pfTagline', p.tagline);
+    setVal('pfBio', p.bio);
+    setVal('pfAbout', p.about);
+    setVal('pfLocation', p.location);
+    setVal('pfEmail', p.email);
+    setVal('pfLinkedin', p.linkedin);
+    setVal('pfActions', (p.actions || [])
+        .map(a => [a.label || '', a.href || '', a.style || 'primary'].join(' | '))
+        .join('\n'));
 }
 
 /* --- Profile form: save --- */
 function saveProfileForm() {
     const g = (id) => (document.getElementById(id)?.value || '').trim();
 
-    if (!contentData.site) contentData.site = { projectName: 'PORTFOLIO', theme: 'retro' };
-    contentData.site.projectName = g('siteProjectName') || 'PORTFOLIO';
-    const themeSelect = document.getElementById('siteTheme');
-    contentData.site.theme = themeSelect ? themeSelect.value : 'retro';
+    if (!contentData.profile) contentData.profile = {};
+    const p = contentData.profile;
 
-    contentData.profile.email = g('profileEmail');
+    p.name     = g('pfName') || 'IAN';
+    p.pronouns = g('pfPronouns');
+    p.greeting = g('pfGreeting');
+    p.title    = g('pfTitle');
+    p.tagline  = g('pfTagline');
+    p.bio      = g('pfBio');
+    p.about    = g('pfAbout');
+    p.location = g('pfLocation');
+    p.email    = g('pfEmail');
+    p.linkedin = g('pfLinkedin');
+    p.actions  = g('pfActions').split('\n').map(line => {
+        const [label, href, style] = line.split('|').map(s => (s || '').trim());
+        return label && href ? { label, href, style: style || 'primary' } : null;
+    }).filter(Boolean);
 
     saveContent();
     updateHeaderName();
-    renderTheme();
+    if (document.getElementById('heroText')) renderHeroForTab('home');
+    if (document.getElementById('profileName')) renderProfilePage();
+    if (document.getElementById('postList')) renderPosts();
+    showAdminToast('Profile saved');
     playSound('success');
 }
 
-/* --- Profile form: submit handler --- */
+/* --- Profile form: submit + reset --- */
 document.getElementById('profileForm')?.addEventListener('submit', (e) => {
     e.preventDefault();
     saveProfileForm();
 });
+document.getElementById('profileCancelBtn')?.addEventListener('click', populateProfileForm);
 
 /* --- Export --- */
 document.getElementById('adminExportBtn')?.addEventListener('click', () => {
-    const blob = new Blob([JSON.stringify(contentData, null, 2)], { type: 'application/json' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url;
-    a.download = 'content.json';
-    a.click();
-    URL.revokeObjectURL(url);
+    downloadJson('content.json');
+    showAdminToast('content.json exported');
 });
 
 /* --- Import --- */
@@ -1628,26 +1669,28 @@ importInput?.addEventListener('change', (e) => {
                 // Legacy: array of posts
                 parsed.forEach((p, i) => {
                     if (!p.date || !p.title || !p.excerpt) {
-                        throw new Error(`Post #${i + 1} missing required fields.`);
+                        throw new Error(`Post #${i + 1} is missing date, title or excerpt.`);
                     }
                 });
                 applyContent({ posts: parsed });
                 saveContent();
-                alert(`Imported ${parsed.length} post(s) (legacy format — consider exporting as content.json).`);
+                showAdminToast(`Imported ${parsed.length} legacy note${parsed.length === 1 ? '' : 's'}`);
             } else if (parsed && typeof parsed === 'object') {
-                // New: full content bundle
                 applyContent(parsed);
                 saveContent();
                 const postCount = Array.isArray(parsed.posts) ? parsed.posts.length : 0;
                 const eduCount  = Array.isArray(parsed.education) ? parsed.education.length : 0;
-                alert(`Imported content bundle: ${postCount} post(s), ${eduCount} education entr${eduCount === 1 ? 'y' : 'ies'}.`);
+                showAdminToast(`Imported ${postCount} note${postCount === 1 ? '' : 's'}, ${eduCount} education entr${eduCount === 1 ? 'y' : 'ies'}`);
             } else {
-                throw new Error('File must contain a content object or a posts array.');
+                throw new Error('The file must contain a content object or a posts array.');
             }
 
-            refreshMainViews();
-            renderAdminList();
+            if (document.getElementById('adminList')) renderAdminList();
             resetAdminForm();
+            populateProfileForm();
+            populateSiteForm();
+            renderHeroSelects();
+            updateStorageMeter();
         } catch (err) {
             alert('Import failed: ' + err.message);
         }
@@ -1694,9 +1737,18 @@ document.getElementById('adminResetBtn')?.addEventListener('click', async () => 
     }
 
     applyContent(source);
-    refreshMainViews();
-    renderAdminList();
+    if (document.getElementById('adminList')) renderAdminList();
     resetAdminForm();
+    populateProfileForm();
+    populateSiteForm();
+    renderHeroSelects();
+    renderAdminEducationList();
+    renderAdminExperienceList();
+    renderAdminPhotoList();
+    renderAdminLabelsList();
+    populateSurveyAdminForm();
+    updateStorageMeter();
+    showAdminToast('Local draft reset');
 });
 
 /* =========================================================
@@ -1714,19 +1766,18 @@ const settingsClearDataBtn = document.getElementById('settingsClearDataBtn');
 function openSettings() {
     if (!settingsBackdrop) return;
     applySettings();
-    populateSiteSettings();
     settingsBackdrop.hidden = false;
-    setTimeout(() => settingsBackdrop.classList.add('is-open'), 10);
     document.body.style.overflow = 'hidden';
+    const panel = settingsBackdrop.querySelector('.settings-panel');
+    if (panel) panel.focus({ preventScroll: true });
 }
 
 function closeSettings() {
     if (!settingsBackdrop) return;
     settingsBackdrop.classList.remove('is-open');
-    setTimeout(() => {
-        settingsBackdrop.hidden = true;
-        document.body.style.overflow = '';
-    }, 300); // Wait for animation
+    settingsBackdrop.hidden = true;
+    document.body.style.overflow = '';
+    settingsBtn?.focus({ preventScroll: true });
 }
 
 // Wire up the gear icon
@@ -1779,7 +1830,7 @@ settingClockMode?.addEventListener('change', (e) => {
 
 // Clear Local Data
 settingsClearDataBtn?.addEventListener('click', () => {
-    if (!confirm('Are you sure? This will wipe your drafts, photo, and preferences. This cannot be undone.')) return;
+    if (!confirm('This clears the local draft, reading preferences and any photo handles stored in this browser. Published files are untouched.')) return;
     localStorage.clear();
     location.reload();
 });
@@ -1813,9 +1864,12 @@ function renderLabelChips() {
     const container = document.getElementById('postFilterChips');
     if (!container) return;
 
-    // Count posts per label
+    const currentTab = getCurrentTab();
+
+    // Count posts per label on this page only
     const counts = {};
     thoughtsPosts.forEach(p => {
+        if (currentTab && currentTab !== 'home' && getPostTab(p) !== currentTab) return;
         const key = p.label || 'general';
         counts[key] = (counts[key] || 0) + 1;
     });
@@ -1834,7 +1888,8 @@ function renderLabelChips() {
     }
 
     container.innerHTML = sortedLabels.map(key => {
-        const color = getLabel(key).color;
+        const raw = getLabel(key).color;
+        const color = /^#[0-9a-f]{3,8}$/i.test(raw || '') ? raw : '#d6cebf';
         const isActive = key === activeLabelFilter;
         return `
             <button class="post-filter-chip${isActive ? ' is-active' : ''}"
@@ -1864,14 +1919,15 @@ let lastRandomIndex = -1;
 let diceAnimating = false;
 
 function openPostByReference(post) {
-    const cards = document.querySelectorAll('.post-card');
-    for (const card of cards) {
-        if (card.dataset.postId === post.id) {
-            card.classList.add('is-expanded');
-            document.body.classList.add('post-focused');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            return;
-        }
+    const card = document.querySelector(`.post-card[data-post-id="${post.id}"]`);
+    if (card) {
+        openPostReading(card);
+        return;
+    }
+    // The note may live on another page
+    const tab = getPostTab(post);
+    if (tab && tab !== 'home') {
+        window.location.href = `${tab}.html?post=${encodeURIComponent(post.id)}`;
     }
 }
 
@@ -1970,19 +2026,39 @@ document.getElementById('calendarTodayBtn')?.addEventListener('click', () => {
 document.querySelector('.admin-tabs')?.addEventListener('click', (e) => {
     const tab = e.target.closest('.admin-tab');
     if (!tab) return;
-    const target = tab.dataset.tab;
+    activateAdminTab(tab.dataset.tab);
+});
 
+function activateAdminTab(target) {
+    if (!target) return;
     document.querySelectorAll('.admin-tab').forEach(t => {
-        t.classList.toggle('is-active', t.dataset.tab === target);
+        const active = t.dataset.tab === target;
+        t.classList.toggle('is-active', active);
+        t.setAttribute('aria-selected', String(active));
     });
+
     document.querySelectorAll('.admin-tab-panel').forEach(p => {
         const panelName = 'adminPanel' + target.charAt(0).toUpperCase() + target.slice(1);
         p.classList.toggle('is-active', p.id === panelName);
     });
 
-    // Move posts manager (form + list) into the correct tab's slot
-    movePostsManagerInto(target);
-});
+    if (target === 'posts') renderAdminList();
+    if (target === 'data') updateStorageMeter();
+    if (target === 'site') {
+        populateSiteForm();
+        renderHeroSelects();
+    }
+    if (target === 'profile') populateProfileForm();
+    if (target === 'skills') populateSkillsForm();
+    if (target === 'photos') renderAdminPhotoList();
+    if (target === 'education') renderAdminEducationList();
+    if (target === 'experience') renderAdminExperienceList();
+    if (target === 'labels') renderAdminLabelsList();
+    if (target === 'survey') populateSurveyAdminForm();
+
+    const body = document.querySelector('.admin-body');
+    if (body) body.scrollTop = 0;
+}
 
 /* =========================================================
    25. PHOTOS MODAL — Phase A (empty state)
@@ -2035,11 +2111,14 @@ function getFilteredPhotos() {
 
 function populatePhotoLabelPicker() {
     if (!photoLabelPicker) return;
-    photoLabelPicker.innerHTML = Object.keys(postLabels).map(k => `
-        <button class="post-filter-chip" data-label="${k}" style="--chip-color: ${getLabel(k).color};" type="button">
-            <span>${formatLabelName(k)}</span>
-        </button>
-    `).join('');
+    photoLabelPicker.innerHTML = Object.keys(postLabels).map(k => {
+        const raw = getLabel(k).color;
+        const color = /^#[0-9a-f]{3,8}$/i.test(raw || '') ? raw : '#d6cebf';
+        return `
+        <button class="post-filter-chip" data-label="${escapeHtml(k)}" style="--chip-color: ${color};" type="button">
+            <span>${escapeHtml(formatLabelName(k))}</span>
+        </button>`;
+    }).join('');
 }
 
 photoLabelPicker?.addEventListener('click', (e) => {
@@ -2052,7 +2131,7 @@ function resetPhotoForm() {
     if (!photoForm) return;
     photoForm.reset();
     photoEditIndex.value = '';
-    photoFormTitle.textContent = 'Add New Photo';
+    photoFormTitle.textContent = 'Add photo';
     photoDate.value = new Date().toISOString().slice(0, 10);
     photoLabelPicker?.querySelectorAll('.post-filter-chip').forEach(c => c.classList.remove('is-active'));
 }
@@ -2107,8 +2186,8 @@ function renderAdminPhotoList() {
         return `
             <div class="admin-item">
                 <div class="admin-item-info">
-                    <strong>${memoShort}</strong>
-                    <span>${p.date} · ${labelsText}</span>
+                    <strong>${escapeHtml(memoShort)}</strong>
+                    <span>${escapeHtml(p.date || '')} / ${escapeHtml(labelsText)}</span>
                 </div>
                 <div class="admin-item-actions">
                     <button data-action="edit" data-index="${i}" type="button">Edit</button>
@@ -2151,7 +2230,7 @@ function renderPhotosModal() {
     if (!body) return;
 
     if (contentData.photos.length === 0) {
-        body.innerHTML = '<p class="photos-empty">No photos yet. Add them in the admin panel.</p>';
+        body.innerHTML = '<p class="photos-empty">No photos yet. Add them in the editor.</p>';
         const sidebar = document.getElementById('photosSidebar');
         if (sidebar) sidebar.innerHTML = '';
         return;
@@ -2185,16 +2264,17 @@ function renderPhotosModal() {
 
     const cards = visible.map(({ photo, position }) => {
         const labelDots = (photo.labels || []).map(l =>
-            `<span class="photos-label-dot" style="background:${getLabel(l).color}" title="${formatLabelName(l)}"></span>`
+            `<span class="photos-label-dot" style="--chip-color:${/^#[0-9a-f]{3,8}$/i.test(getLabel(l).color || '') ? getLabel(l).color : '#d6cebf'}" title="${escapeHtml(formatLabelName(l))}"></span>`
         ).join('');
+        const altText = photo.memo || `Polaroid from ${photo.date || 'the archive'}`;
         return `
             <div class="photos-stack-card" data-position="${position}">
                 <div class="photos-stack-image">
-                    ${photo.image ? `<img src="${photo.image}" alt="">` : '<div class="photos-stack-placeholder">No image</div>'}
+                    ${photo.image ? `<img src="${escapeHtml(photo.image)}" alt="${escapeHtml(altText)}" loading="lazy">` : '<div class="photos-stack-placeholder">No image</div>'}
                 </div>
-                <div class="photos-stack-memo">${photo.memo || ''}</div>
+                <div class="photos-stack-memo">${escapeHtml(photo.memo || '')}</div>
                 <div class="photos-stack-meta">
-                    <span class="photos-stack-date">${formatPostDate(photo.date)}</span>
+                    <span class="photos-stack-date">${escapeHtml(formatPostDate(photo.date))}</span>
                     <div class="photos-stack-labels">${labelDots}</div>
                 </div>
             </div>
@@ -2436,6 +2516,8 @@ function showAdminToast(message) {
         document.body.appendChild(toast);
     }
     toast.textContent = message;
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
     toast.classList.add('is-visible');
     clearTimeout(toast._timeout);
     toast._timeout = setTimeout(() => {
@@ -2469,7 +2551,7 @@ function resetEducationForm() {
     if (!educationForm) return;
     educationForm.reset();
     educationEditIndex.value = '';
-    educationFormTitle.textContent = 'Add New Education Entry';
+    educationFormTitle.textContent = 'Add education entry';
 }
 
 document.getElementById('educationCancelBtn')?.addEventListener('click', resetEducationForm);
@@ -2506,6 +2588,7 @@ educationForm?.addEventListener('submit', (e) => {
     renderAdminEducationList();
     resetEducationForm();
     if (document.getElementById('educationTimeline')) renderEducationPage();
+    showAdminToast('Education saved');
     playSound('success');
 });
 
@@ -2522,8 +2605,8 @@ function renderAdminEducationList() {
     adminEducationListEl.innerHTML = sorted.map(({ p, i }) => `
         <div class="admin-item">
             <div class="admin-item-info">
-                <strong>${p.institution}</strong>
-                <span>${p.degree} · ${p.years}</span>
+                <strong>${escapeHtml(p.institution || '')}</strong>
+                <span>${escapeHtml(p.degree || '')} / ${escapeHtml(p.years || '')}</span>
             </div>
             <div class="admin-item-actions">
                 <button data-action="edit" data-index="${i}" type="button">Edit</button>
@@ -2548,7 +2631,7 @@ adminEducationListEl?.addEventListener('click', (e) => {
         eduLocation.value    = entry.location || '';
         eduDescription.value = entry.description || '';
         eduHighlights.value  = (entry.highlights || []).join('\n');
-        educationFormTitle.textContent = 'Edit Education Entry';
+        educationFormTitle.textContent = 'Edit education entry';
         educationForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else if (btn.dataset.action === 'delete') {
         if (!confirm('Delete this education entry?')) return;
@@ -2564,31 +2647,44 @@ function renderEducationPage() {
     const timeline = document.getElementById('educationTimeline');
     if (!timeline) return;
 
-    if (contentData.education.length === 0) {
-        timeline.innerHTML = '<p class="education-empty">No education entries yet.</p>';
+    const entries = Array.isArray(contentData.education) ? contentData.education : [];
+
+    if (entries.length === 0) {
+        timeline.innerHTML = '<p class="education-empty">No education entries yet. Add the first one in the editor.</p>';
         return;
     }
 
-    const sorted = [...contentData.education].sort((a, b) => (b.sortYear || 0) - (a.sortYear || 0));
+    const sorted = [...entries].sort((a, b) => (b.sortYear || 0) - (a.sortYear || 0));
+
+    const heroMeta = document.getElementById('educationHeroMeta');
+    if (heroMeta) {
+        const latest = sorted[0];
+        heroMeta.innerHTML = [
+            latest.institution,
+            latest.degree,
+            latest.years,
+            latest.location
+        ].filter(Boolean).map(value => `<span>${escapeHtml(value)}</span>`).join('');
+    }
 
     timeline.innerHTML = sorted.map(entry => {
         const highlightsHtml = (entry.highlights && entry.highlights.length)
             ? `<div class="education-highlights">${entry.highlights.map(h =>
-                `<span class="education-chip">${h}</span>`
+                `<span class="education-chip">${escapeHtml(h)}</span>`
               ).join('')}</div>`
             : '';
 
         return `
             <article class="education-card">
-                <div class="education-card-icon">🎓</div>
+                <div class="education-card-icon card-icon card-icon--edu" aria-hidden="true"></div>
                 <div class="education-card-body">
-                    <h3 class="education-institution">${entry.institution}</h3>
-                    <h4 class="education-degree">${entry.degree}</h4>
+                    <h3 class="education-institution">${escapeHtml(entry.institution || '')}</h3>
+                    <p class="education-degree">${escapeHtml(entry.degree || '')}</p>
                     <div class="education-meta">
-                        <span class="education-years">${entry.years}</span>
-                        ${entry.location ? `<span class="education-loc-sep">·</span><span class="education-location">${entry.location}</span>` : ''}
+                        <span class="education-years">${escapeHtml(entry.years || '')}</span>
+                        ${entry.location ? `<span class="education-loc-sep">/</span><span class="education-location">${escapeHtml(entry.location)}</span>` : ''}
                     </div>
-                    ${entry.description ? `<p class="education-description">${entry.description}</p>` : ''}
+                    ${entry.description ? `<p class="education-description">${escapeHtml(entry.description)}</p>` : ''}
                     ${highlightsHtml}
                 </div>
             </article>
@@ -2633,7 +2729,7 @@ function resetExperienceForm() {
     if (!experienceForm) return;
     experienceForm.reset();
     experienceEditIndex.value = '';
-    experienceFormTitle.textContent = 'Add New Experience Entry';
+    experienceFormTitle.textContent = 'Add experience entry';
 }
 
 document.getElementById('experienceCancelBtn')?.addEventListener('click', resetExperienceForm);
@@ -2683,6 +2779,7 @@ experienceForm?.addEventListener('submit', (e) => {
     renderAdminExperienceList();
     resetExperienceForm();
     if (document.getElementById('experienceTimeline')) renderExperiencePage();
+    showAdminToast('Experience saved');
     playSound('success');
 });
 
@@ -2699,8 +2796,8 @@ function renderAdminExperienceList() {
     adminExperienceListEl.innerHTML = sorted.map(({ p, i }) => `
         <div class="admin-item">
             <div class="admin-item-info">
-                <strong>${p.position}</strong>
-                <span>${p.organization} · ${p.years}</span>
+                <strong>${escapeHtml(p.position || '')}</strong>
+                <span>${escapeHtml(p.organization || '')} / ${escapeHtml(p.years || '')}</span>
             </div>
             <div class="admin-item-actions">
                 <button data-action="edit" data-index="${i}" type="button">Edit</button>
@@ -2726,7 +2823,7 @@ adminExperienceListEl?.addEventListener('click', (e) => {
         expDescription.value  = entry.description || '';
         expHighlights.value   = (entry.highlights || []).join('\n');
         expDocuments.value    = (entry.documents || []).map(d => `${d.title} | ${d.path}`).join('\n');
-        experienceFormTitle.textContent = 'Edit Experience Entry';
+        experienceFormTitle.textContent = 'Edit experience entry';
         experienceForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
     } else if (btn.dataset.action === 'delete') {
         if (!confirm('Delete this experience entry?')) return;
@@ -2742,29 +2839,42 @@ function renderExperiencePage() {
     const timeline = document.getElementById('experienceTimeline');
     if (!timeline) return;
 
-    if (!contentData.experience || contentData.experience.length === 0) {
-        timeline.innerHTML = '<p class="experience-empty">No experience entries yet.</p>';
+    const entries = Array.isArray(contentData.experience) ? contentData.experience : [];
+
+    if (entries.length === 0) {
+        timeline.innerHTML = '<p class="experience-empty">No experience entries yet. Add the first one in the editor.</p>';
         return;
     }
 
-    const sorted = [...contentData.experience].sort((a, b) => (b.sortYear || 0) - (a.sortYear || 0));
+    const sorted = [...entries].sort((a, b) => (b.sortYear || 0) - (a.sortYear || 0));
+
+    const heroMeta = document.getElementById('experienceHeroMeta');
+    if (heroMeta) {
+        const latest = sorted[0];
+        heroMeta.innerHTML = [
+            latest.position,
+            latest.organization,
+            latest.years,
+            latest.location
+        ].filter(Boolean).map(value => `<span>${escapeHtml(value)}</span>`).join('');
+    }
 
     timeline.innerHTML = sorted.map(entry => {
         const highlightsHtml = (entry.highlights && entry.highlights.length)
             ? `<div class="experience-highlights">${entry.highlights.map(h =>
-                `<span class="experience-chip">${h}</span>`
+                `<span class="experience-chip">${escapeHtml(h)}</span>`
               ).join('')}</div>`
             : '';
 
         const docsHtml = (entry.documents && entry.documents.length)
             ? `
                 <div class="experience-docs">
-                    <div class="experience-docs-label">📎 Attached Documents</div>
+                    <div class="experience-docs-label">Attached documents</div>
                     <div class="experience-docs-list">
                         ${entry.documents.map(d => `
-                            <a class="experience-doc-link" href="${d.path}" target="_blank" rel="noopener">
+                            <a class="experience-doc-link" href="${escapeHtml(d.path || '#')}" target="_blank" rel="noopener">
                                 <span class="experience-doc-icon">${getDocIcon(d.path)}</span>
-                                <span>${d.title}</span>
+                                <span>${escapeHtml(d.title || 'Document')}</span>
                             </a>
                         `).join('')}
                     </div>
@@ -2774,15 +2884,15 @@ function renderExperiencePage() {
 
         return `
             <article class="experience-card">
-                <div class="experience-card-icon">💼</div>
+                <div class="experience-card-icon card-icon card-icon--exp" aria-hidden="true"></div>
                 <div class="experience-card-body">
-                    <h3 class="experience-position">${entry.position}</h3>
-                    <h4 class="experience-organization">${entry.organization}</h4>
+                    <h3 class="experience-position">${escapeHtml(entry.position || '')}</h3>
+                    <p class="experience-organization">${escapeHtml(entry.organization || '')}</p>
                     <div class="experience-meta">
-                        <span class="experience-years">${entry.years}</span>
-                        ${entry.location ? `<span class="experience-loc-sep">·</span><span class="experience-location">${entry.location}</span>` : ''}
+                        <span class="experience-years">${escapeHtml(entry.years || '')}</span>
+                        ${entry.location ? `<span class="experience-loc-sep">/</span><span class="experience-location">${escapeHtml(entry.location)}</span>` : ''}
                     </div>
-                    ${entry.description ? `<p class="experience-description">${entry.description}</p>` : ''}
+                    ${entry.description ? `<p class="experience-description">${escapeHtml(entry.description)}</p>` : ''}
                     ${highlightsHtml}
                     ${docsHtml}
                 </div>
@@ -2795,25 +2905,25 @@ function renderExperiencePage() {
    30. PROFILE PAGE RENDERER
    ========================================================= */
 function renderProfilePage() {
-    const nameEl    = document.getElementById('profileName');
+    const nameEl     = document.getElementById('profileName');
     const greetingEl = document.getElementById('profileGreeting');
-    const titleEl   = document.getElementById('profileTitle');
-    const taglineEl = document.getElementById('profileTagline');
-    const metaEl    = document.getElementById('profileMeta');
-    const bioEl     = document.getElementById('profileBio');
-    const aboutEl   = document.getElementById('profileAbout');
-    const actionsEl = document.getElementById('profileActions');
+    const titleEl    = document.getElementById('profileTitle');
+    const taglineEl  = document.getElementById('profileTagline');
+    const metaEl     = document.getElementById('profileMeta');
+    const bioEl      = document.getElementById('profileBio');
+    const aboutEl    = document.getElementById('profileAbout');
+    const actionsEl  = document.getElementById('profileActions');
 
     if (!nameEl) return;
 
-    const p = contentData.profile;
+    const p = contentData.profile || {};
 
     if (greetingEl) {
         greetingEl.textContent = p.greeting || '';
         greetingEl.style.display = p.greeting ? '' : 'none';
     }
 
-    nameEl.innerHTML = `${p.name || ''}${p.pronouns ? `<span class="profile-hero-pronouns">(${p.pronouns})</span>` : ''}`;
+    nameEl.innerHTML = `${escapeHtml(p.name || 'IAN')}${p.pronouns ? ` <span class="profile-hero-pronouns">(${escapeHtml(p.pronouns)})</span>` : ''}`;
 
     if (titleEl) {
         titleEl.textContent = p.title || '';
@@ -2826,27 +2936,28 @@ function renderProfilePage() {
     }
 
     if (actionsEl) {
-        if (p.actions && p.actions.length) {
-            actionsEl.innerHTML = p.actions.map(a =>
-                `<a href="${a.href}" class="btn btn-${a.style}">${a.label}</a>`
-            ).join('');
-            actionsEl.style.display = '';
-        } else {
-            actionsEl.innerHTML = '';
-            actionsEl.style.display = 'none';
+        const pageFile = location.pathname.split('/').pop() || 'index.html';
+        const visibleActions = (p.actions || []).filter(a => (a.href || '') !== pageFile);
+        if (p.email && !visibleActions.some(a => String(a.href || '').startsWith('mailto:'))) {
+            visibleActions.push({ label: 'Email', href: `mailto:${p.email}`, style: 'secondary' });
         }
+        const actionHtml = visibleActions.map(a =>
+            `<a href="${escapeHtml(a.href || '#')}" class="${actionClass(a.style)}">${escapeHtml(a.label || '')}</a>`
+        ).join('');
+        actionsEl.innerHTML = actionHtml;
+        actionsEl.style.display = actionHtml ? '' : 'none';
     }
 
     if (metaEl) {
         const parts = [];
-        if (p.location) parts.push(`<span class="profile-meta-item">📍 ${p.location}</span>`);
-        if (p.email) parts.push(`<span class="profile-meta-item"><a href="mailto:${p.email}">✉️ ${p.email}</a></span>`);
+        if (p.location) parts.push(`<span class="profile-meta-item">⌖ ${escapeHtml(p.location)}</span>`);
+        if (p.email) parts.push(`<span class="profile-meta-item"><a href="mailto:${escapeHtml(p.email)}">✉ Email</a></span>`);
         if (p.linkedin) {
             const url = p.linkedin.startsWith('http') ? p.linkedin : `https://${p.linkedin}`;
-            parts.push(`<span class="profile-meta-item"><a href="${url}" target="_blank" rel="noopener">🔗 LinkedIn</a></span>`);
+            parts.push(`<span class="profile-meta-item"><a href="${escapeHtml(url)}" target="_blank" rel="noopener">↗ LinkedIn</a></span>`);
         }
         if (parts.length) {
-            metaEl.innerHTML = parts.join('<span class="meta-sep">·</span>');
+            metaEl.innerHTML = parts.join('<span class="meta-sep">/</span>');
             metaEl.style.display = '';
         } else {
             metaEl.innerHTML = '';
@@ -2861,9 +2972,8 @@ function renderProfilePage() {
 
     if (aboutEl) {
         if (p.about && p.about.trim()) {
-            // Split by blank lines into paragraphs
             const paragraphs = p.about.split(/\n\s*\n/).map(s => s.trim()).filter(Boolean);
-            aboutEl.innerHTML = paragraphs.map(par => `<p>${par}</p>`).join('');
+            aboutEl.innerHTML = paragraphs.map(par => `<p>${escapeHtml(par)}</p>`).join('');
             aboutEl.style.display = '';
         } else {
             aboutEl.innerHTML = '';
@@ -2892,6 +3002,7 @@ document.getElementById('skillsForm')?.addEventListener('submit', (e) => {
 
     saveContent();
     if (document.getElementById('skillsCard')) renderSkillsPage();
+    showAdminToast('Skills and hobbies saved');
     playSound('success');
 });
 
@@ -2900,36 +3011,39 @@ function renderSkillsPage() {
     const hobbiesCard = document.getElementById('hobbiesCard');
     if (!skillsCard && !hobbiesCard) return;
 
-    if (skillsCard) {
-        const skills = (contentData.skills || []).slice().sort((a, b) => a.localeCompare(b));
-        if (skills.length) {
-            skillsCard.innerHTML = `
-                <h2 class="skills-card-title">Skills</h2>
-                <div class="skills-chips">
-                    ${skills.map(s => `<span class="skills-chip">${s}</span>`).join('')}
-                </div>
-            `;
-            skillsCard.style.display = '';
-        } else {
-            skillsCard.innerHTML = '';
-            skillsCard.style.display = 'none';
+    const renderList = (card, title, items, emptyCopy) => {
+        const list = (items || []).map(s => String(s).trim()).filter(Boolean);
+        if (!list.length) {
+            card.innerHTML = `
+                <h2 class="skills-card-title">${title}</h2>
+                <p class="no-content">${emptyCopy}</p>`;
+            card.style.display = '';
+            return;
         }
+        card.innerHTML = `
+            <h2 class="skills-card-title">${title}<span class="skills-count">${list.length}</span></h2>
+            <div class="skills-chips">
+                ${list.map(s => `<span class="skills-chip">${escapeHtml(s)}</span>`).join('')}
+            </div>`;
+        card.style.display = '';
+    };
+
+    if (skillsCard) {
+        renderList(
+            skillsCard,
+            'Skills',
+            (contentData.skills || []).slice().sort((a, b) => a.localeCompare(b)),
+            'Add a few skills in the editor.'
+        );
     }
 
     if (hobbiesCard) {
-        const hobbies = (contentData.hobbies || []).slice().sort((a, b) => a.localeCompare(b));
-        if (hobbies.length) {
-            hobbiesCard.innerHTML = `
-                <h2 class="skills-card-title">Hobbies</h2>
-                <div class="skills-chips">
-                    ${hobbies.map(h => `<span class="skills-chip">${h}</span>`).join('')}
-                </div>
-            `;
-            hobbiesCard.style.display = '';
-        } else {
-            hobbiesCard.innerHTML = '';
-            hobbiesCard.style.display = 'none';
-        }
+        renderList(
+            hobbiesCard,
+            'Hobbies',
+            (contentData.hobbies || []).slice().sort((a, b) => a.localeCompare(b)),
+            'Add a few hobbies in the editor.'
+        );
     }
 }
 
@@ -3362,7 +3476,7 @@ function validateSurveyField(fieldIdx) {
 function submitSurvey() {
     const toEmail = (contentData.profile && contentData.profile.email || '').trim();
     if (!toEmail) {
-        alert('Survey submissions are not configured yet — no contact email set. Please try again later.');
+        showAdminToast('No contact email is configured for survey submissions.');
         return;
     }
 
@@ -3401,7 +3515,6 @@ function submitSurvey() {
     const body = bodyLines.join('\n').trim();
 
     const mailto = `mailto:${toEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-    console.log('Survey mailto:', mailto);
     window.location.href = mailto;
 
     surveySubmitted = true;
@@ -3463,22 +3576,23 @@ function renderAdminLabelsList() {
     }
 
     listEl.innerHTML = keys.sort().map(key => {
-        const color = (contentData.labels[key] || {}).color || '#E0E0E0';
+        const rawColor = (contentData.labels[key] || {}).color || '#E0E0E0';
+        const color = /^#[0-9a-f]{3,8}$/i.test(rawColor) ? rawColor : '#E0E0E0';
         const usage = countLabelUsage(key);
         const usageText = usage.total > 0
-            ? `${usage.posts} post${usage.posts !== 1 ? 's' : ''}, ${usage.photos} photo${usage.photos !== 1 ? 's' : ''}`
+            ? `${usage.posts} note${usage.posts !== 1 ? 's' : ''}, ${usage.photos} photo${usage.photos !== 1 ? 's' : ''}`
             : 'Unused';
         return `
             <div class="admin-item">
                 <div class="admin-item-info">
                     <strong>
-                        <span class="admin-label-chip" style="background:${color};">${formatLabelName(key)}</span>
+                        <span class="admin-label-chip" style="background:${color};">${escapeHtml(formatLabelName(key))}</span>
                     </strong>
-                    <span>${color.toUpperCase()} · ${usageText}</span>
+                    <span>${escapeHtml(color.toUpperCase())} / ${usageText}</span>
                 </div>
                 <div class="admin-item-actions">
-                    <button data-action="edit" data-label-key="${key}" type="button">Edit</button>
-                    <button data-action="delete" data-label-key="${key}" type="button">Delete</button>
+                    <button data-action="edit" data-label-key="${escapeHtml(key)}" type="button">Edit</button>
+                    <button data-action="delete" data-label-key="${escapeHtml(key)}" type="button">Delete</button>
                 </div>
             </div>
         `;
@@ -3689,49 +3803,14 @@ document.getElementById('fieldsEditor')?.addEventListener('input', (e) => {
 /* =========================================================
    37. POSTS MANAGER — TAB CONTEXT
    ========================================================= */
-function movePostsManagerInto(tab) {
-    const form = document.getElementById('adminForm');
-    const list = document.getElementById('adminList');
-    const postsPanel = document.getElementById('adminPanelPosts');
-    if (!form || !list || !postsPanel) return;
-
-    // Hide on Photos/Labels (no posts manager there)
-    if (tab === 'photos' || tab === 'labels') {
-        form.style.display = 'none';
-        list.style.display = 'none';
-        return;
-    }
-    form.style.display = '';
-    list.style.display = '';
-
-    if (tab === 'posts') {
-        // Home posts — form lives directly in the Posts panel
-        postsPanel.appendChild(form);
-        postsPanel.appendChild(list);
-        currentPostTab = 'home';
-    } else {
-        const panelId = 'adminPanel' + tab.charAt(0).toUpperCase() + tab.slice(1);
-        const panel = document.getElementById(panelId);
-        const slot = panel?.querySelector('.posts-slot');
-        if (slot) {
-            slot.appendChild(form);
-            slot.appendChild(list);
-        }
-        currentPostTab = tab;
-    }
-
-    updateAdminFormTitle();
-    renderAdminList();
-}
-
 function updateAdminFormTitle() {
     const titleEl = document.getElementById('adminFormTitle');
     if (!titleEl) return;
     const label = currentPostTab === 'home' ? 'Home' : (currentPostTab.charAt(0).toUpperCase() + currentPostTab.slice(1));
     if (adminEditIndex.value === '') {
-        titleEl.textContent = 'Add New ' + label + ' Post';
+        titleEl.textContent = 'Add a ' + label + ' note';
     } else {
-        titleEl.textContent = 'Edit ' + label + ' Post';
+        titleEl.textContent = 'Edit ' + label + ' note';
     }
 }
 
@@ -3744,14 +3823,10 @@ let heroReadingTab = null;
 let heroReadingPage = 0;
 
 function getCurrentTab() {
-    const b = document.body;
-    if (b.classList.contains('page-home')) return 'home';
-    if (b.classList.contains('theme-profile')) return 'profile';
-    if (b.classList.contains('theme-education')) return 'education';
-    if (b.classList.contains('theme-experience')) return 'experience';
-    if (b.classList.contains('theme-skills')) return 'skills';
-    if (b.classList.contains('theme-survey')) return 'survey';
-    return null;
+    const page = document.body.dataset.page || '';
+    return ['home', 'profile', 'education', 'experience', 'skills', 'survey'].includes(page)
+        ? page
+        : null;
 }
 
 function renderBlockHtml(block) {
@@ -3807,36 +3882,33 @@ function renderPaginatedFields(post, pageNum, opts = {}) {
 }
 
 /* =========================================================
-   39. HERO-AS-POST — RENDERING & FOCUS MODE
+   39. HOME HERO — FEATURED NOTE OR PROFILE COPY
    ========================================================= */
 function getHeroPostForTab(tabName) {
-    const id = contentData.site.heroPostIds && contentData.site.heroPostIds[tabName];
-    return id ? thoughtsPosts.find(p => p.id === id) : null;
+    const ids = (contentData.site && contentData.site.heroPostIds) || {};
+    const id = ids[tabName];
+    return id ? thoughtsPosts.find(p => p.id === id) || null : null;
 }
 
 function getHeroContainer(tabName) {
-    if (tabName === 'home') return document.getElementById('heroText');
-    return document.getElementById(tabName + 'HeroContent');
+    return tabName === 'home' ? document.getElementById('heroText') : null;
 }
 
 function renderHeroForTab(tabName) {
-    const container = getHeroContainer(tabName);
+    if (tabName !== 'home') return;
+    const container = getHeroContainer('home');
     if (!container) return;
 
-    const heroBox = container.closest('.retro-box');
-    const post = getHeroPostForTab(tabName);
-
+    const post = getHeroPostForTab('home');
     if (!post) {
-        if (heroBox) heroBox.style.display = 'none';
+        renderHero();
         return;
     }
-    if (heroBox) heroBox.style.display = '';
 
-    if (document.body.classList.contains('hero-focused') && heroReadingTab === tabName) {
-        container.innerHTML = renderPaginatedFields(post, heroReadingPage);
-    } else {
-        container.innerHTML = renderPaginatedFields(post, 0, { showNav: false, showBanners: false });
-    }
+    const isReading = document.body.classList.contains('hero-focused') && heroReadingTab === 'home';
+    container.innerHTML = isReading
+        ? renderPaginatedFields(post, heroReadingPage)
+        : renderPaginatedFields(post, 0, { showNav: false, showBanners: false });
 }
 
 function openHeroReading(tabName) {
@@ -3885,94 +3957,12 @@ document.addEventListener('click', (e) => {
     }
 });
 
-/* Inject expand button + content slot into non-Home tab heroes */
-function prepareTabHero(tabName) {
-    const hero = document.querySelector('.' + tabName + '-hero');
-    if (!hero || hero.dataset.prepared === 'true') return;
-    hero.dataset.prepared = 'true';
-
-    // Remove existing hardcoded content
-    hero.querySelectorAll('h1, h2, p, .' + tabName + '-hero-title, .' + tabName + '-hero-subtitle').forEach(el => el.remove());
-
-    // Insert expand button at top
-    hero.insertAdjacentHTML('afterbegin', `
-        <button class="hero-header hero-expand-btn" data-tab="${tabName}" type="button" title="Expand">
-            <svg class="book-icon book-icon-closed" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6,22q-1.25,0-2.13-0.88T3,19V5Q3,3.75 3.88,2.88T6,2H17V18H6q-0.42,0-0.71,0.29T5,19t0.29,0.71T6,20H19V4h2V22H6Zm3-6h6V4H9V16ZM7,16V4H6Q5.58,4 5.29,4.29T5,5V16.18q0.25-0.07 0.49-0.13T6,16H7ZM5,4V16.18V4Z"/></svg>
-            <svg class="book-icon book-icon-opened" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.75,22q-1.13,0-1.94-0.76T4,19.35V5.4Q4,4.45 4.59,3.7T6.13,2.75L16,0.8v16L6.53,18.7Q6.3,18.75 6.15,18.94T6,19.35q0,0.27 0.23,0.46T6.75,20H18V4h2V22H6.75ZM9,16.18l5-0.98V3.25L9,4.22V16.18Zm-2,0.4V4.63L6.63,4.7Q6.35,4.75 6.18,4.94T6,5.4V16.83q0.13-0.05 0.26-0.09t0.26-0.06L7,16.58ZM6,4.77V16.83V4.77Z"/></svg>
-        </button>
-    `);
-
-    // Insert content slot at end
-    hero.insertAdjacentHTML('beforeend', `<div class="tab-hero-content" id="${tabName}HeroContent"></div>`);
-}
-
 /* =========================================================
-   40. SITE CONFIG IN SETTINGS DRAWER
+   40. LEGACY CLEANUP
+   Hero editors, the site panel in Settings and the old single
+   survey migration have been replaced by the editor tabs in
+   section 47. Kept out of the initialisation path on purpose.
    ========================================================= */
-function populateSiteSettings() {
-    const siteNameEl = document.getElementById('settingSiteName');
-    if (siteNameEl) siteNameEl.value = (contentData.site && contentData.site.projectName) || 'PORTFOLIO';
-
-    const themeEl = document.getElementById('settingTheme');
-    if (themeEl) themeEl.value = (contentData.site && contentData.site.theme) || 'retro';
-
-    const emailEl = document.getElementById('settingContactEmail');
-    if (emailEl) emailEl.value = (contentData.profile && contentData.profile.email) || '';
-}
-
-document.getElementById('settingSiteName')?.addEventListener('change', (e) => {
-    if (!contentData.site) contentData.site = { projectName: 'PORTFOLIO', theme: 'retro' };
-    contentData.site.projectName = e.target.value.trim() || 'PORTFOLIO';
-    saveContent();
-    updateHeaderName();
-});
-
-document.getElementById('settingTheme')?.addEventListener('change', (e) => {
-    if (!contentData.site) contentData.site = { projectName: 'PORTFOLIO', theme: 'retro' };
-    contentData.site.theme = e.target.value;
-    saveContent();
-    renderTheme();
-});
-
-document.getElementById('settingContactEmail')?.addEventListener('change', (e) => {
-    if (!contentData.profile) contentData.profile = {};
-    contentData.profile.email = e.target.value.trim();
-    saveContent();
-});
-
-/* =========================================================
-   41. SETTINGS — site panel toggle
-   ========================================================= */
-document.getElementById('settingsSiteToggle')?.addEventListener('click', () => {
-    const panel = document.getElementById('settingsSitePanel');
-    const icon  = document.getElementById('settingsSiteToggleIcon');
-    if (!panel) return;
-    const isOpen = panel.style.display !== 'none';
-    panel.style.display = isOpen ? 'none' : 'flex';
-    if (icon) icon.textContent = isOpen ? '▼' : '▲';
-});
-
-/* =========================================================
-   42. SURVEY MIGRATION & HELPERS
-   ========================================================= */
-function ensureSurveyFields() {
-    if (!contentData.survey) return;
-    if (!Array.isArray(contentData.survey.fields)) {
-        // Upgrade old shape (no fields array) with a default feedback form
-        contentData.survey.fields = [
-            {
-                name: "Feedback",
-                blocks: [
-                    { type: "heading",   content: "Your thoughts" },
-                    { type: "text",      label: "Your name", required: true, placeholder: "" },
-                    { type: "textarea",  label: "Feedback", required: true, placeholder: "" }
-                ]
-            }
-        ];
-    }
-}
-
-ensureSurveyFields();
 
 /* =========================================================
    43. SURVEY FIELDS EDITOR (admin)
@@ -4289,3 +4279,233 @@ document.addEventListener('click', (e) => {
 
     history.replaceState({}, '', location.pathname);
 })();
+
+
+/* =========================================================
+   46b. SITE SETTINGS, FEATURED NOTE & DATA TOOLS
+   ========================================================= */
+function populateSiteForm() {
+    const site = contentData.site || {};
+    const nameEl = document.getElementById('siteProjectName');
+    if (nameEl) nameEl.value = site.projectName || 'PORTFOLIO';
+    const themeEl = document.getElementById('siteTheme');
+    if (themeEl) {
+        const theme = site.theme === 'neobrutalism' ? 'retro-bold' : (site.theme || 'retro');
+        themeEl.value = theme === 'retro-bold' ? 'retro-bold' : 'retro';
+    }
+}
+
+function renderHeroSelects() {
+    const host = document.getElementById('heroSelects');
+    if (!host) return;
+
+    const current = (contentData.site && contentData.site.heroPostIds && contentData.site.heroPostIds.home) || '';
+    const homePosts = thoughtsPosts
+        .filter(p => getPostTab(p) === 'home')
+        .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+
+    host.innerHTML = `
+        <div class="admin-field">
+            <label for="heroSelectHome">Home hero</label>
+            <select id="heroSelectHome" data-hero-tab="home">
+                <option value="">Profile copy (default)</option>
+                ${homePosts.map(p =>
+                    `<option value="${escapeHtml(p.id)}" ${p.id === current ? 'selected' : ''}>${escapeHtml(getPostTitle(p))} — ${escapeHtml(p.date || '')}</option>`
+                ).join('')}
+            </select>
+            <small class="admin-hint-inline">A featured note replaces the profile hero on the home page and is hidden from the notes list.</small>
+        </div>`;
+}
+
+function setHeroForTab(tab, postId) {
+    if (!contentData.site) contentData.site = { projectName: 'PORTFOLIO', theme: 'retro' };
+    if (!contentData.site.heroPostIds) contentData.site.heroPostIds = {};
+
+    contentData.site.heroPostIds[tab] = postId || null;
+
+    saveContent();
+    if (document.getElementById('heroText')) renderHeroForTab('home');
+    if (document.getElementById('postList')) renderPosts();
+    renderAdminList();
+    renderHeroSelects();
+    showAdminToast(postId ? 'Featured note updated' : 'Using profile copy');
+}
+
+/* --- Site form --- */
+document.getElementById('siteForm')?.addEventListener('submit', (e) => {
+    e.preventDefault();
+    if (!contentData.site) contentData.site = { projectName: 'PORTFOLIO', theme: 'retro' };
+    contentData.site.projectName = (document.getElementById('siteProjectName')?.value || '').trim() || 'PORTFOLIO';
+    contentData.site.theme = document.getElementById('siteTheme')?.value || 'retro';
+    saveContent();
+    renderTheme();
+    updateHeaderName();
+    showAdminToast('Site settings saved');
+});
+
+document.getElementById('heroSelects')?.addEventListener('change', (e) => {
+    const select = e.target.closest('select[data-hero-tab]');
+    if (!select) return;
+    setHeroForTab(select.dataset.heroTab, select.value || null);
+});
+
+/* --- Notes toolbar --- */
+function populateAdminPostTabSelect() {
+    const select = document.getElementById('adminPostTab');
+    if (!select) return;
+    select.value = currentPostTab;
+    if (select.dataset.bound === 'true') return;
+    select.dataset.bound = 'true';
+    select.addEventListener('change', () => {
+        currentPostTab = select.value;
+        resetAdminForm();
+        renderAdminList();
+    });
+}
+
+(function bindAdminPostSearch() {
+    const search = document.getElementById('adminPostSearch');
+    if (!search) return;
+    let timer;
+    search.addEventListener('input', () => {
+        clearTimeout(timer);
+        timer = setTimeout(renderAdminList, 120);
+    });
+})();
+
+/* --- Local draft tools --- */
+function formatBytes(bytes) {
+    if (!bytes) return '0 B';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(2) + ' MB';
+}
+
+function localStorageBytes() {
+    let total = 0;
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        total += (key.length + (localStorage.getItem(key) || '').length) * 2;
+    }
+    return total;
+}
+
+function updateStorageMeter() {
+    const bar = document.getElementById('storageBar');
+    const label = document.getElementById('storageUsage');
+    if (!bar && !label) return;
+
+    const contentBytes = new Blob([JSON.stringify(contentData)]).size;
+    const used = localStorageBytes();
+    const budget = 5 * 1024 * 1024;
+    const pct = Math.min(100, (used / budget) * 100);
+
+    if (bar) bar.style.width = Math.max(2, pct).toFixed(1) + '%';
+    if (label) {
+        label.textContent = `${formatBytes(contentBytes)} of content · ${formatBytes(used)} in this browser (${pct.toFixed(2)}% of a typical 5 MB budget).`;
+    }
+}
+
+function validateContent() {
+    const issues = [];
+    const p = contentData.profile || {};
+
+    if (!p.name) issues.push('Profile name is empty.');
+    if (!p.email) issues.push('No contact email — header and footer links fall back to the survey.');
+    if (!p.bio) issues.push('Profile bio is empty; the home hero will feel thin.');
+
+    if (!Array.isArray(contentData.posts) || contentData.posts.length === 0) {
+        issues.push('No notes yet.');
+    } else {
+        const seen = new Set();
+        contentData.posts.forEach((post, i) => {
+            const label = `Note ${i + 1}`;
+            if (!post.id) issues.push(`${label} has no id.`);
+            else if (seen.has(post.id)) issues.push(`${label} has a duplicate id (${post.id}).`);
+            seen.add(post.id);
+            if (!post.date) issues.push(`${label} has no date.`);
+            if (!Array.isArray(post.fields) || !post.fields.length) issues.push(`${label} has no content fields.`);
+        });
+    }
+
+    const heroId = contentData.site?.heroPostIds?.home;
+    if (heroId && !contentData.posts.some(post => post.id === heroId)) {
+        issues.push('The featured home note points at a note that no longer exists.');
+    }
+
+    if (!Array.isArray(contentData.education) || !contentData.education.length) {
+        issues.push('Education is empty.');
+    }
+    if (!Array.isArray(contentData.experience) || !contentData.experience.length) {
+        issues.push('Experience is empty.');
+    }
+
+    const activeSurveys = (contentData.surveys || []).filter(s => s.active);
+    if (!activeSurveys.length) issues.push('No active survey — the survey page will show an empty state.');
+    if (activeSurveys.length > 1) issues.push('More than one survey is active; only the first is shown.');
+
+    return issues;
+}
+
+document.getElementById('adminValidateBtn')?.addEventListener('click', () => {
+    const box = document.getElementById('dataValidation');
+    if (!box) return;
+    const issues = validateContent();
+    box.hidden = false;
+    box.classList.toggle('has-errors', issues.length > 0);
+    if (issues.length) {
+        box.innerHTML = `<strong>${issues.length} thing${issues.length === 1 ? '' : 's'} to look at</strong><br>` +
+            issues.map(i => '• ' + escapeHtml(i)).join('<br>');
+    } else {
+        box.textContent = 'Content looks good: every note, entry and survey has what it needs.';
+    }
+});
+
+function downloadJson(filename) {
+    const blob = new Blob([JSON.stringify(contentData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+document.getElementById('adminBackupBtn')?.addEventListener('click', () => {
+    const stamp = new Date().toISOString().slice(0, 10);
+    downloadJson(`portfolio-backup-${stamp}.json`);
+    showAdminToast('Backup downloaded');
+});
+
+document.getElementById('adminCopyBtn')?.addEventListener('click', async () => {
+    const text = JSON.stringify(contentData, null, 2);
+    try {
+        await navigator.clipboard.writeText(text);
+        showAdminToast('JSON copied to clipboard');
+    } catch (err) {
+        const area = document.createElement('textarea');
+        area.value = text;
+        document.body.appendChild(area);
+        area.select();
+        document.execCommand('copy');
+        area.remove();
+        showAdminToast('JSON copied');
+    }
+});
+
+/* Open the editor when the page was loaded with ?admin=1 */
+if (isAdmin) {
+    window.addEventListener('load', () => {
+        setTimeout(() => {
+            if (adminBackdrop && adminBackdrop.hidden) openAdmin();
+        }, 250);
+    });
+}
+
+/* =========================================================
+   47. BOOT
+   Rendering starts only after the whole module has evaluated so
+   every state variable exists, then the published content replaces
+   the hard-coded defaults.
+   ========================================================= */
+loadContent();

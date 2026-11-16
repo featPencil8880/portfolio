@@ -1,17 +1,32 @@
 /* =========================================================
    GAME PAGES — shared dark "psych lab" base
    ========================================================= */
+@font-face {
+    font-family: "Courier Prime";
+    src: url("../googleFonts/Courier_Prime/CourierPrime-Regular.ttf") format("truetype");
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+@font-face {
+    font-family: "Courier Prime";
+    src: url("../googleFonts/Courier_Prime/CourierPrime-Bold.ttf") format("truetype");
+    font-weight: 700;
+    font-style: normal;
+    font-display: swap;
+}
+
 :root {
-    --bg: #0f1216;
-    --bg-2: #161a20;
-    --text: #d4d8dd;
-    --text-dim: #8b94a0;
-    --accent: #6ee7a8;
-    --accent-hover: #8ff0bb;
-    --accent-dim: #3d8c5f;
-    --warn: #fbbf24;
-    --err: #ef4444;
-    --border: #2a2f38;
+    --bg: #15130f;
+    --bg-2: #1e1a15;
+    --text: #e8e0d1;
+    --text-dim: #a0978a;
+    --accent: #9fe0b0;
+    --accent-hover: #bdf0c8;
+    --accent-dim: #4e8a63;
+    --warn: #e8c36a;
+    --err: #e0715e;
+    --border: #3a342a;
 }
 
 * { box-sizing: border-box; }
@@ -22,9 +37,11 @@ body.game-body {
     margin: 0;
     min-height: 100vh;
     background: var(--bg);
+    background-image: radial-gradient(rgba(232, 224, 209, 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
     color: var(--text);
-    font-family: "Courier New", monospace;
-    font-weight: bold;
+    font-family: "Courier Prime", "Courier New", monospace;
+    font-weight: 400;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -91,6 +108,7 @@ body.game-body::before {
 .game-title {
     margin: 0 0 16px;
     font-size: 1.8rem;
+    font-weight: 700;
     color: var(--accent);
     letter-spacing: 2px;
     text-transform: uppercase;
