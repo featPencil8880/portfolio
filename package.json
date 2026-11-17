@@ -1,0 +1,14 @@
+{
+  "name": "ian-portfolio",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "preview": "node scripts/serve.mjs dist",
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.56.1",
+    "sharp": "^0.35.5"
+  }
+}

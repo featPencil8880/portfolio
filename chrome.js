@@ -121,8 +121,11 @@
       </p>
     </div>
     <nav class="footer-links" aria-label="Footer">
+      <a href="notes.html">Notes</a>
       <a href="mailto:" data-contact-email>Email</a>
       <a href="survey.html">Feedback</a>
+      <a href="rss.xml">RSS</a>
+      <a href="admin/">CMS</a>
       <a href="index.html?admin=1" class="admin-entry" data-admin-link>Admin</a>
       <a class="footer-mascot" href="games.html" aria-label="Games" title="Games"><span class="mascot" aria-hidden="true"></span></a>
     </nav>
@@ -426,6 +429,7 @@
               </div>
             </div>
             <div class="admin-field"><label for="photoMemo">Handwritten caption</label><textarea id="photoMemo" rows="3" maxlength="200"></textarea></div>
+            <div class="admin-field"><label for="photoAlt">Alternative text <span aria-hidden="true">*</span></label><input id="photoAlt" type="text" maxlength="250" required placeholder="Describe what is visible in the photo"></div>
             <div class="admin-field"><label>Labels</label><div class="photo-label-picker" id="photoLabelPicker"></div></div>
             <div class="admin-form-actions">
               <button type="submit" class="btn admin-primary">Save photo</button>
@@ -533,7 +537,7 @@
         <section class="admin-tab-panel" id="adminPanelData" role="tabpanel">
           <div class="admin-form">
             <h3>Local draft</h3>
-            <p class="admin-hint-inline">Edits live in this browser until you export <code>content.json</code> and commit it to the site.</p>
+            <p class="admin-hint-inline">These drafts stay in this browser until exported. For authenticated GitHub editing, use the Decap CMS at <a href="admin/">/admin/</a> after its OAuth provider is configured.</p>
             <div class="storage-meter" role="img" aria-label="Local storage usage"><span id="storageBar"></span></div>
             <p class="admin-hint-inline" id="storageUsage">Measuring…</p>
             <div class="admin-actions">

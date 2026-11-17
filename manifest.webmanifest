@@ -1,0 +1,9 @@
+{
+  "name": "IAN — Portfolio",
+  "short_name": "IAN",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#e1f3f2",
+  "theme_color": "#e1f3f2"
+}

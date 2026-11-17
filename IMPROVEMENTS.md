@@ -1,94 +1,53 @@
 # Substantial improvements
 
-A prioritised list for turning this from a very good static portfolio into a
-site that is easier to publish, easier to find, and safer to grow. Each item has
-an impact/effort read so you can pick by the time you have.
+Status of the publishing, rendering, notes, testing, photo and survey work.
+Remaining ideas are listed below the completed items.
 
 ---
 
-## 1. Give the editor a real publishing path — **high impact / medium effort**
+## 1. Give the editor a real publishing path — **implemented; OAuth setup required**
 
-Today the editor is a beautiful local draft: changes live in `localStorage`, and
-publishing means export → replace `content.json` → commit → reset. Every step is
-a chance to publish the wrong file.
+Added Decap CMS at `/admin/`, configured to edit `content.json` in the GitHub
+repository's `main` branch. Successful CMS changes are committed by Decap and
+the GitHub Pages workflow rebuilds the site. The browser-local editor and JSON
+export remain available as a backup.
 
-Options, cheapest first:
+GitHub Pages does not host a GitHub OAuth server. Deploy a Decap-compatible
+OAuth provider and configure `base_url` (and, if needed, `auth_endpoint`) in
+`admin/config.yml` before using CMS login. Never place a GitHub token or OAuth
+client secret in client-side files.
 
-1. **GitHub API commits from the editor.** A small serverless function holds a
-   fine-grained token; the editor posts the new `content.json` and the function
-   opens a commit. GitHub Pages redeploys automatically. ~150 lines of code.
-2. **Git-based CMS** (Decap CMS, Keystatic, Sveltia). Keep the JSON shape, get a
-   real login and editorial workflow. Least custom code, but a new UI to learn.
-3. **Hosted CMS + API** (Sanity, Contentful, Supabase). Best if the site grows
-   beyond one author or needs scheduling, roles or drafts.
+## 2. Render content at build time — **implemented**
 
-Whichever you choose, keep the current export as an escape hatch.
+`npm run build` runs `scripts/build.mjs` and writes the static site to `dist/`.
+The generator prerenders the profile, education, experience, skills, notes
+archive and individual note articles. It also writes per-note canonical/Open
+Graph/JSON-LD metadata, `sitemap.xml`, and `rss.xml`. Browser JavaScript remains
+available for interactions and as progressive enhancement.
 
-## 2. Render content at build time — **high impact / medium effort**
+`SITE_URL` can override the URL derived from the GitHub remote; set it for
+custom-domain deployments.
 
-Every visitor currently downloads the skeleton and waits for `content.json`
-before the portfolio appears. Search engines index the skeleton, not the notes;
-link previews are generic. That is a real cost for a portfolio whose job is to
-be found.
+## 3. Add real note URLs and an index — **implemented**
 
-Move to a small static-site generator (Astro, Eleventy, or a ~100-line Node
-script) that turns `content.json` into HTML at build time:
+Notes now have shareable routes at `/notes/<slug>/`, full article HTML, metadata,
+pagination, and links from the archive and note cards. The build derives a slug
+when one is missing and fails on duplicate slugs. The reading overlay remains a
+fast preview.
 
-- Education, experience, skills and every note become real HTML.
-- Per-note pages (`/notes/where-do-we-exist`) with their own title, description
-  and Open Graph tags.
-- A sitemap and RSS feed fall out for free.
-- The JavaScript becomes progressive enhancement instead of a requirement.
+## 4. Break `portfolio.js` into modules — **feature split implemented; ESM migration remains**
 
-Astro is the closest fit: it keeps plain HTML/CSS/JS, ships zero JS by default,
-and can still hydrate the calendar, games and editor.
+The former monolithic file is split into ordered feature files in
+`js/portfolio/`. `portfolio.js` is now a small loader. The files remain classic
+scripts to preserve existing cross-section shared state; converting them to
+isolated ES modules requires a separate dependency/API refactor.
 
-## 3. Add real note URLs and an index — **high impact / low effort**
+## 5. Test the important paths — **implemented**
 
-Right now a note opens in a reading overlay on the page that contains it. You
-cannot link to a specific note, bookmark it, or share it.
-
-- Give each note a slug (`/notes/<slug>` or `?note=<id>` with a server rewrite).
-- Add `/notes` with full-text search and tag pages.
-- Add `rel="canonical"`, `og:title`, `og:description` per note.
-- The reading overlay can stay as a fast preview.
-
-This is the single highest-leverage content change: it turns the journal into a
-publishable body of writing rather than a set of cards.
-
-## 4. Break `portfolio.js` into modules — **medium impact / medium effort**
-
-The file is well sectioned but 4,400 lines in one scope. That makes every change
-riskier than it needs to be.
-
-A natural split:
-
-```
-src/
-  core/       state, storage, escaping, formatting
-  content/    load, migrate, validate, save
-  render/     hero, notes, education, experience, skills, survey
-  editor/     posts, profile, resume, photos, survey, labels, site, data
-  ui/         clock, calendar, settings, dialogs, sound
-  main.js     boot
-```
-
-Introduce Vite or esbuild for bundling and a 30-second dev server. Add ESLint +
-Prettier so formatting stops being a manual concern. Keep the build output as
-plain files for the static host.
-
-## 5. Test the important paths — **medium impact / low effort**
-
-A handful of Playwright tests would have caught the empty education/skills/
-survey pages and the broken admin tab wiring:
-
-- every page renders its section (one assertion per page);
-- editor opens, adds an education entry, exports valid JSON;
-- note opens, paginates and closes;
-- survey advances, validates and builds a mailto;
-- no console errors and no horizontal overflow at 390/768/1440.
-
-Run them in CI on push. This is cheap insurance and documents intent.
+Playwright tests cover static HTML without JavaScript, primary-page startup,
+clean note routes and metadata, Formspree survey submission, CMS configuration,
+and generated image variants. The GitHub Pages workflow runs the browser tests
+before deployment.
 
 ## 6. Finish the accessibility pass — **medium impact / low effort**
 
@@ -107,30 +66,23 @@ Still to do:
 - Add `autocomplete` and `inputmode` hints to email/text fields.
 - Run `axe-core` or Lighthouse against every page once and fix the remainder.
 
-## 7. Upgrade the photo pipeline — **medium impact / medium effort**
+## 7. Upgrade the photo pipeline — **implemented**
 
-The gallery is charming but the images are served as full-size JPEGs.
+The Node build generates AVIF and WebP size variants for local gallery images
+and records them in `photos/manifest.json`. Gallery markup uses `<picture>`,
+`srcset`, and `sizes`, with the original file as fallback. The editor and Decap
+schema have a separate required alternative-text field; captions are no longer
+used as alt text. Existing content needs meaningful alt text entered by the
+site owner.
 
-- Resize to a max edge (the editor already does this) and export **WebP/AVIF**
-  with a JPEG fallback via `<picture>`.
-- Generate `srcset`/`sizes` so phones do not download desktop images.
-- Add an **alt text** field to the photo editor (currently the memo is reused).
-- Read EXIF orientation and write the capture date automatically.
-- Consider a single `photos/manifest.json` or a build step so the gallery does
-  not need to be listed by hand.
+## 8. Replace `mailto:` survey submission — **implemented; Formspree ID required**
 
-## 8. Replace `mailto:` survey submission — **medium impact / medium effort**
-
-`mailto:` depends on the visitor having a desktop mail client and gives you no
-confirmation that anything arrived. A tiny endpoint (Netlify Forms, Formspree,
-Cloudflare Worker + Resend) gives you:
-
-- reliable delivery and a copy in your inbox;
-- spam protection (honeypot + rate limit);
-- a real thank-you state instead of a hopeful one;
-- basic metrics (completions, drop-off per field).
-
-Keep `mailto:` as a fallback when the endpoint is unreachable.
+The survey posts JSON to the Formspree endpoint configured by the build-time
+`FORMSPREE_ID` environment variable. A thank-you state appears only after a
+successful response. If the endpoint is missing or unreachable, the site offers
+the existing mailto path as a fallback; HTTP errors remain visible and preserve
+the visitor's answers. Set the GitHub Actions secret `FORMSPREE_ID` to enable
+delivery after deployment.
 
 ## 9. Make the games feel part of the site — **low impact / low effort**
 
@@ -204,7 +156,7 @@ gives you a résumé that never drifts from the site.
 
 ---
 
-## What was fixed in this pass
+## What was fixed in the previous cleanup
 
 - Restored the education, experience, skills, profile and survey renderers that
   were silently doing nothing (missing containers and a boot-order bug).

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>IAN — Field notes</title>
+    <meta name="description" content="The archive of Ian's field notes — observations, questions and half-formed thoughts."/>
+    <meta name="theme-color" content="#e1f3f2"/>
+    <meta property="og:type" content="website"/>
+    <meta property="og:title" content="IAN — Field notes"/>
+    <meta property="og:description" content="The archive of Ian's field notes — observations, questions and half-formed thoughts."/>
+    <meta property="og:url" id="ogUrl" content="notes.html"/>
+    <link rel="canonical" href="notes.html"/>
+    <link rel="alternate" type="application/rss+xml" title="IAN — Field notes" href="rss.xml"/>
+    <link rel="icon" href="favicon.svg" type="image/svg+xml"/>
+    <link rel="manifest" href="manifest.webmanifest"/>
+    <link rel="preload" href="googleFonts/Courier_Prime/CourierPrime-Regular.ttf" as="font" type="font/ttf" crossorigin/>
+    <link rel="preload" href="googleFonts/Courier_Prime/CourierPrime-Bold.ttf" as="font" type="font/ttf" crossorigin/>
+    <link rel="stylesheet" href="style.css"/>
+    <script src="chrome.js" defer></script>
+    <script src="portfolio.js" defer></script>
+</head>
+<body data-page="notes" data-page-title="Field notes">
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <header class="site-header" id="site-header"></header>
+
+    <div class="layout-container">
+        <aside class="left-panel" id="leftPanel" aria-label="Sections">
+            <div id="site-rail"></div>
+        </aside>
+
+        <div class="content">
+            <main class="content-main" id="main">
+                <div class="content-container notes-page">
+                    <header class="page-hero">
+                        <p class="eyebrow"><span class="eyebrow-num">✳</span> Archive</p>
+                        <h1 class="page-hero__title">Every note,<br><em>in one place.</em></h1>
+                        <p class="page-hero__lede">Observations, half-formed thoughts, and things worth remembering — newest first.</p>
+                    </header>
+
+                    <section class="section notes-archive" aria-labelledby="archiveHeading">
+                        <div class="section-head">
+                            <h2 class="section-title" id="archiveHeading">Field notes</h2>
+                            <span class="section-note" id="notesCount"></span>
+                        </div>
+
+                        <div class="notes-toolbar">
+                            <label class="notes-search">
+                                <span class="visually-hidden">Search notes</span>
+                                <input id="notesSearch" type="search" placeholder="Search titles, labels, text…" autocomplete="off"/>
+                            </label>
+                            <div class="notes-tags" id="notesTags"></div>
+                        </div>
+
+                        <div id="notesIndex" class="notes-index"></div>
+                    </section>
+                </div>
+            </main>
+
+            <div id="site-widget"></div>
+            <footer class="site-footer" id="site-footer"></footer>
+        </div>
+    </div>
+
+    <div id="site-overlays"></div>
+    <noscript>
+        <div class="noscript-bar">
+            <a class="noscript-brand" href="index.html">IAN — Portfolio</a>
+            <nav aria-label="Sections">
+                <a href="index.html">Home</a>
+                <a href="profile.html">Profile</a>
+                <a href="education.html">Education</a>
+                <a href="experience.html">Experience</a>
+                <a href="skills.html">Skills</a>
+                <a href="survey.html">Survey</a>
+            </nav>
+            <p>This archive is rendered with JavaScript. Please enable it to browse the notes.</p>
+        </div>
+    </noscript>
+</body>
+</html>
