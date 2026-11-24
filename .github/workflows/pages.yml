@@ -34,7 +34,7 @@ jobs:
       - name: Build production site
         run: npm run build
         env:
-          SITE_URL: https://featpencil8880.github.io/portfoli
+          SITE_URL: https://featpencil8880.github.io/portfolio
           FORMSPREE_ID: ${{ secrets.FORMSPREE_ID }}
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5

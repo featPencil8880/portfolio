@@ -5,8 +5,8 @@ backend:
 media_folder: photos/polaroid
 public_folder: photos/polaroid
 publish_mode: simple
-site_url: https://featpencil8880.github.io/portfoli
-display_url: https://featpencil8880.github.io/portfoli
+site_url: https://featpencil8880.github.io/portfolio
+display_url: https://featpencil8880.github.io/portfolio
 
 collections:
   - name: portfolio

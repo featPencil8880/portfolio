@@ -222,13 +222,9 @@ GitHub Actions** in repository settings.
 - `SITE_URL` defaults from the GitHub remote for local builds. Set it explicitly
   for custom domains; it is used for canonical tags, sitemap, RSS URLs, and the
   generated Decap `site_url` and `display_url`.
-- The Decap CMS GitHub backend needs an OAuth service; GitHub Pages does not
-  provide one. A standard option is Netlify's OAuth gateway: register a GitHub
-  OAuth app with callback `https://api.netlify.com/auth/done`, then install the
-  GitHub provider with that app's client ID and secret in Netlify's project
-  security settings. Decap's GitHub backend uses Netlify by default. For a
-  different self-hosted provider, configure `base_url` and, if needed,
-  `auth_endpoint` in `admin/config.yml`. Never commit the client secret.
+- Decap CMS at `/admin/` uses the Turbo GitHub backend. GitHub Pages does not
+  provide CMS authentication; Turbo supplies the hosted authentication service.
+  Keep the `turbo_site_id` in `admin/config.yml` matched to the Turbo site.
 - `npm test` builds the site and runs Playwright smoke tests. CI installs
   Chromium and runs the same suite before deploying.
 

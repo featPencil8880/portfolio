@@ -308,7 +308,7 @@ test('Decap CMS uses the Turbo backend and a compatible CMS version', async ({ r
     expect(config.ok()).toBeTruthy();
     const configText = await config.text();
     expect(configText).toMatch(/backend:\s+name: turbo-github\s+turbo_site_id: f1bfaa59-b9ba-4a0c-921d-c73c50158dd1/);
-    expect(configText).not.toContain('repo: featPencil8880/portfoli');
+    expect(configText).not.toContain('name: github');
     expect(configText).toContain('file: content.json');
     expect(configText).toContain('site_url: "http://127.0.0.1:4173"');
 });
