@@ -14,24 +14,25 @@
         <div class="game-panel" id="introPanel">
             <h1 class="game-title">Reaction Time</h1>
             <p class="game-intro">
-                A simple test drawn from cognitive psychology labs.<br>
+                A simple reaction-time game.<br>
                 Click the box as fast as you can when it turns <strong style="color: var(--accent);">GREEN</strong>.<br>
                 Five trials. If you click before it's green, the trial restarts.
             </p>
+            <p class="game-caveat">Informal browser game only; not a validated assessment. Display and input latency affect timing.</p>
             <button class="game-btn-primary" id="startBtn" type="button">Start Test</button>
         </div>
 
         <!-- Playing -->
         <div class="game-stage" id="stagePanel" style="display: none;">
-            <div class="game-box" id="gameBox">
-                <span class="game-box-label" id="boxLabel">Wait...</span>
-            </div>
+            <button class="game-box" id="gameBox" type="button">
+                <span class="game-box-label" id="boxLabel" aria-live="polite">Wait...</span>
+            </button>
             <div class="game-trials">Trial <span id="currentTrial">1</span> / 5</div>
         </div>
 
         <!-- Results -->
         <div class="game-panel" id="resultsPanel" style="display: none;">
-            <h2 class="game-title">Your Results</h2>
+            <h2 class="game-title" tabindex="-1">Your Results</h2>
             <div class="game-stats">
                 <div>
                     <span class="game-stat-label">Average</span>
@@ -42,7 +43,7 @@
                     <span class="game-stat-value" id="statBest">—</span>
                 </div>
                 <div>
-                    <span class="game-stat-label">Rank</span>
+                    <span class="game-stat-label">Band</span>
                     <span class="game-stat-value" id="statRank">—</span>
                 </div>
             </div>

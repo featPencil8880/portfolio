@@ -13,10 +13,11 @@
         <div class="game-panel" id="introPanel">
             <h1 class="game-title">Memory Match</h1>
             <p class="game-intro">
-                A working-memory test dressed up as a card game.<br>
+                A matching game inspired by memory tasks.<br>
                 Flip two cards. If they match, they stay.<br>
                 Eight pairs. Fewest moves wins.
             </p>
+            <p class="game-caveat">Casual matching game only; scores are not a validated measure of working memory.</p>
             <button class="game-btn-primary" id="startBtn" type="button">Start Game</button>
         </div>
 
@@ -30,7 +31,7 @@
         </div>
 
         <div class="game-panel" id="resultsPanel" style="display: none;">
-            <h2 class="game-title">You Win!</h2>
+            <h2 class="game-title" tabindex="-1">You Win!</h2>
             <div class="game-stats">
                 <div>
                     <span class="game-stat-label">Moves</span>
@@ -41,7 +42,7 @@
                     <span class="game-stat-value" id="statTime">—</span>
                 </div>
                 <div>
-                    <span class="game-stat-label">Rank</span>
+                    <span class="game-stat-label">Result</span>
                     <span class="game-stat-value" id="statRank">—</span>
                 </div>
             </div>

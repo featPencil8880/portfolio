@@ -68,6 +68,7 @@
         stagePanel.style.display = 'none';
         resultsPanel.style.display = '';
         phase = 'complete';
+        resultsPanel.querySelector('.game-title')?.focus();
 
         const avg  = Math.round(times.reduce((a, b) => a + b, 0) / times.length);
         const best = Math.min.apply(null, times);
@@ -75,26 +76,21 @@
         statAvg.textContent  = avg + ' ms';
         statBest.textContent = best + ' ms';
 
-        let rank, note;
+        let band;
         if (avg < 200) {
-            rank = 'Exceptional';
-            note = 'That reaction time sits in the top tier of published adult averages — faster than roughly 95% of adults tested.';
+            band = 'Under 200 ms';
         } else if (avg < 250) {
-            rank = 'Fast';
-            note = 'Well above the median. Most studies put the adult average between 250 and 300 ms — you are clearly on the faster side.';
+            band = '200–249 ms';
         } else if (avg < 300) {
-            rank = 'Average';
-            note = 'Right in the middle of the typical adult range (250–300 ms). Solid, reliable reflexes.';
+            band = '250–299 ms';
         } else if (avg < 400) {
-            rank = 'Relaxed';
-            note = 'Slightly above the average range. Could be caffeine, fatigue, or device lag — try again when rested.';
+            band = '300–399 ms';
         } else {
-            rank = 'Take Your Time';
-            note = 'Notably slower than average. Nothing wrong — reaction time varies widely — but if this is a surprise, try again on a fresh morning.';
+            band = '400 ms or more';
         }
 
-        statRank.textContent = rank;
-        resultsNote.textContent = note;
+        statRank.textContent = band;
+        resultsNote.textContent = `Your average response time was ${avg} ms in this run. This informal browser task is not a validated assessment; display, device, and input latency affect results.`;
     }
 
     function startGame() {
@@ -105,6 +101,7 @@
         trialIndex = 0;
         clearTimeout(waitTimeout);
         setBoxState('waiting', 'Wait...');
+        gameBox.focus();
         beginTrial();
     }
 

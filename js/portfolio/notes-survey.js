@@ -626,27 +626,33 @@ function renderSurveyBlock(block, fi, bi) {
         return `<p class="survey-field-paragraph">${escapeHtml(block.content || '')}</p>`;
     }
     if (block.type === 'text') {
+        const inputId = `survey-input-${key}`;
+        const isEmail = /email/i.test(block.label || '');
+        const autocomplete = isEmail ? 'email' : /name/i.test(block.label || '') ? 'name' : 'off';
         return `
             <div class="survey-input-group">
-                <label>${escapeHtml(block.label || '')}${req}</label>
-                <input type="${/email/i.test(block.label || '') ? 'email' : 'text'}" data-key="${key}" value="${escapeHtml(existing)}" placeholder="${escapeHtml(block.placeholder || '')}" autocomplete="${/email/i.test(block.label || '') ? 'email' : 'off'}">
+                <label for="${inputId}">${escapeHtml(block.label || '')}${req}</label>
+                <input id="${inputId}" type="${isEmail ? 'email' : 'text'}" data-key="${key}" value="${escapeHtml(existing)}" placeholder="${escapeHtml(block.placeholder || '')}" autocomplete="${autocomplete}" inputmode="${isEmail ? 'email' : 'text'}" aria-required="${Boolean(block.required)}"${isEmail ? ` aria-describedby="survey-email-error-${key}"` : ''}>
+                ${isEmail ? `<p id="survey-email-error-${key}" class="survey-error-message" role="alert" hidden>Enter a valid email address.</p>` : ''}
             </div>`;
     }
     if (block.type === 'textarea') {
+        const inputId = `survey-input-${key}`;
         return `
             <div class="survey-input-group">
-                <label>${escapeHtml(block.label || '')}${req}</label>
-                <textarea data-key="${key}" rows="5" placeholder="${escapeHtml(block.placeholder || '')}">${escapeHtml(existing)}</textarea>
+                <label for="${inputId}">${escapeHtml(block.label || '')}${req}</label>
+                <textarea id="${inputId}" data-key="${key}" rows="5" placeholder="${escapeHtml(block.placeholder || '')}" aria-required="${Boolean(block.required)}">${escapeHtml(existing)}</textarea>
             </div>`;
     }
     if (block.type === 'select') {
+        const inputId = `survey-input-${key}`;
         const opts = (block.options || []).map(o =>
             `<option value="${escapeHtml(o)}" ${existing === o ? 'selected' : ''}>${escapeHtml(o)}</option>`
         ).join('');
         return `
             <div class="survey-input-group">
-                <label>${escapeHtml(block.label || '')}${req}</label>
-                <select data-key="${key}">
+                <label for="${inputId}">${escapeHtml(block.label || '')}${req}</label>
+                <select id="${inputId}" data-key="${key}" aria-required="${Boolean(block.required)}">
                     <option value="">— Select —</option>
                     ${opts}
                 </select>
@@ -661,8 +667,8 @@ function renderSurveyBlock(block, fi, bi) {
         ).join('');
         return `
             <div class="survey-input-group" data-key="${key}">
-                <label>${escapeHtml(block.label || '')}${req}</label>
-                <div class="survey-radio-group">${opts}</div>
+                <div class="survey-group-label" id="survey-label-${key}">${escapeHtml(block.label || '')}${req}</div>
+                <div class="survey-radio-group" role="radiogroup" aria-labelledby="survey-label-${key}" aria-required="${Boolean(block.required)}">${opts}</div>
             </div>`;
     }
     if (block.type === 'rating') {
@@ -673,8 +679,8 @@ function renderSurveyBlock(block, fi, bi) {
         }
         return `
             <div class="survey-input-group" data-key="${key}">
-                <label>${escapeHtml(block.label || '')}${req}</label>
-                <div class="rating-stars">${stars}</div>
+                <div class="survey-group-label" id="survey-label-${key}">${escapeHtml(block.label || '')}${req}</div>
+                <div class="rating-stars" role="radiogroup" aria-labelledby="survey-label-${key}" aria-required="${Boolean(block.required)}">${stars}</div>
             </div>`;
     }
     return '';
@@ -731,24 +737,38 @@ function validateSurveyField(fieldIdx) {
     const field = (active.fields || [])[fieldIdx];
     if (!field) return true;
     let allValid = true;
+    let firstInvalid = null;
 
     (field.blocks || []).forEach((block, bi) => {
-        if (!block.required) return;
         if (block.type === 'heading' || block.type === 'paragraph') return;
+        const isEmail = block.type === 'text' && /email/i.test(block.label || '');
+        if (!block.required && !isEmail) return;
         const key = fieldIdx + '-' + bi;
         const val = surveyAnswers[key];
         const isEmpty = !val || (typeof val === 'string' && !val.trim());
-        if (isEmpty) {
+        const control = document.querySelector(`[data-key="${key}"]`);
+        const emailInvalid = Boolean(isEmail && !isEmpty && control && !control.checkValidity());
+        const missingRequired = Boolean(block.required && isEmpty);
+        const emailError = document.getElementById(`survey-email-error-${key}`);
+
+        if (emailError) emailError.hidden = !emailInvalid;
+        if (control && isEmail) {
+            if (emailInvalid) control.setAttribute('aria-invalid', 'true');
+            else control.removeAttribute('aria-invalid');
+        }
+
+        if (missingRequired || emailInvalid) {
             allValid = false;
             const group = document.querySelector(`.survey-input-group[data-key="${key}"]`);
-            const el    = document.querySelector(`[data-key="${key}"]`);
-            const target = group || el;
+            const target = group || control;
             if (target) {
                 target.classList.add('has-error');
                 setTimeout(() => target.classList.remove('has-error'), 2500);
             }
+            if (!firstInvalid) firstInvalid = control || target;
         }
     });
+    firstInvalid?.focus();
     return allValid;
 }
 

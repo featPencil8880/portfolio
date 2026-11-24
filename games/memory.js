@@ -17,6 +17,10 @@
     if (!gridEl) return;
 
     const EMOJIS = ['🍎', '🍌', '🍇', '🍓', '🥝', '🍊', '🍋', '🍒'];
+    const EMOJI_NAMES = {
+        '🍎': 'Apple', '🍌': 'Banana', '🍇': 'Grapes', '🍓': 'Strawberry',
+        '🥝': 'Kiwi', '🍊': 'Orange', '🍋': 'Lemon', '🍒': 'Cherries'
+    };
 
     let cards = [];
     let flipped = [];
@@ -67,10 +71,10 @@
 
     function renderGrid() {
         gridEl.innerHTML = cards.map((card, i) => `
-            <div class="memory-card" data-index="${i}">
-                <span class="memory-card-back">?</span>
-                <span class="memory-card-front">${card.emoji}</span>
-            </div>
+            <button class="memory-card" data-index="${i}" type="button" aria-label="Card ${i + 1}, face down" aria-pressed="false">
+                <span class="memory-card-back" aria-hidden="true">?</span>
+                <span class="memory-card-front" aria-hidden="true">${card.emoji}</span>
+            </button>
         `).join('');
     }
 
@@ -83,6 +87,8 @@
         if (cards[idx].matched) return;
 
         cardEl.classList.add('is-flipped');
+        cardEl.setAttribute('aria-label', `Card ${idx + 1}, ${EMOJI_NAMES[cards[idx].emoji]}`);
+        cardEl.setAttribute('aria-pressed', 'true');
         flipped.push(idx);
 
         if (flipped.length === 2) {
@@ -99,7 +105,11 @@
 
                 setTimeout(() => {
                     document.querySelectorAll('.memory-card').forEach((el, i) => {
-                        if (i === a || i === b) el.classList.add('is-matched');
+                        if (i === a || i === b) {
+                            el.classList.add('is-matched');
+                            el.setAttribute('aria-label', `Card ${i + 1}, ${EMOJI_NAMES[cards[i].emoji]}, matched`);
+                            el.setAttribute('aria-disabled', 'true');
+                        }
                     });
                     flipped = [];
                     if (matched === totalPairs) showResults();
@@ -109,7 +119,11 @@
                 lock = true;
                 setTimeout(() => {
                     document.querySelectorAll('.memory-card').forEach((el, i) => {
-                        if (i === a || i === b) el.classList.remove('is-flipped');
+                        if (i === a || i === b) {
+                            el.classList.remove('is-flipped');
+                            el.setAttribute('aria-label', `Card ${i + 1}, face down`);
+                            el.setAttribute('aria-pressed', 'false');
+                        }
                     });
                     flipped = [];
                     lock = false;
@@ -125,26 +139,23 @@
         setTimeout(() => {
             stagePanel.style.display = 'none';
             resultsPanel.style.display = '';
+            resultsPanel.querySelector('.game-title')?.focus();
 
             statMoves.textContent = moves;
             statTime.textContent  = formatTime(elapsed);
 
-            let rank, note;
+            let result;
             if (moves <= 12) {
-                rank = 'Sharp';
-                note = 'Excellent working memory. Well above average for a 4x4 grid — most players need 16–20 moves.';
+                result = 'Few moves';
             } else if (moves <= 18) {
-                rank = 'Solid';
-                note = 'A strong result. You tracked pairs efficiently and avoided random flips.';
+                result = 'Steady pace';
             } else if (moves <= 24) {
-                rank = 'Average';
-                note = 'Right in the typical range. Working memory is a trainable skill — play again and you will likely improve.';
+                result = 'More moves';
             } else {
-                rank = 'Take a Breath';
-                note = 'More moves than average. Try a slower approach — say each card name out loud as you flip it.';
+                result = 'Many moves';
             }
-            statRank.textContent = rank;
-            resultsNote.textContent = note;
+            statRank.textContent = result;
+            resultsNote.textContent = `You found all eight pairs in ${moves} moves. This casual game is not a validated measure of working memory; strategy, familiarity, and chance affect results.`;
         }, 400);
     }
 
@@ -164,6 +175,7 @@
         pairCountEl.textContent = '0';
 
         renderGrid();
+        gridEl.querySelector('.memory-card')?.focus();
         stopTimer();
         startTimer();
     }

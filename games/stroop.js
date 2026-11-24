@@ -97,6 +97,7 @@
     function showResults() {
         stagePanel.style.display = 'none';
         resultsPanel.style.display = '';
+        resultsPanel.querySelector('.game-title')?.focus();
 
         const avg = Math.round(times.reduce((a, b) => a + b, 0) / times.length);
 
@@ -107,15 +108,15 @@
         let note;
         const accuracy = correct / ROUNDS;
         if (accuracy >= 0.95) {
-            note = 'Near-perfect accuracy on a task designed to trip you up. Strong inhibition of automatic reading.';
+            note = 'You identified the ink color correctly in nearly every round.';
         } else if (accuracy >= 0.8) {
-            note = 'Solid performance. The Stroop interference effect is real — most adults score between 70% and 90%.';
+            note = 'You identified the ink color correctly in most rounds.';
         } else if (accuracy >= 0.6) {
-            note = 'Some interference crept in — completely normal. Reading is automatic; suppressing it takes effort.';
+            note = 'Some rounds were tricky; review the color and word carefully as you play.';
         } else {
-            note = 'High interference. The word won this round — try again when focused. Practice genuinely improves this task.';
+            note = 'This round was challenging; take your time matching the ink color.';
         }
-        resultsNote.textContent = note;
+        resultsNote.textContent = `${note} This informal game is not a validated cognitive assessment; results can vary with display, input latency, and familiarity.`;
     }
 
     function startGame() {

@@ -122,6 +122,13 @@ body.game-body::before {
     color: var(--text-dim);
 }
 
+.game-caveat {
+    margin: -12px 0 24px;
+    color: var(--text-dim);
+    font-size: 0.8rem;
+    line-height: 1.5;
+}
+
 .game-btn-primary {
     background: var(--accent);
     color: var(--bg);
@@ -151,12 +158,17 @@ body.game-body::before {
 }
 
 .game-box {
+    appearance: none;
     width: 100%;
     aspect-ratio: 1 / 1;
     max-height: 400px;
+    padding: 0;
     background: var(--bg-2);
     border: 3px solid var(--border);
     border-radius: 12px;
+    color: inherit;
+    font: inherit;
+    text-align: center;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -192,6 +204,12 @@ body.game-body::before {
     font-weight: 900;
     text-transform: uppercase;
     letter-spacing: 3px;
+}
+
+.game-box:focus-visible,
+.memory-card:focus-visible {
+    outline: 3px solid var(--accent-hover);
+    outline-offset: 3px;
 }
 
 .game-trials {
@@ -328,15 +346,19 @@ body.game-body::before {
 }
 
 .memory-card {
+    appearance: none;
     aspect-ratio: 1 / 1;
+    padding: 0;
     background: var(--bg-2);
     border: 3px solid var(--border);
     border-radius: 10px;
+    color: inherit;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     font-size: 2.4rem;
+    font-family: inherit;
     line-height: 1;
     user-select: none;
     position: relative;

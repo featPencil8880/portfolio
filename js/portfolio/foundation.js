@@ -499,6 +499,24 @@ function escapeHtml(s) {
         .replace(/"/g, '&quot;');
 }
 
+function safeHref(value, allowedProtocols = ['http:', 'https:', 'mailto:', 'tel:']) {
+    const href = String(value || '').trim();
+    if (!href || href.startsWith('//') || href.startsWith('\\\\')) return '';
+
+    try {
+        const url = new URL(href, document.baseURI);
+        return allowedProtocols.includes(url.protocol) ? href : '';
+    } catch {
+        return '';
+    }
+}
+
+function safeWebHref(value) {
+    const href = String(value || '').trim();
+    const normalized = /^[a-z][a-z\d+.-]*:/i.test(href) ? href : `https://${href}`;
+    return safeHref(normalized, ['http:', 'https:']);
+}
+
 function slugify(text, maxLength = 40) {
     return String(text || '')
         .normalize('NFKD')

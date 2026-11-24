@@ -308,9 +308,12 @@ function renderBlockHtml(block) {
             return label && href ? { label, href, style: style || 'primary' } : null;
         }).filter(Boolean);
         if (!actions.length) return '';
-        return `<div class="post-field-actions">${actions.map(a =>
-            `<a href="${escapeHtml(a.href)}" class="btn btn-${escapeHtml(a.style)}">${escapeHtml(a.label)}</a>`
-        ).join('')}</div>`;
+        return `<div class="post-field-actions">${actions.map(a => {
+            const href = safeHref(a.href);
+            return href
+                ? `<a href="${escapeHtml(href)}" class="btn btn-${escapeHtml(a.style)}">${escapeHtml(a.label)}</a>`
+                : '';
+        }).join('')}</div>`;
     }
     return '';
 }

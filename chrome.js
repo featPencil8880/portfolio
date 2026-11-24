@@ -106,7 +106,7 @@
         </div>
       </div>
       <div class="calendar-grid" id="calendarGrid"></div>
-      <div class="calendar-worded-date" id="wordedDate"></div>
+      <div class="calendar-worded-date" id="wordedDate" aria-live="polite" aria-atomic="true"></div>
       <button class="calendar-today-btn" id="calendarTodayBtn" type="button" style="display:none">Back to today</button>
     </div>
   </aside>`;

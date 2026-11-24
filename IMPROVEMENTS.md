@@ -56,14 +56,12 @@ keyboard-activatable note cards and calendar days, focus restoration after
 reading mode, an `aria-live` editor toast, contrast-checked palette and reduced
 motion.
 
+Completed: calendar arrow-key travel and live date announcements, reading-mode
+document titles, survey labels and choice-group names, email validation, and
+autocomplete/input-mode hints.
+
 Still to do:
 
-- **Calendar keyboard travel.** Days respond to Enter/Space; add arrow-key
-  movement between days and announce the selected date.
-- **Reading mode** should also set the document title to the note title.
-- Check the survey rating group with a screen reader: five unlabelled radios
-  need a `fieldset`/`legend` or `aria-labelledby`.
-- Add `autocomplete` and `inputmode` hints to email/text fields.
 - Run `axe-core` or Lighthouse against every page once and fix the remainder.
 
 ## 7. Upgrade the photo pipeline — **implemented**
@@ -89,7 +87,8 @@ delivery after deployment.
 The dark lab is a deliberate contrast; keep it, but connect it:
 
 - Link the game results back to the relevant note ("why reaction time matters").
-- Show a short "what this measures / what it doesn't" panel after each game.
+- Add clear informal/non-diagnostic result notes — **done**; a fuller
+  "what this measures / what it doesn't" explanation remains.
 - Add a shared footer link back to the portfolio and the same `Courier Prime`
   type scale (already done).
 - Consider recording anonymous aggregate results (no accounts, no PII) for a

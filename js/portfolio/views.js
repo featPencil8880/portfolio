@@ -8,8 +8,8 @@ function renderProfileMeta(p) {
         parts.push(`<span class="profile-meta-item"><a href="mailto:${escapeHtml(p.email)}">✉ Email</a></span>`);
     }
     if (p.linkedin) {
-        const url = p.linkedin.startsWith('http') ? p.linkedin : `https://${p.linkedin}`;
-        parts.push(`<span class="profile-meta-item"><a href="${escapeHtml(url)}" target="_blank" rel="noopener">↗ LinkedIn</a></span>`);
+        const url = safeWebHref(p.linkedin);
+        if (url) parts.push(`<span class="profile-meta-item"><a href="${escapeHtml(url)}" target="_blank" rel="noopener">↗ LinkedIn</a></span>`);
     }
     if (parts.length === 0) return '';
     return `<div class="hero-meta">${parts.join('<span class="meta-sep">/</span>')}</div>`;
@@ -24,9 +24,12 @@ function actionClass(style) {
 function renderActions(actions, className = 'hero-actions') {
     if (!Array.isArray(actions) || !actions.length) return '';
     return `<div class="${className}">
-        ${actions.map(a =>
-            `<a href="${escapeHtml(a.href || '#')}" class="${actionClass(a.style)}">${escapeHtml(a.label || '')}</a>`
-        ).join('')}
+        ${actions.map(a => {
+            const href = safeHref(a.href);
+            return href
+                ? `<a href="${escapeHtml(href)}" class="${actionClass(a.style)}">${escapeHtml(a.label || '')}</a>`
+                : '';
+        }).join('')}
     </div>`;
 }
 
@@ -142,9 +145,9 @@ const hourHand       = document.getElementById('hourHand');
 const minHand        = document.getElementById('minHand');
 const secHand        = document.getElementById('secHand');
 
-function setClockMode(mode) {
+function setClockMode(mode, persist = true) {
     settings.clockMode = mode;
-    saveSettings();
+    if (persist) saveSettings();
 
     const clockSelect = document.getElementById('settingClockMode');
     if (clockSelect) clockSelect.value = mode;
@@ -202,7 +205,7 @@ function updateClock() {
 }
 
 if (digitalClock) {
-    setClockMode(settings.clockMode); // Initialize based on saved setting
+    setClockMode(settings.clockMode, false);
     setInterval(updateClock, 1000);
 }
 
@@ -215,6 +218,10 @@ function isSameDay(d1, d2) {
     return d1.getFullYear() === d2.getFullYear() &&
            d1.getMonth() === d2.getMonth() &&
            d1.getDate() === d2.getDate();
+}
+
+function calendarDateKey(date) {
+    return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
 function updateCalendarTodayBtn() {
@@ -266,6 +273,13 @@ function renderCalendar(date) {
 
     const firstDay    = (new Date(year, month, 1).getDay() + 1) % 7;
     const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const focusDay = currentDateFilter &&
+        currentDateFilter.getFullYear() === year &&
+        currentDateFilter.getMonth() === month
+        ? currentDateFilter.getDate()
+        : year === today.getFullYear() && month === today.getMonth()
+            ? today.getDate()
+            : 1;
 
     for (let i = 0; i < firstDay; i++) {
         const empty = document.createElement('div');
@@ -293,7 +307,8 @@ function renderCalendar(date) {
             cell.classList.add('selected');
         }
 
-        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+        const dateKey = calendarDateKey(cellDate);
+        cell.dataset.date = dateKey;
         const labelsForDay = postDateMap[dateKey];
         if (labelsForDay && labelsForDay.length) {
             const dotsWrap = document.createElement('div');
@@ -311,16 +326,27 @@ function renderCalendar(date) {
             currentDateFilter = new Date(year, month, day);
             renderCalendar(currentViewDate);
             renderPosts();
+            grid.querySelector(`[data-date="${dateKey}"]`)?.focus();
         });
 
-        // Make the calendar usable without a mouse
-        cell.tabIndex = 0;
+        cell.tabIndex = day === focusDay ? 0 : -1;
         cell.setAttribute('role', 'button');
         cell.setAttribute('aria-label', `${monthNames[month]} ${day}, ${year}`);
+        cell.setAttribute('aria-pressed', String(Boolean(currentDateFilter && isSameDay(cellDate, currentDateFilter))));
         cell.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 cell.click();
+                return;
+            }
+
+            const dayDelta = { ArrowLeft: -1, ArrowRight: 1, ArrowUp: -7, ArrowDown: 7 }[e.key];
+            if (dayDelta) {
+                e.preventDefault();
+                const nextDate = new Date(year, month, day + dayDelta);
+                currentViewDate = new Date(nextDate.getFullYear(), nextDate.getMonth(), 1);
+                renderCalendar(currentViewDate);
+                grid.querySelector(`[data-date="${calendarDateKey(nextDate)}"]`)?.focus();
             }
         });
 
@@ -346,6 +372,8 @@ if (prevYearBtn) {
 /* =========================================================
    13. POST CLICK → READING MODE
    ========================================================= */
+let readingOriginalTitle = null;
+
 document.getElementById('postList')?.addEventListener('click', (e) => {
     // Handle pagination clicks first
     if (e.target.closest('.page-prev')) { handlePostPage(-1); return; }
@@ -362,7 +390,8 @@ document.getElementById('postList')?.addEventListener('click', (e) => {
 document.getElementById('postList')?.addEventListener('keydown', (e) => {
     if (e.key !== 'Enter' && e.key !== ' ') return;
     const card = e.target.closest('.post-card');
-    if (!card) return;
+    if (!card || document.body.classList.contains('post-focused') ||
+        e.target.closest('a, button, input, select, textarea, [contenteditable="true"]')) return;
     e.preventDefault();
     openPostReading(card);
 });
@@ -371,6 +400,8 @@ function openPostReading(card) {
     const postId = card.dataset.postId;
     const post = thoughtsPosts.find(p => p.id === postId);
     if (!post) return;
+    if (!document.body.classList.contains('post-focused')) readingOriginalTitle = document.title;
+    document.title = `${getPostPreview(post).title} — ${(contentData.profile && contentData.profile.name) || 'Portfolio'}`;
     activeReadingPostId = postId;
     postReadingPage = 0;
     card.classList.add('is-expanded');
@@ -405,6 +436,10 @@ function closePostReading() {
     });
     activeReadingPostId = null;
     postReadingPage = 0;
+    if (readingOriginalTitle !== null) {
+        document.title = readingOriginalTitle;
+        readingOriginalTitle = null;
+    }
     if (expanded) expanded.focus({ preventScroll: true });
 }
 

@@ -1797,7 +1797,8 @@ body.post-focused .reading-close { display: inline-flex; }
 .survey-field-paragraph { color: var(--ink-2); margin: 0; }
 
 .survey-input-group { display: flex; flex-direction: column; gap: 7px; }
-.survey-input-group > label {
+.survey-input-group > label,
+.survey-group-label {
   font-family: var(--font-display);
   font-size: 0.63rem;
   font-weight: 700;
@@ -1805,6 +1806,7 @@ body.post-focused .reading-close { display: inline-flex; }
   text-transform: uppercase;
   color: var(--ink-2);
 }
+.survey-group-label { margin: 0; }
 .survey-req { color: var(--danger); }
 .survey-input-group input[type="text"],
 .survey-input-group input[type="email"],
@@ -1826,6 +1828,13 @@ body.post-focused .reading-close { display: inline-flex; }
   border-color: var(--page-accent);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--page-accent) 16%, transparent);
 }
+.survey-input-group input[aria-invalid="true"] { border-color: var(--danger); }
+.survey-error-message {
+  margin: 0;
+  color: var(--danger);
+  font-size: 0.82rem;
+}
+.survey-error-message[hidden] { display: none; }
 .survey-radio-group { display: flex; flex-direction: column; gap: 6px; }
 .survey-radio-option {
   display: flex;

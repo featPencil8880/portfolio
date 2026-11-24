@@ -32,6 +32,24 @@ function escapeHtml(value = '') {
         .replace(/'/g, '&#39;');
 }
 
+function safeHref(value, allowedProtocols = ['http:', 'https:', 'mailto:', 'tel:']) {
+    const href = String(value || '').trim();
+    if (!href || href.startsWith('//') || href.startsWith('\\\\')) return '';
+
+    try {
+        const url = new URL(href, 'https://portfolio.invalid/');
+        return allowedProtocols.includes(url.protocol) ? href : '';
+    } catch {
+        return '';
+    }
+}
+
+function safeWebHref(value) {
+    const href = String(value || '').trim();
+    const normalized = /^[a-z][a-z\d+.-]*:/i.test(href) ? href : `https://${href}`;
+    return safeHref(normalized, ['http:', 'https:']);
+}
+
 function stripTags(value = '') {
     return String(value).replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
 }
@@ -153,14 +171,16 @@ function replaceTitle(html, title) {
 
 function renderActions(actions = []) {
     return actions.map(action => {
-        if (!action?.label || !action.href) return '';
+        const href = safeHref(action?.href);
+        if (!action?.label || !href) return '';
         const style = action.style === 'primary' ? 'btn--primary' : 'btn--ghost';
-        return `<a class="btn ${style}" href="${escapeHtml(action.href)}">${escapeHtml(action.label)}</a>`;
+        return `<a class="btn ${style}" href="${escapeHtml(href)}">${escapeHtml(action.label)}</a>`;
     }).join('');
 }
 
 function renderNoteLinks(posts, groupByYear = false) {
-    if (!posts.length) return '<p class="no-posts">No field notes yet.</p>';
+    const listedPosts = groupByYear ? posts : posts.filter(post => !post.hideFromList);
+    if (!listedPosts.length) return '<p class="no-posts">No field notes yet.</p>';
     const renderItem = post => {
         const preview = getPreview(post);
         const label = escapeHtml(String(post.label || 'General'));
@@ -172,10 +192,10 @@ function renderNoteLinks(posts, groupByYear = false) {
             <span class="note-index-arrow" aria-hidden="true">→</span>
         </a>`;
     };
-    if (!groupByYear) return posts.map(renderItem).join('');
+    if (!groupByYear) return listedPosts.map(renderItem).join('');
 
     const years = new Map();
-    [...posts].sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))).forEach(post => {
+    [...listedPosts].sort((a, b) => String(b.date || '').localeCompare(String(a.date || ''))).forEach(post => {
         const year = /^\d{4}(?:-|$)/.test(post.date || '') ? post.date.slice(0, 4) : 'Undated';
         if (!years.has(year)) years.set(year, []);
         years.get(year).push(post);
@@ -194,8 +214,12 @@ function renderTimeline(entries, kind) {
         const organization = isEducation ? entry.degree : entry.organization;
         const highlights = (entry.highlights || []).map(item =>
             `<span class="${kind}-chip">${escapeHtml(item)}</span>`).join('');
-        const documents = isEducation ? '' : (entry.documents || []).map(document =>
-            `<a class="experience-doc-link" href="${escapeHtml(document.path || '#')}" target="_blank" rel="noopener">${escapeHtml(document.title || 'Document')}</a>`).join('');
+        const documents = isEducation ? '' : (entry.documents || []).map(document => {
+            const href = safeHref(document.path, ['http:', 'https:']);
+            return href
+                ? `<a class="experience-doc-link" href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(document.title || 'Document')}</a>`
+                : '';
+        }).join('');
         return `<article class="${kind}-card">
             <div class="${kind}-card-icon card-icon card-icon--${isEducation ? 'edu' : 'exp'}" aria-hidden="true"></div>
             <div class="${kind}-card-body">
@@ -237,8 +261,9 @@ function noteBodyHtml(post) {
             if (block.type === 'actions') {
                 const actions = String(block.content || '').split('\n').map(line => {
                     const [label, href, style] = line.split('|').map(value => value.trim());
-                    if (!label || !href || /^(javascript|data):/i.test(href)) return '';
-                    return `<a class="btn ${style === 'primary' ? 'btn--primary' : 'btn--ghost'}" href="${escapeHtml(href)}">${escapeHtml(label)}</a>`;
+                    const safeUrl = safeHref(href);
+                    if (!label || !safeUrl) return '';
+                    return `<a class="btn ${style === 'primary' ? 'btn--primary' : 'btn--ghost'}" href="${escapeHtml(safeUrl)}">${escapeHtml(label)}</a>`;
                 }).join('');
                 return actions ? `<div class="post-field-actions">${actions}</div>` : '';
             }
@@ -403,8 +428,8 @@ function renderRootPage(file, html, data, siteUrl) {
         if (profile.location) meta.push(`<span class="profile-meta-item">⌖ ${escapeHtml(profile.location)}</span>`);
         if (profile.email) meta.push(`<span class="profile-meta-item"><a href="mailto:${escapeHtml(profile.email)}">✉ Email</a></span>`);
         if (profile.linkedin) {
-            const linkedin = /^https?:\/\//i.test(profile.linkedin) ? profile.linkedin : `https://${profile.linkedin}`;
-            meta.push(`<span class="profile-meta-item"><a href="${escapeHtml(linkedin)}" target="_blank" rel="noopener">↗ LinkedIn</a></span>`);
+            const linkedin = safeWebHref(profile.linkedin);
+            if (linkedin) meta.push(`<span class="profile-meta-item"><a href="${escapeHtml(linkedin)}" target="_blank" rel="noopener">↗ LinkedIn</a></span>`);
         }
         html = elementContent(html, 'profileMeta', meta.join('<span class="meta-sep">/</span>'));
         html = elementContent(html, 'postList', renderNoteLinks(posts.filter(post => post.tab === 'profile')));

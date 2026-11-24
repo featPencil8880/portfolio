@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import { expect, test } from '@playwright/test';
 
 test('resume pages, notes, feeds, and metadata are generated before JavaScript runs', async ({ browser, request }) => {
+    test.setTimeout(60_000);
     const page = await browser.newPage({ javaScriptEnabled: false });
 
     await page.goto('/education.html');
@@ -15,6 +16,9 @@ test('resume pages, notes, feeds, and metadata are generated before JavaScript r
     await page.goto('/skills.html');
     await expect(page.locator('#skillsCard .skills-chip')).toHaveCount(8);
     await expect(page.locator('#hobbiesCard')).toContainText('Photography');
+
+    await page.goto('/index.html');
+    await expect(page.locator('.hero-actions a')).toHaveText(['Explore My Profile', 'Leave Feedback']);
 
     await page.goto('/notes.html');
     await expect(page.locator('#notesIndex .notes-year-heading')).toHaveText('2026');
@@ -36,6 +40,30 @@ test('resume pages, notes, feeds, and metadata are generated before JavaScript r
     expect(await feed.text()).toContain('<title>WHERE DO WE EXIST IN OUR MINDS?</title>');
 
     await page.close();
+});
+
+test('hidden notes do not create home label chips or inflate their counts', async ({ page }) => {
+    await page.addInitScript(() => {
+        const note = (id, title, hideFromList = false) => ({
+            id,
+            date: '2026-11-15',
+            tab: 'home',
+            label: 'introspection',
+            hideFromList,
+            fields: [{ name: 'Note', blocks: [{ type: 'title', content: title }] }]
+        });
+        localStorage.setItem('portfolioContent', JSON.stringify({
+            posts: [
+                note('hidden-note', 'Hidden note', true),
+                note('visible-note', 'Visible note')
+            ]
+        }));
+    });
+
+    await page.goto('/index.html');
+    await expect(page.locator('.post-card')).toHaveCount(1);
+    await expect(page.locator('.post-card-title')).toHaveText('Visible note');
+    await expect(page.locator('#postFilterChips .chip-count')).toHaveText('1');
 });
 
 test('notes archive groups by year and keeps category and search filters working', async ({ page }) => {
@@ -107,6 +135,168 @@ test('survey keeps answers visible when Formspree rejects a response', async ({ 
     await expect(page.locator('#surveyThanksCard')).toBeHidden();
     await expect(page.locator('#surveySubmitStatus')).toContainText('HTTP 503');
     await expect(page.locator('#surveyDynamicContent textarea')).toHaveValue('Please keep this answer.');
+});
+
+test('survey inputs and choice groups expose their labels accessibly', async ({ page }) => {
+    await page.goto('/survey.html');
+    await page.getByRole('button', { name: /start/i }).click();
+
+    await expect(page.getByLabel('Your name')).toBeVisible();
+    await expect(page.getByLabel('Your name')).toHaveAttribute('autocomplete', 'name');
+    await expect(page.getByLabel('Your name')).toHaveAttribute('inputmode', 'text');
+    await expect(page.getByLabel('Your email')).toHaveAttribute('autocomplete', 'email');
+    await expect(page.getByLabel('Your email')).toHaveAttribute('inputmode', 'email');
+    await expect(page.getByRole('radiogroup', { name: /how do you know me/i })).toBeVisible();
+
+    await page.getByLabel('Your name').fill('Test visitor');
+    await page.getByRole('button', { name: /next/i }).first().click();
+    await expect(page.getByRole('radiogroup', { name: /rate this site/i })).toBeVisible();
+});
+
+test('survey rejects malformed optional email addresses and explains the error', async ({ page }) => {
+    await page.goto('/survey.html');
+    await page.getByRole('button', { name: /start/i }).click();
+    await page.getByLabel('Your name').fill('Test visitor');
+    const email = page.getByLabel('Your email');
+    await email.fill('not-an-email');
+    await page.getByRole('button', { name: /next/i }).first().click();
+
+    await expect(email).toHaveAttribute('aria-invalid', 'true');
+    await expect(page.locator('#survey-email-error-0-2')).toBeVisible();
+    await expect(page.locator('.survey-progress').first()).toHaveText('1 / 2');
+
+    await email.fill('visitor@example.com');
+    await page.getByRole('button', { name: /next/i }).first().click();
+    await expect(page.locator('.survey-progress').first()).toHaveText('2 / 2');
+});
+
+test('calendar arrow keys move by day and selected dates are announced', async ({ page }) => {
+    await page.goto('/index.html');
+    const firstDay = page.locator('#calendarGrid .calendar-day[data-date]').first();
+    await firstDay.focus();
+    const firstDate = await firstDay.getAttribute('data-date');
+    const expectedDate = await page.evaluate(dateKey => {
+        const [year, month, day] = dateKey.split('-').map(Number);
+        const next = new Date(year, month - 1, day + 1);
+        return `${next.getFullYear()}-${String(next.getMonth() + 1).padStart(2, '0')}-${String(next.getDate()).padStart(2, '0')}`;
+    }, firstDate);
+
+    await page.keyboard.press('ArrowRight');
+    const focusedDay = page.locator('#calendarGrid .calendar-day[data-date]:focus');
+    await expect(focusedDay).toHaveAttribute('data-date', expectedDate);
+    await page.keyboard.press('Enter');
+
+    const announcedDate = await page.evaluate(dateKey => {
+        const [year, month, day] = dateKey.split('-').map(Number);
+        return new Date(year, month - 1, day).toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+        });
+    }, expectedDate);
+    await expect(page.locator('#wordedDate')).toHaveAttribute('aria-live', 'polite');
+    await expect(page.locator('#wordedDate')).toHaveText(announcedDate);
+});
+
+test('reading a note updates the document title and restores it on close', async ({ page }) => {
+    await page.goto('/index.html');
+    const originalTitle = await page.title();
+    const card = page.locator('.post-card').first();
+    await card.focus();
+    await page.keyboard.press('Enter');
+
+    await expect(page).toHaveTitle('WHERE DO WE EXIST IN OUR MINDS? — IAN');
+    await page.keyboard.press('Escape');
+    await expect(page).toHaveTitle(originalTitle);
+});
+
+test('each cognitive game explains that results are informal', async ({ page }) => {
+    for (const path of ['/games/memory.html', '/games/reaction.html', '/games/stroop.html']) {
+        await page.goto(path);
+        await expect(page.locator('.game-caveat')).toContainText(/informal|casual/i);
+        await expect(page.locator('.game-caveat')).toContainText(/not a validated/i);
+    }
+});
+
+test('untrusted profile and document links with unsafe schemes are omitted', async ({ page }) => {
+    await page.addInitScript(() => {
+        localStorage.setItem('portfolioContent', JSON.stringify({
+            profile: {
+                name: 'Test',
+                actions: [
+                    { label: 'Unsafe', href: 'javascript:blocked' },
+                    { label: 'Safe', href: 'https://example.com/' }
+                ],
+                linkedin: 'javascript:blocked'
+            },
+            experience: [{
+                position: 'Test role',
+                organization: 'Test organization',
+                years: '2020–2021',
+                documents: [
+                    { title: 'Unsafe document', path: 'data:text/html,blocked' },
+                    { title: 'Safe document', path: 'https://example.com/document.pdf' }
+                ]
+            }]
+        }));
+    });
+
+    await page.goto('/profile.html');
+    await expect(page.locator('#profileActions a')).toHaveCount(1);
+    await expect(page.locator('#profileActions a')).toHaveAttribute('href', 'https://example.com/');
+    await expect(page.locator('#profileMeta a')).toHaveCount(0);
+
+    await page.goto('/experience.html');
+    await expect(page.locator('.experience-doc-link')).toHaveCount(1);
+    await expect(page.locator('.experience-doc-link')).toHaveAttribute('href', 'https://example.com/document.pdf');
+});
+
+test('note permalink remains keyboard-navigable inside a card', async ({ page }) => {
+    await page.goto('/index.html');
+    const permalink = page.locator('.post-card-permalink').first();
+    await permalink.focus();
+    await page.keyboard.press('Enter');
+
+    await expect(page).toHaveURL(/\/notes\/where-do-we-exist-in-our-minds\/$/);
+});
+
+test('clearing portfolio data preserves unrelated origin storage', async ({ page }) => {
+    await page.addInitScript(() => {
+        if (sessionStorage.getItem('clear-data-test-seeded')) return;
+        sessionStorage.setItem('clear-data-test-seeded', 'true');
+        localStorage.setItem('unrelated-app-data', 'keep');
+        localStorage.setItem('portfolioSettings', '{"fontSize":"large"}');
+        localStorage.setItem('portfolioContent', '{"profile":{"name":"Draft"}}');
+    });
+
+    await page.goto('/index.html');
+    await page.locator('#settingsBtn').click();
+    page.once('dialog', dialog => dialog.accept());
+    await Promise.all([
+        page.waitForNavigation(),
+        page.locator('#settingsClearDataBtn').click()
+    ]);
+    await expect(page.locator('body')).toHaveAttribute('data-rendered', 'true');
+
+    const storage = await page.evaluate(() => ({
+        unrelated: localStorage.getItem('unrelated-app-data'),
+        settings: localStorage.getItem('portfolioSettings'),
+        content: localStorage.getItem('portfolioContent')
+    }));
+    expect(storage).toEqual({ unrelated: 'keep', settings: null, content: null });
+});
+
+test('memory cards and reaction target are keyboard-operable controls', async ({ page }) => {
+    await page.goto('/games/memory.html');
+    await page.getByRole('button', { name: /start game/i }).click();
+    const card = page.locator('.memory-card[data-index="0"]');
+    await expect(card).toHaveAttribute('aria-label', 'Card 1, face down');
+    await expect(card).toBeFocused();
+    await page.keyboard.press('Enter');
+    await expect(card).toHaveAttribute('aria-pressed', 'true');
+    await expect(card).not.toHaveAttribute('aria-label', /face down/i);
+
+    await page.goto('/games/reaction.html');
+    await page.getByRole('button', { name: /start test/i }).click();
+    await expect(page.getByRole('button', { name: /wait/i })).toBeFocused();
 });
 
 test('Decap CMS configuration is served for the GitHub-backed editor', async ({ request }) => {

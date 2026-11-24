@@ -557,7 +557,9 @@ settingClockMode?.addEventListener('change', (e) => {
 // Clear Local Data
 settingsClearDataBtn?.addEventListener('click', () => {
     if (!confirm('This clears the local draft, reading preferences and any photo handles stored in this browser. Published files are untouched.')) return;
-    localStorage.clear();
+    for (const key of ['portfolioContent', 'thoughtsPosts', 'portfolioSettings']) {
+        localStorage.removeItem(key);
+    }
     location.reload();
 });
 
@@ -595,6 +597,7 @@ function renderLabelChips() {
     // Count posts per label on this page only
     const counts = {};
     thoughtsPosts.forEach(p => {
+        if (p.hideFromList) return;
         if (currentTab && currentTab !== 'home' && getPostTab(p) !== currentTab) return;
         const key = p.label || 'general';
         counts[key] = (counts[key] || 0) + 1;

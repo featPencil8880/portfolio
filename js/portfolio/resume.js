@@ -344,12 +344,15 @@ function renderExperiencePage() {
                 <div class="experience-docs">
                     <div class="experience-docs-label">Attached documents</div>
                     <div class="experience-docs-list">
-                        ${entry.documents.map(d => `
-                            <a class="experience-doc-link" href="${escapeHtml(d.path || '#')}" target="_blank" rel="noopener">
-                                <span class="experience-doc-icon">${getDocIcon(d.path)}</span>
-                                <span>${escapeHtml(d.title || 'Document')}</span>
-                            </a>
-                        `).join('')}
+                        ${entry.documents.map(d => {
+                            const href = safeHref(d.path, ['http:', 'https:']);
+                            return href ? `
+                                <a class="experience-doc-link" href="${escapeHtml(href)}" target="_blank" rel="noopener">
+                                    <span class="experience-doc-icon">${getDocIcon(d.path)}</span>
+                                    <span>${escapeHtml(d.title || 'Document')}</span>
+                                </a>
+                            ` : '';
+                        }).join('')}
                     </div>
                 </div>
               `
@@ -414,9 +417,12 @@ function renderProfilePage() {
         if (p.email && !visibleActions.some(a => String(a.href || '').startsWith('mailto:'))) {
             visibleActions.push({ label: 'Email', href: `mailto:${p.email}`, style: 'secondary' });
         }
-        const actionHtml = visibleActions.map(a =>
-            `<a href="${escapeHtml(a.href || '#')}" class="${actionClass(a.style)}">${escapeHtml(a.label || '')}</a>`
-        ).join('');
+        const actionHtml = visibleActions.map(a => {
+            const href = safeHref(a.href);
+            return href
+                ? `<a href="${escapeHtml(href)}" class="${actionClass(a.style)}">${escapeHtml(a.label || '')}</a>`
+                : '';
+        }).join('');
         actionsEl.innerHTML = actionHtml;
         actionsEl.style.display = actionHtml ? '' : 'none';
     }
@@ -426,8 +432,8 @@ function renderProfilePage() {
         if (p.location) parts.push(`<span class="profile-meta-item">⌖ ${escapeHtml(p.location)}</span>`);
         if (p.email) parts.push(`<span class="profile-meta-item"><a href="mailto:${escapeHtml(p.email)}">✉ Email</a></span>`);
         if (p.linkedin) {
-            const url = p.linkedin.startsWith('http') ? p.linkedin : `https://${p.linkedin}`;
-            parts.push(`<span class="profile-meta-item"><a href="${escapeHtml(url)}" target="_blank" rel="noopener">↗ LinkedIn</a></span>`);
+            const url = safeWebHref(p.linkedin);
+            if (url) parts.push(`<span class="profile-meta-item"><a href="${escapeHtml(url)}" target="_blank" rel="noopener">↗ LinkedIn</a></span>`);
         }
         if (parts.length) {
             metaEl.innerHTML = parts.join('<span class="meta-sep">/</span>');
