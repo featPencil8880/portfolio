@@ -299,15 +299,16 @@ test('memory cards and reaction target are keyboard-operable controls', async ({
     await expect(page.getByRole('button', { name: /wait/i })).toBeFocused();
 });
 
-test('Decap CMS configuration is served for the GitHub-backed editor', async ({ request }) => {
+test('Decap CMS uses the Turbo backend and a compatible CMS version', async ({ request }) => {
     const cmsPage = await request.get('/admin/');
     expect(cmsPage.ok()).toBeTruthy();
-    expect(await cmsPage.text()).toContain('decap-cms');
+    expect(await cmsPage.text()).toContain('decap-cms@3.17.0');
 
     const config = await request.get('/admin/config.yml');
     expect(config.ok()).toBeTruthy();
     const configText = await config.text();
-    expect(configText).toContain('repo: featPencil8880/portfoli');
+    expect(configText).toMatch(/backend:\s+name: turbo-github\s+turbo_site_id: f1bfaa59-b9ba-4a0c-921d-c73c50158dd1/);
+    expect(configText).not.toContain('repo: featPencil8880/portfoli');
     expect(configText).toContain('file: content.json');
     expect(configText).toContain('site_url: "http://127.0.0.1:4173"');
 });

@@ -180,8 +180,8 @@ Available at `?admin=1`:
 - **Data** — storage usage, backup download, copy JSON, validation checklist and
   reset.
 
-The local editor never writes to disk directly. Decap is the online publishing
-path; its GitHub OAuth server must be hosted and configured separately.
+The local editor never writes to disk directly. Decap CMS at `/admin/` is the
+online publishing path; the GitHub backend is connected through Decap Turbo.
 
 ---
 
